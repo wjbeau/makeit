@@ -5,12 +5,11 @@ import { Dimensions } from './dimensions';
 const useStyles = makeStyles((theme) => ({
   footer: {
     backgroundColor: theme.palette.grey[600],
-    color: theme.palette.text.hint,
+    color: theme.palette.grey[400],
+    fontSize: theme.typography.caption.fontSize,
     textAlign: "left",
     padding: "0 1rem",
     height: Dimensions.footerHeight,
-    position: "fixed",
-    bottom: 0,
   }
 }));
 

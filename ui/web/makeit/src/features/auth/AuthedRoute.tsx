@@ -1,12 +1,8 @@
 import React, { PropsWithChildren } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectAuthed } from "./auth.slice"
-import { Routes } from "../../app/Routes";
 import {
-    BrowserRouter as Router,
-    Switch,
     Route,
-    NavLink,
     Redirect,
     RouteProps
   } from "react-router-dom";

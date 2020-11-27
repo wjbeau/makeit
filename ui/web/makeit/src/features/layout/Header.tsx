@@ -1,5 +1,5 @@
 import React from 'react';
-import { doLogout, selectAuthed } from "../auth/auth.slice";
+import { doLogout } from "../auth/auth.slice";
 import logo from '../../assets/img/logo.svg';
 import { useAppDispatch } from '../../app/store';
 import { AppBar, Toolbar, Typography, Button, SvgIcon } from "@material-ui/core"

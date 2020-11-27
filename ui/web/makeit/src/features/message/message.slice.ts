@@ -15,7 +15,7 @@ export const messageSlice = createSlice({
       let msg = action.payload
       state.messages.push({
         type: "info",
-        message: msg,
+        message: JSON.stringify(msg),
         args: []
       });
     },
@@ -23,7 +23,7 @@ export const messageSlice = createSlice({
       let msg = action.payload
       state.messages.push({
         type: "warn",
-        message: msg,
+        message: JSON.stringify(msg),
         args: []
       });
     },
@@ -31,7 +31,7 @@ export const messageSlice = createSlice({
       let msg = action.payload
       state.messages.push({
         type: "debug",
-        message: msg,
+        message: JSON.stringify(msg),
         args: []
       });
     },
@@ -39,7 +39,7 @@ export const messageSlice = createSlice({
       let msg = action.payload
       state.messages.push({
         type: "error",
-        message: msg,
+        message: JSON.stringify(msg),
         args: []
       });
     },
