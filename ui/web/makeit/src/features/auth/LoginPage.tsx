@@ -6,8 +6,13 @@ import { loginAttempt, selectLoading } from "./auth.slice";
 import {
   useHistory
 } from "react-router-dom";
-import { Button, Grid, Link, makeStyles, Paper, TextField, Typography } from '@material-ui/core';
+import { Button, Grid, Link, makeStyles, Paper, Typography } from '@material-ui/core';
 import { logError } from '../message/message.slice';
+import { FormProvider, useForm } from 'react-hook-form';
+import TextInput from '../forms/TextInput';
+
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
@@ -23,13 +28,22 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const Login = () => {
+const validationSchema = yup.object().shape({
+  username: yup.string().required("Required"),
+  password: yup.string().required("Required")
+});
+
+export const LoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const methods = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+  const { handleSubmit, errors } = methods;
 
-  const handleLogin = () => {
-    dispatch(loginAttempt({ username: "will", password: "test" })) //TODO pass in user details here
+  const handleLogin = (data: any) => {
+    dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then(auth => {
         history.push("/")
@@ -37,9 +51,6 @@ export const Login = () => {
       .catch(error => dispatch(logError(error)))
   }
   const loading = useSelector(selectLoading);
-
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
 
   return (
     <div>
@@ -55,25 +66,27 @@ export const Login = () => {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <form onSubmit={handleLogin}>
-                    <Grid container direction="column" spacing={2}>
-                      <Grid item>
-                        <TextField type="email" placeholder="Email" fullWidth name="username" variant="outlined"
-                          value={username} onChange={(event) => setUsername(event.target.value)}
-                          required autoFocus />
+                  <FormProvider {...methods}>
+                    <form>
+                      <Grid container direction="column" spacing={2}>
+                        <Grid item>
+                          <TextInput name="username" label="Username"
+                            required={true}
+                            errors={errors} />
+                        </Grid>
+                        <Grid item>
+                          <TextInput name="password" label="Password" type="password"
+                            required={true}
+                            errors={errors} />
+                        </Grid>
+                        <Grid item>
+                          <Button variant="contained" color="primary" className={classes.buttonBlock} onClick={handleSubmit(handleLogin)}>
+                            Sign In
+                          </Button>
+                        </Grid>
                       </Grid>
-                      <Grid item>
-                        <TextField type="password" placeholder="Password" fullWidth name="password" variant="outlined"
-                          value={password} onChange={(event) => setPassword(event.target.value)}
-                          required />
-                      </Grid>
-                      <Grid item>
-                        <Button variant="contained" color="primary" type="submit" className={classes.buttonBlock}>
-                          Submit
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </form>
+                    </form>
+                  </FormProvider>
                 </Grid>
                 <Grid item>
                   <Link href="#" variant="body2">
@@ -90,4 +103,4 @@ export const Login = () => {
   );
 }
 
-export default Login;
+export default LoginPage;

@@ -1,6 +1,6 @@
 
 
-export class Dimensions {
+export class DIMENSIONS {
 
     public static get footerHeight() { return 64; }
     public static get headerHeight() { return 64; }

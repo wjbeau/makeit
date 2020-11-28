@@ -1,6 +1,6 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import { Dimensions } from './dimensions';
+import { DIMENSIONS } from './dimensions';
 
 const useStyles = makeStyles((theme) => ({
   footer: {
@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.caption.fontSize,
     textAlign: "left",
     padding: "0 1rem",
-    height: Dimensions.footerHeight,
+    height: DIMENSIONS.footerHeight,
   }
 }));
 

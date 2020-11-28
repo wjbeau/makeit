@@ -4,7 +4,7 @@ import { Footer } from './features/layout/Footer';
 import { PageContent } from './features/layout/PageContent';
 import './App.scss';
 import { createMuiTheme, Grid, makeStyles, ThemeProvider } from '@material-ui/core';
-import { Dimensions } from './features/layout/dimensions';
+import { DIMENSIONS } from './features/layout/dimensions';
 
 const useStyles = makeStyles((theme) => (
   {
@@ -13,11 +13,11 @@ const useStyles = makeStyles((theme) => (
     },
     header: {
       flexGrow: 0,
-      height: Dimensions.headerHeight
+      height: DIMENSIONS.headerHeight
     },
     content: {
       flexGrow: 1,
-      minHeight: Dimensions.pageContentHeight
+      minHeight: DIMENSIONS.pageContentHeight
     }
   }
 ));

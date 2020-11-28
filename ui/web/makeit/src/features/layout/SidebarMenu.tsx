@@ -7,8 +7,9 @@ export function SidebarMenu() {
   return (
     <nav>
         <List>
+            {}
             <SidebarMenuSection section={routeDefinitions.public} />
-            <SidebarMenuSection section={routeDefinitions.protected} />
+            <SidebarMenuSection section={routeDefinitions.career} />
         </List>
     </nav>
   );

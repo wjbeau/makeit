@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { allRoutes } from "../../app/Routes";
+import { routeDefinitions } from "../../app/Routes";
 import { SidebarMenu } from "./SidebarMenu";
 import { AuthedRoute } from "../auth/AuthedRoute";
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,18 +8,18 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import { Grid, Paper } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
-import { Dimensions } from './dimensions';
+import { DIMENSIONS } from './dimensions';
 import { Loading } from './Loading';
 
 const useStyles = makeStyles((theme) => ({
     grid: {
-        minHeight: Dimensions.pageContentHeight
+        minHeight: DIMENSIONS.pageContentHeight
     },
     sidebar: {
         flexGrow: 0,
-        width: Dimensions.drawerWidth
+        width: DIMENSIONS.drawerWidth
     },
     content: {
         flexGrow: 1,
@@ -43,26 +43,27 @@ export function PageContent() {
                     </Grid>
                 </IfAuthenticated>
                 <Grid item className={classes.content}>
-                    <Paper className={classes.paper}>
-                        <Suspense fallback={<Loading />}>
-                            <Switch>
-                                {allRoutes.map((route) => (
-                                    route.requiresAuth ? <AuthedRoute
-                                        key={route.path}
-                                        path={route.path}
-                                        exact={route.exact}
-                                        children={<route.main />}
-                                    />
+                    <Suspense fallback={<Loading />}>
+                        <Switch>
+                            {[routeDefinitions.public, routeDefinitions.career].map((set: any) =>
+                                set.routes.map((route: any) =>
+                                    route.requiresAuth ?
+                                        <AuthedRoute key={route.path}
+                                            path={route.path}
+                                            exact={route.exact}
+                                            children={<route.main />}
+                                        />
                                         : <Route
                                             key={route.path}
                                             path={route.path}
                                             exact={route.exact}
                                             children={<route.main />}
                                         />
-                                ))}
-                            </Switch>
-                        </Suspense>
-                    </Paper>
+                                )
+                            )
+                            }
+                        </Switch>
+                    </Suspense>
                 </Grid>
             </Grid>
         </Router>

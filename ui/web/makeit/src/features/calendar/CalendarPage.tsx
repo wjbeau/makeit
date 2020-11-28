@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Calendar = () => {
+export const CalendarPage = () => {
   return (
     <>
       This is Calendar!!
@@ -8,4 +8,4 @@ export const Calendar = () => {
   );
 }
 
-export default Calendar;
+export default CalendarPage;
