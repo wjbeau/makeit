@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { selectAuthed } from '../auth/auth.slice';
-import Loading from '../layout/Loading';
-import { logError } from '../message/message.slice';
-import { fetchMeetings, selectMeetingsLoading, selectMeetings } from './meetings.slice';
-import MeetingsList from './MeetingsList';
+import { logError } from '../logging/logging.slice';
+import { fetchAuditions, selectAuditionsLoading, selectAuditions } from './audition.slice';
+import { AuditionsList } from './AuditionsList';
 import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import IfNotLoading from '../layout/IfNotLoading';
 import TitledSection from '../layout/TitledSection';
-import MeetingCard from './MeetingCard';
+import AuditionCard from './AuditionCard';
+import { Audition } from './audition.state';
 
 const PREVIEW_COUNT = 3;
 
@@ -21,22 +21,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const MeetingsPage = () => {
+export const AuditionsPage = () => {
   const user = useSelector(selectAuthed);
-  const loading = useSelector(selectMeetingsLoading)
-  const meetings = useSelector(selectMeetings)
+  const loading = useSelector(selectAuditionsLoading)
+  const auditions = useSelector(selectAuditions)
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const futureMeetings = meetings.slice(0, PREVIEW_COUNT); //TODO filter only future meetings and sort by date 
-  const pastMeetings:any[] = []; //TODO filter only future meetings and sort by date desc
+  const futureAuditions:Audition[] = auditions.slice(0, PREVIEW_COUNT); //TODO filter only future meetings and sort by date 
+  const pastAuditions:Audition[] = []; //TODO filter only future meetings and sort by date desc
   const classes = useStyles();
   
   const handleAdd = () => {
-    history.push("meetings/new/edit")
+    history.push("auditions/new/edit")
   }
 
   useEffect(() => {
-    dispatch(fetchMeetings(user?.userId ?? "notnull"))
+    dispatch(fetchAuditions(user?.userId ?? "notnull"))
       .then(unwrapResult)
       .catch(error => dispatch(logError(error)))
   }, [dispatch, user?.userId])
@@ -52,12 +52,12 @@ export const MeetingsPage = () => {
         <Grid container direction="row" spacing={3}>
           <Grid item xs={4}>
             <IfNotLoading loading={loading}>
-              <TitledSection variant="h6" component="h2" title="Upcoming Meetings">
+              <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
                 <Grid container direction="column" spacing={2}>
-                  { futureMeetings.length > 0 &&
-                    futureMeetings.map(m => <Grid item><MeetingCard meeting={m} /></Grid>) 
+                  { futureAuditions.length > 0 &&
+                    futureAuditions.map(m => <Grid item><AuditionCard audition={m} /></Grid>) 
                   }
-                  { futureMeetings.length === 0 &&
+                  { futureAuditions.length === 0 &&
                     <Grid item className={classes.noContent}>
                       <Typography variant="body2">No upcoming meetings to show</Typography>
                     </Grid>
@@ -68,12 +68,12 @@ export const MeetingsPage = () => {
           </Grid>
           <Grid item xs={4}>
             <IfNotLoading loading={loading}>
-              <TitledSection variant="h6" component="h2" title="Recent Meetings">
+              <TitledSection variant="h6" component="h2" title="Recent Auditions">
                 <Grid container direction="column" spacing={2}>
-                  { pastMeetings.length > 0 &&
-                    pastMeetings.map(m => <Grid item><MeetingCard meeting={m} /></Grid>)
+                  { pastAuditions.length > 0 &&
+                    pastAuditions.map(m => <Grid item><AuditionCard audition={m} /></Grid>)
                   }
-                  { pastMeetings.length === 0 &&
+                  { pastAuditions.length === 0 &&
                     <Grid item className={classes.noContent}>
                       <Typography variant="body2">No recent meetings to show</Typography>
                     </Grid>
@@ -84,11 +84,11 @@ export const MeetingsPage = () => {
           </Grid>
         </Grid>
         <Grid item>
-          <MeetingsList meetings={meetings} />
+          <AuditionsList auditions={auditions} />
         </Grid>
       </Grid>
     </Grid>
   );
 }
 
-export default MeetingsPage;
+export default AuditionsPage;

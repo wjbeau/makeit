@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MeetingEditPage = (props: any) => {
-  const { meetingId } = props;
+const AuditionEditPage = (props: any) => {
+  const { auditionId } = props;
   const loading = false;
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -46,13 +46,13 @@ const MeetingEditPage = (props: any) => {
     history.goBack();
   }
 
-  const title = meetingId === "new" ? "New Meeting" : "Edit Meeting";
+  const title = auditionId === "new" ? "New Meeting" : "Edit Meeting";
 
   useEffect(() => {
-    if (meetingId !== "new") {
+    if (auditionId !== "new") {
       //TODO implement this
     }
-  }, [dispatch, meetingId])
+  }, [dispatch, auditionId])
 
   return (
     <div>
@@ -65,7 +65,7 @@ const MeetingEditPage = (props: any) => {
                 <Breadcrumbs>
                   <NavLink color="inherit" to="/meetings" className={classes.link}>
                     <ArrowBack className={classes.icon} />
-                    Back to Meetings
+                    Back to Auditions
                   </NavLink>
                 </Breadcrumbs>
               </Grid>
@@ -122,4 +122,4 @@ const MeetingEditPage = (props: any) => {
   );
 }
 
-export default MeetingEditPage;
+export default AuditionEditPage;

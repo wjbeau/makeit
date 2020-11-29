@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const MeetingCard = (props: any) => {
-    const { meeting } = props
+export const AuditionCard = (props: any) => {
+    const { audition } = props
     const classes = useStyles()
     const [expanded, setExpanded] = React.useState(false);
 
@@ -43,8 +43,8 @@ export const MeetingCard = (props: any) => {
                         <MoreVert />
                     </IconButton>
                 }
-                title={meeting.subject}
-                subheader={meeting.startTime}
+                title={audition.subject}
+                subheader={audition.startTime}
             />
             <CardActions disableSpacing>
                 <IconButton aria-label="edit">
@@ -63,7 +63,7 @@ export const MeetingCard = (props: any) => {
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
-                    <Typography paragraph>{meeting.subject}</Typography>
+                    <Typography paragraph>{audition.subject}</Typography>
                     <Typography paragraph>
                         Details to follow, etc...
                     </Typography>
@@ -82,4 +82,4 @@ export const MeetingCard = (props: any) => {
     );
 }
 
-export default MeetingCard;
+export default AuditionCard;

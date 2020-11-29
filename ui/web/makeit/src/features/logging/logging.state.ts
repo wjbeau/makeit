@@ -1,9 +1,9 @@
 
 export interface ApplicationMessages {
-    messages: Message[];
+    messages: LogMessage[];
 }
 
-export interface Message {
+export interface LogMessage {
     type: string,
     message: string;
     args: string[];

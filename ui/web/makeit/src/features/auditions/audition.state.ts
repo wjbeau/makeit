@@ -1,18 +1,16 @@
 // Model / State objects for the auth feature
 
-import { Address } from "cluster";
-
-export interface MeetingsState {
-    meetings: Meeting[];
+export interface AuditionsState {
+    auditions: Audition[];
     loading: boolean;
 }
 
-export interface Meeting {
+export interface Audition {
     id: string;
     subject: string;
     type: string;
     startTime: string;
     endTime: string;
-    location?: Address;
+    location?: any;
 }
 

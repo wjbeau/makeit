@@ -7,7 +7,7 @@ import {
   useHistory
 } from "react-router-dom";
 import { Button, Grid, Link, makeStyles, Paper, Typography } from '@material-ui/core';
-import { logError } from '../message/message.slice';
+import { logError } from '../logging/logging.slice';
 import { FormProvider, useForm } from 'react-hook-form';
 import TextInput from '../forms/TextInput';
 

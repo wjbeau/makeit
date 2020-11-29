@@ -1,16 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ApplicationMessages } from './message.state';
+import { ApplicationMessages } from './logging.state';
 
 
 const initialState: ApplicationMessages = {
   messages: []
 };
 
-export const messageSlice = createSlice({
-  name: 'message',
+export const loggingSlice = createSlice({
+  name: 'logging',
   initialState,
   reducers: {
+    logSuccess: (state, action) => {
+      let msg = action.payload
+      state.messages.push({
+        type: "success",
+        message: JSON.stringify(msg),
+        args: []
+      });
+    },
     logInfo: (state, action) => {
       let msg = action.payload
       state.messages.push({
@@ -53,11 +61,12 @@ export const messageSlice = createSlice({
   }
 });
 
-export const { logInfo, logWarn, logDebug, logError, messageHandled } = messageSlice.actions;
+export const { logInfo, logWarn, logDebug, logError, messageHandled } = loggingSlice.actions;
 
-export const selectErrors = (state: RootState) => state.message.messages.filter(m => m.type === "error");
-export const selectInfo = (state: RootState) => state.message.messages.filter(m => m.type === "info");
-export const selectWarn = (state: RootState) => state.message.messages.filter(m => m.type === "warn");
-export const selectDebug = (state: RootState) => state.message.messages.filter(m => m.type === "debug");
+export const selectErrors = (state: RootState) => state.logging.messages.filter(m => m.type === "error");
+export const selectInfo = (state: RootState) => state.logging.messages.filter(m => m.type === "info");
+export const selectWarn = (state: RootState) => state.logging.messages.filter(m => m.type === "warn");
+export const selectDebug = (state: RootState) => state.logging.messages.filter(m => m.type === "debug");
+export const selectSuccess = (state: RootState) => state.logging.messages.filter(m => m.type === "success");
 
-export default messageSlice.reducer;
+export default loggingSlice.reducer;

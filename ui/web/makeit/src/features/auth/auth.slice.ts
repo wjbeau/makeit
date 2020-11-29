@@ -33,7 +33,8 @@ export const authSlice = createSlice({
         state.user = {
           userId: action.payload.userId,
           firstName: action.payload.firstName,
-          lastName: action.payload.lastName
+          lastName: action.payload.lastName,
+          profiles: []
         }
         state.loading = false;
       })

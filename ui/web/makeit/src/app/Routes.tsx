@@ -11,8 +11,8 @@ export const routeDefinitions = {
     career: {
         title: "Career Tracking",
         routes: [
-            { path: "/meetings/:id/edit", exact: true, main: lazy(() => import('../features/meetings/MeetingEditPage')), title: "Meeting Edit", icon: undefined, requiresAuth: true, showInMenu: false },
-            { path: "/meetings", exact: false, main: lazy(() => import('../features/meetings/MeetingsPage')), title: "Meetings", icon: <MeetingRoom />, requiresAuth: true, showInMenu: true },
+            { path: "/auditions/:id/edit", exact: true, main: lazy(() => import('../features/auditions/AuditionEditPage')), title: "Audition Edit", icon: undefined, requiresAuth: true, showInMenu: false },
+            { path: "/auditions", exact: false, main: lazy(() => import('../features/auditions/AuditionsPage')), title: "Auditions", icon: <MeetingRoom />, requiresAuth: true, showInMenu: true },
             { path: "/calendar", exact: false, main: lazy(() => import('../features/calendar/CalendarPage')), title: "Calendar", icon: <Today />, requiresAuth: true, showInMenu: true },
             { path: "/contacts", exact: false, main: lazy(() => import('../features/contacts/ContactsPage')), title: "Contacts", icon: <People />, requiresAuth: true, showInMenu: true },
         ]
