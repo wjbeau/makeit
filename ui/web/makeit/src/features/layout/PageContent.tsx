@@ -8,7 +8,7 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import { Grid } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
 import { DIMENSIONS } from './dimensions';
 import { Loading } from './Loading';
@@ -43,28 +43,35 @@ export function PageContent() {
                     </Grid>
                 </IfAuthenticated>
                 <Grid item className={classes.content}>
-                    <Suspense fallback={<Loading />}>
-                        <Switch>
-                            {[routeDefinitions.public, routeDefinitions.career].map((set: any) =>
-                                set.routes.map((route: any) =>
-                                    route.requiresAuth ?
-                                        <AuthedRoute key={route.path}
-                                            path={route.path}
-                                            exact={route.exact}
-                                            children={<route.main />}
-                                        />
-                                        : <Route
-                                            key={route.path}
-                                            path={route.path}
-                                            exact={route.exact}
-                                            children={<route.main />}
-                                        />
+                    <Container maxWidth="lg">
+                        <Suspense fallback={<Loading />}>
+                            <Switch>
+                                {[routeDefinitions.public, routeDefinitions.career].map((set: any) =>
+                                    set.routes.map((route: any) =>
+                                        route.requiresAuth ?
+                                            <AuthedRoute key={route.path}
+                                                path={route.path}
+                                                exact={route.exact}
+                                                children={<route.main />}
+                                            />
+                                            : <Route
+                                                key={route.path}
+                                                path={route.path}
+                                                exact={route.exact}
+                                                children={<route.main />}
+                                            />
+                                    )
                                 )
-                            )
-                            }
-                        </Switch>
-                    </Suspense>
+                                }
+                            </Switch>
+                        </Suspense>
+                    </Container>
                 </Grid>
+                <IfAuthenticated>
+                    <Grid item className={classes.sidebar}>
+
+                    </Grid>
+                </IfAuthenticated>
             </Grid>
         </Router>
     );

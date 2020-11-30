@@ -75,7 +75,7 @@ const AuditionEditPage = (props: any) => {
               <Grid item>
                 <TitledPaper variant="h6" component="h2" title="Project Details">
                   <Grid container direction="column" spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={6}>
                           <TextInput name="breakdown.project.name" label="Project Name"
@@ -92,10 +92,10 @@ const AuditionEditPage = (props: any) => {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <TextInput name="breakdown.project.description" label="Description" />
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={3}>
                           <TextInput name="breakdown.project.union" label="Union Status" />
@@ -123,7 +123,7 @@ const AuditionEditPage = (props: any) => {
               <Grid item>
                 <TitledPaper variant="h6" component="h2" title="Role/Breakdown Details">
                   <Grid container direction="column" spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={6}>
                           <TextInput name="breakdown.roleName" label="Role Name"
@@ -135,10 +135,10 @@ const AuditionEditPage = (props: any) => {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <TextInput name="breakdown.roleDescription" label="Description" />
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={2}>
                           <TextInput name="breakdown.rate" label="Rate / Pay" />
@@ -166,7 +166,7 @@ const AuditionEditPage = (props: any) => {
               <Grid item>
                 <TitledPaper variant="h6" component="h2" title="Audition Details">
                   <Grid container direction="column" spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={2}>
                           <TextInput name="type" label="Type" />
@@ -185,10 +185,10 @@ const AuditionEditPage = (props: any) => {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item>
                       <TextInput name="instructions" label="Instructions" />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <TextInput name="address" label="Address" />
                     </Grid>
                     <Grid item>

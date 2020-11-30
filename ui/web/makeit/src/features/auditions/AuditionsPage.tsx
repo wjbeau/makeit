@@ -51,7 +51,7 @@ export const AuditionsPage = () => {
         </Button>
       </Grid>
       <Grid container direction="row" spacing={3}>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
             <IfNotLoading loading={loading}>
               <Grid container direction="column" spacing={2}>
@@ -67,7 +67,7 @@ export const AuditionsPage = () => {
             </IfNotLoading>
           </TitledSection>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <TitledSection variant="h6" component="h2" title="Recent Auditions">
             <IfNotLoading loading={loading}>
               <Grid container direction="column" spacing={2}>
