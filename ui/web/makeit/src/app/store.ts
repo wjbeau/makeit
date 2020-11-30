@@ -3,12 +3,14 @@ import { useDispatch } from 'react-redux';
 import authReducer from '../features/auth/auth.slice';
 import loggingReducer from '../features/logging/logging.slice';
 import auditionsReducer from '../features/auditions/audition.slice';
+import breakdownsReducer from '../features/breakdowns/breakdowns.slice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     logging: loggingReducer,
-    auditions: auditionsReducer
+    auditions: auditionsReducer,
+    breakdowns: breakdownsReducer,
   },
 });
 

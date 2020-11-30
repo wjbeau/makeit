@@ -20,6 +20,7 @@ function TextInput(props:any) {
       control={control}
       defaultValue=""
       label={label}
+      fullWidth={true}
       InputLabelProps={{
         className: required ? "required-label" : "",
         required: required || false,

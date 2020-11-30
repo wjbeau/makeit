@@ -1,11 +1,16 @@
-import { Grid } from '@material-ui/core';
+import { CircularProgress, Grid, Typography } from '@material-ui/core';
 import React from 'react';
 
 export const Loading = () => {
     return (
-        <Grid container direction="row" justify="center" alignItems="center">
+        <Grid container direction="column" justify="center" alignItems="center">
             <Grid item>
-                Loading...
+                <CircularProgress />
+            </Grid>
+            <Grid item>
+                <Typography variant="body2">
+                    Loading...
+                </Typography>
             </Grid>
         </Grid>
     );

@@ -1,7 +1,8 @@
-import { Avatar, Card, CardActions, CardContent, CardHeader, Collapse, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Avatar, Card, CardActions, CardContent, CardHeader, Collapse,  IconButton, makeStyles, Typography } from '@material-ui/core';
 import { Edit, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,11 +24,15 @@ const useStyles = makeStyles((theme) => ({
 
 export const AuditionCard = (props: any) => {
     const { audition } = props
-    const classes = useStyles()
+    const classes = useStyles();
+    const history = useHistory();
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
+    };
+    const goToEdit = () => {
+        history.push("/meetings/" + audition.id + "/edit")
     };
 
     return (
@@ -47,7 +52,7 @@ export const AuditionCard = (props: any) => {
                 subheader={audition.startTime}
             />
             <CardActions disableSpacing>
-                <IconButton aria-label="edit">
+                <IconButton aria-label="edit" onClick={goToEdit}>
                     <Edit />
                 </IconButton>
                 <IconButton

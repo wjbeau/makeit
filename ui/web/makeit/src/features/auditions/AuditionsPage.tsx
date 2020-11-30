@@ -12,6 +12,7 @@ import IfNotLoading from '../layout/IfNotLoading';
 import TitledSection from '../layout/TitledSection';
 import AuditionCard from './AuditionCard';
 import { Audition } from './audition.state';
+import { AddBoxOutlined } from '@material-ui/icons';
 
 const PREVIEW_COUNT = 3;
 
@@ -27,10 +28,10 @@ export const AuditionsPage = () => {
   const auditions = useSelector(selectAuditions)
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const futureAuditions:Audition[] = auditions.slice(0, PREVIEW_COUNT); //TODO filter only future meetings and sort by date 
-  const pastAuditions:Audition[] = []; //TODO filter only future meetings and sort by date desc
+  const futureAuditions: Audition[] = auditions.slice(0, PREVIEW_COUNT); //TODO filter only future meetings and sort by date 
+  const pastAuditions: Audition[] = []; //TODO filter only future meetings and sort by date desc
   const classes = useStyles();
-  
+
   const handleAdd = () => {
     history.push("auditions/new/edit")
   }
@@ -42,50 +43,53 @@ export const AuditionsPage = () => {
   }, [dispatch, user?.userId])
 
   return (
-    <Grid container direction="column" spacing={3}>
+    <Grid container direction="column" spacing={5}>
       <Grid item>
-        <Button variant="contained" color="primary" onClick={handleAdd}>
-          New Meeting
+        <Button variant="contained" color="primary" onClick={handleAdd}
+          startIcon={<AddBoxOutlined />}>
+          New Audition
         </Button>
       </Grid>
+      <Grid container direction="row" spacing={3}>
+        <Grid item xs={4}>
+          <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
+            <IfNotLoading loading={loading}>
+              <Grid container direction="column" spacing={2}>
+                {futureAuditions.length > 0 &&
+                  futureAuditions.map(m => <Grid item key={m.id}><AuditionCard audition={m} /></Grid>)
+                }
+                {futureAuditions.length === 0 &&
+                  <Grid item className={classes.noContent}>
+                    <Typography variant="body2">No upcoming meetings to show</Typography>
+                  </Grid>
+                }
+              </Grid>
+            </IfNotLoading>
+          </TitledSection>
+        </Grid>
+        <Grid item xs={4}>
+          <TitledSection variant="h6" component="h2" title="Recent Auditions">
+            <IfNotLoading loading={loading}>
+              <Grid container direction="column" spacing={2}>
+                {pastAuditions.length > 0 &&
+                  pastAuditions.map(m => <Grid item key={m.id}><AuditionCard audition={m} /></Grid>)
+                }
+                {pastAuditions.length === 0 &&
+                  <Grid item className={classes.noContent}>
+                    <Typography variant="body2">No recent meetings to show</Typography>
+                  </Grid>
+                }
+              </Grid>
+            </IfNotLoading>
+          </TitledSection>
+        </Grid>
+      </Grid>
       <Grid item>
-        <Grid container direction="row" spacing={3}>
-          <Grid item xs={4}>
-            <IfNotLoading loading={loading}>
-              <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
-                <Grid container direction="column" spacing={2}>
-                  { futureAuditions.length > 0 &&
-                    futureAuditions.map(m => <Grid item><AuditionCard audition={m} /></Grid>) 
-                  }
-                  { futureAuditions.length === 0 &&
-                    <Grid item className={classes.noContent}>
-                      <Typography variant="body2">No upcoming meetings to show</Typography>
-                    </Grid>
-                  }
-                </Grid>
-              </TitledSection>
-            </IfNotLoading>
-          </Grid>
-          <Grid item xs={4}>
-            <IfNotLoading loading={loading}>
-              <TitledSection variant="h6" component="h2" title="Recent Auditions">
-                <Grid container direction="column" spacing={2}>
-                  { pastAuditions.length > 0 &&
-                    pastAuditions.map(m => <Grid item><AuditionCard audition={m} /></Grid>)
-                  }
-                  { pastAuditions.length === 0 &&
-                    <Grid item className={classes.noContent}>
-                      <Typography variant="body2">No recent meetings to show</Typography>
-                    </Grid>
-                  }
-                </Grid>
-              </TitledSection>
-            </IfNotLoading>
-          </Grid>
-        </Grid>
-        <Grid item>
-          <AuditionsList auditions={auditions} />
-        </Grid>
+        <TitledSection variant="h6" component="h2" title="Audition Log">
+          <IfNotLoading loading={loading}>
+            <AuditionsList auditions={auditions} />
+          </IfNotLoading>
+        </TitledSection>
       </Grid>
     </Grid>
   );

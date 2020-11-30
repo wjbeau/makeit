@@ -7,11 +7,11 @@ export const AuditionsList = (props:any) => {
    
   return (
     <>
-      { auditions.map((audition:Audition) => {
-          <div>
-              This is an audition: {audition.subject}
+      { auditions.map((audition:Audition) => 
+          <div  key={audition.id}>
+              This is an audition: {audition.breakdown}
           </div>
-      })}
+      )}
     </>
   );
 }

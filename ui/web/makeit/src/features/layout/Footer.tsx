@@ -18,7 +18,7 @@ export function Footer() {
   return (
       <Grid container spacing={0} justify="flex-start" direction="row" className={classes.footer} alignContent="center">
         <Grid item>
-          <Typography>2020 William J Beaumont. All rights reserved.
+          <Typography>2020 William J Beaumont. All rights reserved. Version: {process.env.REACT_APP_VERSION}
           </Typography>
         </Grid>
       </Grid>
