@@ -5,6 +5,7 @@ import { PageContent } from './features/layout/PageContent';
 import './App.scss';
 import { createMuiTheme, Grid, makeStyles, ThemeProvider } from '@material-ui/core';
 import { DIMENSIONS } from './features/layout/dimensions';
+import MessagePanel from './features/logging/MessagePanel';
 
 const useStyles = makeStyles((theme) => (
   {
@@ -29,6 +30,7 @@ function App() {
   const classes = useStyles()
   return (
     <ThemeProvider theme={theme}>
+      <MessagePanel />
       <Grid container direction="column" className={classes.layoutGrid}>
         <Grid item className={classes.header}>
           <Header />

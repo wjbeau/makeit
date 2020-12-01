@@ -13,7 +13,7 @@ import TextInput from '../forms/TextInput';
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AuthResponse } from '@makeit/types';
+import { AuthRequest, AuthResponse } from '@makeit/types';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
@@ -43,13 +43,16 @@ export const LoginPage = () => {
   });
   const { handleSubmit, errors } = methods;
 
-  const handleLogin = (data: AuthResponse) => {
+  const handleLogin = (data: AuthRequest) => {
     dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then(auth => {
         history.push("/")
       })
-      .catch(error => dispatch(logError(error)))
+      .catch(error => dispatch(logError({
+        message: "Login failed.  Please check your username/password and try again.", 
+        detail: error
+      })))
   }
   const loading = useSelector(selectLoading);
 
