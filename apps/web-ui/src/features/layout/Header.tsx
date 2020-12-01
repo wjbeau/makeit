@@ -1,6 +1,5 @@
 import React from 'react';
 import { doLogout } from "../auth/auth.slice";
-import logo from '../../assets/img/logo.svg';
 import { useAppDispatch } from '../../app/store';
 import { AppBar, Toolbar, Typography, Button, SvgIcon } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,9 +32,6 @@ export function Header() {
         <header className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
-                    <SvgIcon titleAccess="logo">
-                        {logo}
-                    </SvgIcon>
                     <Typography variant="h6" className={classes.title}>
                         Make It!
                     </Typography>
