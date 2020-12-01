@@ -24,10 +24,4 @@ export class UserService {
   async findById(userId: string): Promise<UserAccount | undefined> {
     return this.users.find((user) => user.userId === userId);
   }
-
-  async getHello(): Promise<string> {
-    return new Promise<string>((resolve) => {
-      resolve('Hello World!');
-    });
-  }
 }
