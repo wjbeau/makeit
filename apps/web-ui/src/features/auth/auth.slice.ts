@@ -2,18 +2,15 @@ import { createSlice,  createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { AuthenticationState } from './auth.state'
 import { AuthRequest } from '@makeit/types';
+import axios from 'axios';
 
 const initialState: AuthenticationState = {
   loading: false
 };
 
 export const loginAttempt = createAsyncThunk('auth/loginAttempt', async (userData: AuthRequest) => {
-  //TODO await call to server with auth request
-  return {
-    userId: "user1",
-    firstName: "Will",
-    lastName: "Beaumont"
-  }
+  const result = await axios.post('http://localhost:3333/api/auth/login', userData);
+  return result.data;
 })
 
 export const authSlice = createSlice({
@@ -31,12 +28,8 @@ export const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(loginAttempt.fulfilled, (state, action) => {
-        state.user = {
-          userId: action.payload.userId,
-          firstName: action.payload.firstName,
-          lastName: action.payload.lastName,
-          profiles: []
-        }
+        state.user = action.payload.user;
+        state.token = action.payload.access_token;
         state.loading = false;
       })
       .addCase(loginAttempt.rejected, (state, action) => {

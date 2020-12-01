@@ -1,7 +1,7 @@
 import { Breakdown } from './breakdown.model';
 import { Address } from './address.model';
 import { Link } from './link.model';
-import { AccountReference } from './user.model';
+import { RoleAssignment } from './user.model';
 import { Attachment } from './attachment.model';
 
 
@@ -18,7 +18,7 @@ export interface Audition {
     status: AuditionStatus;
     statusReason?: string;  //reason for status
     links?: Link[];
-    participants?: AccountReference[];
+    participants?: RoleAssignment[];
 }
 
 export interface AuditionNote {

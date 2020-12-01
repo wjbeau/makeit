@@ -5,7 +5,6 @@ import { Link } from './link.model';
 export interface ProjectBreakdowns {
     id: string;
 
-    //TODO replace this with project structure later
     name: string;
     projectType: string; 
     description: string;

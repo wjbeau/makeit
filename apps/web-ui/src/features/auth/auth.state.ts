@@ -5,5 +5,6 @@ import { UserAccount } from "@makeit/types";
 
 export interface AuthenticationState {
     user?: UserAccount;
+    token?: string;
     loading: boolean;
 }
