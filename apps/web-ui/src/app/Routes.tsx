@@ -18,5 +18,3 @@ export const routeDefinitions = {
         ]
     }
 }
-
-export const publicRoutes = routeDefinitions.public.routes;

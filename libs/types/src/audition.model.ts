@@ -10,7 +10,7 @@ export interface Audition {
     breakdown: Breakdown;
     
     instructions?: string;
-    type?: string;
+    type: string;
     auditionTime?: string;
     deadline?: string;
     callbackDate?: string;
@@ -19,6 +19,8 @@ export interface Audition {
     statusReason?: string;  //reason for status
     links?: Link[];
     participants?: RoleAssignment[];
+
+    followUpTo?: string;
 }
 
 export interface AuditionNote {

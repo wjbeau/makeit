@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Loading from '../layout/Loading';
 import { Breadcrumbs, Button, Grid, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import TextInput from '../forms/TextInput';
 
 import * as yup from "yup";
@@ -13,14 +13,14 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { logError } from '../logging/logging.slice';
-import { Audition } from '@makeit/types';
+import { Audition, AuditionStatus } from '@makeit/types';
 import {yupResolver} from '@hookform/resolvers/yup';
 
 const validationSchema = yup.object().shape({
 });
 
-const AuditionEditPage = (props) => {
-  const { auditionId } = props;
+const AuditionEditPage = () => {
+  const { auditionId } = useParams<{ auditionId: string }>();
   const [audition, setAudition] = useState<Audition>()
   const loading = useSelector(selectAuditionsLoading);
   const auditions = useSelector(selectAuditions);
@@ -30,15 +30,14 @@ const AuditionEditPage = (props) => {
   });
   const dispatch = useAppDispatch();
 
-  const { handleSubmit, errors } = methods;
+  const { handleSubmit, errors, reset } = methods;
 
   const handleSave = (data) => {
-    if(audition) {
-      dispatch(saveAudition(audition))
-        .then(unwrapResult)
-        .then(p => history.push("/meetings"))
-        .catch(e => dispatch(logError(e)))
-    }
+    setAudition({...audition, ...data})
+    dispatch(saveAudition(audition))
+      .then(unwrapResult)
+      .then(p => history.push("/auditions"))
+      .catch(e => dispatch(logError(e)))
   }
   const handleCancel = (data) => {
     history.goBack();
@@ -49,9 +48,34 @@ const AuditionEditPage = (props) => {
   useEffect(() => {
     if (auditionId !== "new") {
       setAudition(auditions.find(a => a.id === auditionId))
-      //TODO do something here to make the audition populate the fields...
+      reset(audition)
     }
-  }, [auditionId, setAudition, auditions])
+    else {
+      setAudition({
+        id: null,
+        type: null,
+        breakdown: {
+          id: null,
+          roleName: null,
+          roleDescription: null,
+              roleType: null,
+              rate: null,
+              attachments: [],
+              project: {
+                id: null,
+                name: null,
+                projectType: null,
+                description: null,
+                union: null,
+                startDate: null,
+                attachments: [],
+                links: [],
+            }
+          },
+          status: AuditionStatus.Accepted,
+        });
+    }
+  }, [auditionId, setAudition, auditions, audition, reset])
 
   return (
     <div>

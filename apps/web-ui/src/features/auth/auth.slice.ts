@@ -2,14 +2,15 @@ import { createSlice,  createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { AuthenticationState } from './auth.state'
 import { AuthRequest } from '@makeit/types';
-import axios from 'axios';
+import { SERVER_URL } from '../../app/config';
+import { axiosInstance } from '../../app/axios';
 
 const initialState: AuthenticationState = {
   loading: false
 };
 
 export const loginAttempt = createAsyncThunk('auth/loginAttempt', async (userData: AuthRequest) => {
-  const result = await axios.post('http://localhost:3333/api/auth/login', userData);
+  const result = await axiosInstance().post(SERVER_URL + '/auth/login', userData);
   return result.data;
 })
 

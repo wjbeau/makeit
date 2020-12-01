@@ -10,7 +10,7 @@ export const AuditionsList = (props) => {
     <>
       { auditions.map((audition:Audition) => 
           <div  key={audition.id}>
-              This is an audition: {audition.breakdown}
+              This is an audition: {audition.breakdown.project.name}
           </div>
       )}
     </>

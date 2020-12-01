@@ -12,6 +12,4 @@ export const breakdownsSlice = createSlice({
   }
 });
 
-export const { } = breakdownsSlice.actions;
-
 export default breakdownsSlice.reducer;
