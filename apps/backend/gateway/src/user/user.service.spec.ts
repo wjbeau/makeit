@@ -43,8 +43,8 @@ describe('UserService', () => {
       };
 
       when(mockDocument.toObject()).thenReturn(user);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       when(mockQuery.exec()).thenReturn(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new Promise<any>((resolve) => {
           resolve(instance(mockDocument));
         })
@@ -61,8 +61,8 @@ describe('UserService', () => {
     it('should return null when no user found', async () => {
       const userId = 'nosuchuser';
       when(mockDocument.toObject()).thenReturn(null);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       when(mockQuery.exec()).thenReturn(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new Promise<any>((resolve) => {
           resolve(instance(mockDocument));
         })
