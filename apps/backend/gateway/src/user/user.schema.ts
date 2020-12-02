@@ -10,7 +10,7 @@ export class UserAccountModel implements UserAccount {
     @Prop({ required: true })
     userId: string;
     @Prop()
-    password?: string; //note this will not be populated by the server when returning account objects
+    password?: string;
     @Prop({ required: true })
     firstName: string;
     @Prop({ required: true })

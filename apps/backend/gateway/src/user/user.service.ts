@@ -9,7 +9,8 @@ export class UserService implements OnModuleInit {
   constructor(@InjectModel(UserAccountModel.name) private userModel: Model<UserDocument>) {}
 
   async findById(userId: string): Promise<UserAccountModel | undefined> {
-    const result = await this.userModel.findOne({userId: {$eq: userId} }).exec();
+    const query = this.userModel.findOne({userId: {$eq: userId} });
+    const result = await query.exec();
     return result?.toObject();
   }
 
