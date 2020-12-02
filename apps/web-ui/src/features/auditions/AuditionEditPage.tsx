@@ -34,7 +34,7 @@ const AuditionEditPage = () => {
 
   const handleSave = (data) => {
     setAudition({...audition, ...data})
-    dispatch(saveAudition(audition))
+    dispatch(saveAudition(data))
       .then(unwrapResult)
       .then(p => history.push("/auditions"))
       .catch(e => dispatch(logError(e)))
@@ -49,31 +49,6 @@ const AuditionEditPage = () => {
     if (auditionId !== "new") {
       setAudition(auditions.find(a => a.id === auditionId))
       reset(audition)
-    }
-    else {
-      setAudition({
-        id: null,
-        type: null,
-        breakdown: {
-          id: null,
-          roleName: null,
-          roleDescription: null,
-              roleType: null,
-              rate: null,
-              attachments: [],
-              project: {
-                id: null,
-                name: null,
-                projectType: null,
-                description: null,
-                union: null,
-                startDate: null,
-                attachments: [],
-                links: [],
-            }
-          },
-          status: AuditionStatus.Accepted,
-        });
     }
   }, [auditionId, setAudition, auditions, audition, reset])
 
@@ -107,7 +82,7 @@ const AuditionEditPage = () => {
                             errors={errors} />
                         </Grid>
                         <Grid item xs={3}>
-                          <TextInput name="breakdown.project.name" label="Project Type"
+                          <TextInput name="breakdown.project.type" label="Project Type"
                             required={true}
                             errors={errors} />
                         </Grid>

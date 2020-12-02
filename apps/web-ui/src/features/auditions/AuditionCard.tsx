@@ -42,7 +42,7 @@ export const AuditionCard = (props: {audition: Audition}) => {
     setExpanded(!expanded);
   };
   const goToEdit = () => {
-    history.push('/auditions/' + audition.id + '/edit');
+    history.push('/auditions/' + audition._id + '/edit');
   };
 
   return (

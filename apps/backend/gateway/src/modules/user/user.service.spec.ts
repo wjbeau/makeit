@@ -2,8 +2,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Document } from 'mongoose';
 import { deepEqual, instance, mock, reset, when } from 'ts-mockito';
-import { MockableDocumentQuery, MockableModel } from '../test/mockables';
-import { UserAccountModel } from './user.schema';
+import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
+import { UserAccountModel } from '../../schema/user.schema';
 import { UserService } from './user.service';
 
 describe('UserService', () => {
@@ -55,7 +55,7 @@ describe('UserService', () => {
       );
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.findById(user.userId);
+      const result = await classUnderTest.findByEmail(user.userId);
       expect(result).toEqual(user);
     });
     it('should return null when no user found', async () => {
@@ -72,7 +72,7 @@ describe('UserService', () => {
         instance(mockQuery)
       );
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.findById(userId);
+      const result = await classUnderTest.findByEmail(userId);
       expect(result).toBeNull();
     });
     it('should throw an error when a DB error happens', async () => {
@@ -86,7 +86,7 @@ describe('UserService', () => {
       );
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.findById(userId);
+        await classUnderTest.findByEmail(userId);
         fail();
       } catch (e) {
         expect(e).toBe(error);

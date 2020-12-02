@@ -1,6 +1,6 @@
 import { Audition } from '@makeit/types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { axiosInstance } from '../../app/axios';
+import { apiClient } from '../../app/api-client';
 import { RootState } from '../../app/store';
 import { AuditionsState } from './audition.state';
 
@@ -10,7 +10,7 @@ const initialState: AuditionsState = {
 };
 
 export const fetchAuditions = createAsyncThunk('auditions/fetchAuditions', async (userId: string, thunkAPI) => {
-  const result = await axiosInstance().get('/auditions');
+  const result = await apiClient().get('/auditions');
   thunkAPI.dispatch(receiveAuditions(result.data))
   //TODO await call to server with fetch request
   /*thunkAPI.dispatch(receiveAuditions([
@@ -66,17 +66,17 @@ export const fetchAuditions = createAsyncThunk('auditions/fetchAuditions', async
 })
 
 export const fetchAudition = createAsyncThunk('auditions/fetchAudition', async (auditionId: string, thunkAPI) => {
-  const result = await axiosInstance().get('/auditions/' + auditionId);
+  const result = await apiClient().get('/auditions/' + auditionId);
   thunkAPI.dispatch(receiveAudition(result.data))
 })
 
 export const saveAudition = createAsyncThunk('auditions/saveAudition', async (audition: Audition, thunkAPI) => {
-  if(audition.id) {
-    const result = await axiosInstance().put('/auditions/' + audition.id);
+  if(audition._id) {
+    const result = await apiClient().put('/auditions/' + audition._id);
     thunkAPI.dispatch(auditionSaved(result.data))
   }
   else {
-    const result = await axiosInstance().post('/auditions');
+    const result = await apiClient().post('/auditions');
     thunkAPI.dispatch(auditionSaved(result.data))
   }
 })
@@ -91,7 +91,7 @@ export const auditionsSlice = createSlice({
     },
     receiveAudition: (state, action) => {
       state.loading = false;
-      const idx = state.auditions.findIndex(a => a.id === action.payload.id)
+      const idx = state.auditions.findIndex(a => a._id === action.payload.id)
       if(idx < 0) {
         state.auditions.push(action.payload)
       }
@@ -101,7 +101,7 @@ export const auditionsSlice = createSlice({
     },
     auditionSaved: (state, action) => {
       state.loading = false;
-      const idx = state.auditions.findIndex(a => a.id === action.payload.id)
+      const idx = state.auditions.findIndex(a => a._id === action.payload.id)
       if(idx < 0) {
         state.auditions.push(action.payload)
       }

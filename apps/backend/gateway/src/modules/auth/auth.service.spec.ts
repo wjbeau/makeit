@@ -31,7 +31,7 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should return valid JWT', async () => {
       const user = {
-        userId: 'uid',
+        email: 'uid',
         firstName: 'fname',
         lastName: 'lname',
         profiles: []
@@ -49,17 +49,17 @@ describe('AuthService', () => {
       const username = 'john'
       const password = 'passwd'
       const user = {
-        userId: username,
+        email: username,
         firstName: 'fname',
         lastName: 'lname',
         password: password,
         profiles: []
       }
-      when(mockedUserService.findById(username)).thenReturn(
+      when(mockedUserService.findByEmail(username)).thenReturn(
         new Promise<UserAccount>((resolve) => { resolve(user) }));
       const result = await controllerUnderTest.validateUser(username, password);
       expect(result).toBeDefined();
-      expect(result.userId).toEqual(user.userId)
+      expect(result.email).toEqual(user.email)
       expect(result.firstName).toEqual(user.firstName)
       expect(result.lastName).toEqual(user.lastName)
       expect(result.profiles).toEqual(user.profiles)
@@ -70,13 +70,13 @@ describe('AuthService', () => {
       const username = 'john'
       const password = 'passwd'
       const user = {
-        userId: username,
+        email: username,
         firstName: 'fname',
         lastName: 'lname',
         password: 'otherpassword',
         profiles: []
       }
-      when(mockedUserService.findById(username)).thenReturn(
+      when(mockedUserService.findByEmail(username)).thenReturn(
         new Promise<UserAccount>((resolve) => { resolve(user) }));
       const result = await controllerUnderTest.validateUser(username, password);
       expect(result).toBeNull();
@@ -85,7 +85,7 @@ describe('AuthService', () => {
     it('should return null when user not found', async () => {
       const username = 'john'
       const password = 'passwd'
-      when(mockedUserService.findById(username)).thenReturn(
+      when(mockedUserService.findByEmail(username)).thenReturn(
         new Promise<UserAccount>((resolve) => { resolve(null) }));
       const result = await controllerUnderTest.validateUser(username, password);
       expect(result).toBeNull();

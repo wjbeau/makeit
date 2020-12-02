@@ -3,10 +3,10 @@ import { Address } from './address.model';
 import { Link } from './link.model';
 import { RoleAssignment } from './user.model';
 import { Attachment } from './attachment.model';
+import { BaseEntity } from './base.model';
 
 
-export interface Audition {
-    id: string;
+export interface Audition extends BaseEntity {
     breakdown: Breakdown;
     
     instructions?: string;
@@ -19,13 +19,12 @@ export interface Audition {
     statusReason?: string;  //reason for status
     links?: Link[];
     participants?: RoleAssignment[];
+    notes?: AuditionNotes[];
 
     followUpTo?: string;
 }
 
-export interface AuditionNote {
-    id: string;
-    auditionId: string;
+export interface AuditionNotes {
     noteType: string;
     description: string;
     attachments: Attachment[];
@@ -47,6 +46,6 @@ export enum AuditionStatus {
     Invited = "invited", //performer has been invited to audition
     Accepted = "accepted", //performer has accepted
     Rejected = "rejected", //performer has rejected
-    Performed = "performed", //audition has taken place but no further status has been notified
+    Performed = "performed", //audition has taken place (or the self tape been submitted) but no further status has been notified
     Successful = "success", //audition has been successful (i.e. led to project or callback)
 }

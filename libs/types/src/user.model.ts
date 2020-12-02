@@ -1,4 +1,5 @@
 import { Profile } from './profile.model';
+import { BaseEntity } from './base.model';
 
 export interface AuthRequest {
     username: string;
@@ -10,8 +11,8 @@ export interface AuthResponse {
     user: UserAccount
 }
 
-export interface UserAccount {
-    userId: string;
+export interface UserAccount extends BaseEntity {
+    email: string;
     password?: string; //note this will not be populated by the server when returning account objects
     firstName: string;
     lastName: string;
@@ -20,8 +21,14 @@ export interface UserAccount {
 }
 
 export interface RoleAssignment {
-    reference: UserAccount|string;
+    reference: string;
+    referenceType: ReferenceType;
     role: ParticipantType;
+}
+
+export enum ReferenceType {
+    UserAccount  = "UserAccount",
+    Name = "Name"
 }
 
 export enum ParticipantType {

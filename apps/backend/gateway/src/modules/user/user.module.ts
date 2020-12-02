@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserAccountSchema, UserAccountModel } from './user.schema';
+import { UserAccountSchema, UserAccountModel } from '../../schema/user.schema';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 

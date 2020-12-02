@@ -65,7 +65,7 @@ export const AuditionsPage = () => {
               <Grid container direction="column" spacing={2}>
                 {futureAuditions.length > 0 &&
                   futureAuditions.map((m) => (
-                    <Grid item key={m.id}>
+                    <Grid item key={m._id}>
                       <AuditionCard audition={m} />
                     </Grid>
                   ))}
@@ -86,7 +86,7 @@ export const AuditionsPage = () => {
               <Grid container direction="column" spacing={2}>
                 {pastAuditions.length > 0 &&
                   pastAuditions.map((m) => (
-                    <Grid item key={m.id}>
+                    <Grid item key={m._id}>
                       <AuditionCard audition={m} />
                     </Grid>
                   ))}

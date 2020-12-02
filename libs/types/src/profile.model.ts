@@ -1,3 +1,4 @@
+import { BaseEntity } from './base.model';
 
 
 export enum ProfileType {
@@ -9,7 +10,7 @@ export enum ProfileType {
     Writer = "writer"
 }
 
-export interface Profile {
+export interface Profile extends BaseEntity {
     type: ProfileType;
 }
 

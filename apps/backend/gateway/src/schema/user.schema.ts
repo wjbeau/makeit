@@ -1,14 +1,14 @@
 import { UserAccount, Profile } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { ProfileModel } from '../profile/profile.schema';
+import { ProfileModel } from './profile.schema';
 
 export type UserDocument = UserAccountModel & mongoose.Document;
 
 @Schema()
 export class UserAccountModel implements UserAccount {
     @Prop({ required: true })
-    userId: string;
+    email: string;
     @Prop()
     password?: string;
     @Prop({ required: true })

@@ -9,7 +9,7 @@ export const AuditionsList = (props) => {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       { auditions.map((audition:Audition) => 
-          <div  key={audition.id}>
+          <div  key={audition._id}>
               This is an audition: {audition.breakdown.project.name}
           </div>
       )}

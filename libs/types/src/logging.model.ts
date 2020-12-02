@@ -1,6 +1,6 @@
 
 export interface LogMessage {
-    type: string,
+    type: string;
     message: string;
     args: string[];
 }

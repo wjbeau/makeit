@@ -17,7 +17,7 @@ describe('JwtStrategy', () => {
   describe('validate', () => {
     it('returns user', async () => {
       const user = {
-        userId: 'uid',
+        email: 'uid',
         firstName: 'fname',
         lastName: 'lname',
         profiles: []

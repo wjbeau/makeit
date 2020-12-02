@@ -30,7 +30,7 @@ describe('LocalStrategy', () => {
       const username = 'uid';
       const password = 'pwd';
       const user = {
-        userId: username,
+        email: username,
         firstName: 'fname',
         lastName: 'lname',
         profiles: []
