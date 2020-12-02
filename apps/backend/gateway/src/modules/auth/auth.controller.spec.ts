@@ -29,7 +29,7 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should call login"', async () => {
       const user = {
-        userId: 'uid',
+        email: 'uid',
         firstName: 'fname',
         lastName: 'lname',
         profiles: []
