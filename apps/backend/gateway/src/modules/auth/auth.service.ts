@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthResponse, UserAccount } from '@makeit/types';
-import * as bcrypt from 'bcryptjs';
+import { UserService } from '../user/user.service';
+import { CryptoService } from '../common-services/crypto.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private cryptoService: CryptoService,
     private usersService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -18,7 +19,7 @@ export class AuthService {
       return null;
     }
 
-    const result = await bcrypt.compare(pass, user.password)
+    const result = await this.cryptoService.compare(pass, user.password)
     if (result) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;

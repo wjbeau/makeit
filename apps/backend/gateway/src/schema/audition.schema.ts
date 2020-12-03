@@ -1,4 +1,4 @@
-import { Address, Audition, AuditionStatus, Breakdown, Link, RoleAssignment } from '@makeit/types';
+import { Address, Audition, AuditionStatus, AuditionType, Breakdown, Link, RoleAssignment } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { BreakdownModel } from './breakdown.schema';
@@ -12,8 +12,8 @@ export type AuditionDocument = AuditionModel & mongoose.Document;
 export class AuditionModel implements Audition {
     @Prop()
     instructions?: string;
-    @Prop({ required: true })
-    type: string;
+    @Prop({ enum: Object.values(AuditionType), type: String, required: true })
+    type: AuditionType;
     @Prop()
     auditionTime?: string;
     @Prop()

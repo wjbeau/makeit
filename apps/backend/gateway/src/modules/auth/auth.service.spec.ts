@@ -1,31 +1,30 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { instance, mock, reset, when } from 'ts-mockito';
+import { instance, mock, reset, when, strictEqual } from 'ts-mockito';
 import { AuthService } from './auth.service';
+import { UserAccount } from '@makeit/types';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { UserAccount } from '@makeit/types';
+import { CryptoService } from '../common-services/crypto.service';
 
 describe('AuthService', () => {
-  let controllerUnderTest: AuthService;
+  let classUnderTest: AuthService;
 
   const mockedJwtService = mock(JwtService);
   const mockedUserService = mock(UserService);
+  const mockedCryptoService = mock(CryptoService);
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        { provide: JwtService, useValue: instance(mockedJwtService) },
-        { provide: UserService, useValue: instance(mockedUserService) },
-      ],
-    }).compile();
-
-    controllerUnderTest = app.get<AuthService>(AuthService);
+    //For some reason the TestingModule.createTestingModule.compile was timing out...
+    //so we just manually create the auth service on this occasion
+    classUnderTest = new AuthService(
+      instance(mockedCryptoService), 
+      instance(mockedUserService), 
+      instance(mockedJwtService));
   });
 
   afterEach(() => {
     reset(mockedJwtService)
     reset(mockedUserService)
+    reset(mockedCryptoService)
   });
 
   describe('login', () => {
@@ -36,8 +35,10 @@ describe('AuthService', () => {
         lastName: 'lname',
         profiles: []
       }
-      when(mockedJwtService.sign(user)).thenReturn('test_jwt');
-      const result = await controllerUnderTest.login(user);
+      when(mockedJwtService.sign(strictEqual(user))).thenReturn('test_jwt');
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.login(user);
       expect(result).toBeDefined();
       expect(result.access_token).toEqual('test_jwt')
       expect(result.user).toEqual(user)
@@ -55,9 +56,14 @@ describe('AuthService', () => {
         password: password,
         profiles: []
       }
-      when(mockedUserService.findByEmail(username)).thenReturn(
-        new Promise<UserAccount>((resolve) => { resolve(user) }));
-      const result = await controllerUnderTest.validateUser(username, password);
+      when(mockedCryptoService.compare(password, user.password)).thenReturn(
+        new Promise<boolean>((resolve) => resolve(true)))
+      when(mockedUserService.findByEmail(strictEqual(username))).thenReturn(
+        new Promise<UserAccount>((resolve) => { resolve(user) })
+      );
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.validateUser(username, password);
       expect(result).toBeDefined();
       expect(result.email).toEqual(user.email)
       expect(result.firstName).toEqual(user.firstName)
@@ -77,8 +83,11 @@ describe('AuthService', () => {
         profiles: []
       }
       when(mockedUserService.findByEmail(username)).thenReturn(
-        new Promise<UserAccount>((resolve) => { resolve(user) }));
-      const result = await controllerUnderTest.validateUser(username, password);
+        new Promise<UserAccount>((resolve) => { resolve(user) })
+      );
+      
+      expect(classUnderTest).toBeDefined()
+      const result = await classUnderTest.validateUser(username, password);
       expect(result).toBeNull();
     });
 
@@ -86,8 +95,11 @@ describe('AuthService', () => {
       const username = 'john'
       const password = 'passwd'
       when(mockedUserService.findByEmail(username)).thenReturn(
-        new Promise<UserAccount>((resolve) => { resolve(null) }));
-      const result = await controllerUnderTest.validateUser(username, password);
+        new Promise<UserAccount>((resolve) => { resolve(null) })
+      );
+
+      expect(classUnderTest).toBeDefined()
+      const result = await classUnderTest.validateUser(username, password);
       expect(result).toBeNull();
     });
   });

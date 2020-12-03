@@ -4,10 +4,22 @@ export class MockableDocumentQuery {
     public async exec(): Promise<any> {
         return null;
     }
+
+    public lean(): any {
+        return null;
+    }
 }
 
 export class MockableModel {
+    public find(spec: any): any {
+        return null;
+    }
+
     public findOne(spec: any): any {
+        return null;
+    }
+
+    public findByIdAndUpdate(id: any, data: any, options: any) {
         return null;
     }
 }

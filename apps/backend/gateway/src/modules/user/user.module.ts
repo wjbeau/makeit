@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { UserAccountSchema, UserAccountModel } from '../../schema/user.schema';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommonServicesModule } from '../common-services/common-services.module';
 
 @Module({
   imports: [
+    CommonServicesModule,
     MongooseModule.forFeature([{ name: UserAccountModel.name, schema: UserAccountSchema }])
   ],
   providers: [UserService],

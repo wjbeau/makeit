@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuditionModule } from './audition/audition.module';
 import { BreakdownModule } from './breakdown/breakdown.module';
 import { ProjectModule } from './project/project.module';
+import { CommonServicesModule } from './common-services/common-services.module';
 
 @Module({
   imports: [
+    CommonServicesModule,
     AuthModule, 
     UserModule, 
     ProfileModule, 

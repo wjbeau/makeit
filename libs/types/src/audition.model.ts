@@ -10,7 +10,7 @@ export interface Audition extends BaseEntity {
     breakdown: Breakdown;
     
     instructions?: string;
-    type: string;
+    type: AuditionType;
     auditionTime?: string;
     deadline?: string;
     callbackDate?: string;
@@ -33,6 +33,17 @@ export interface AuditionNotes {
     createdOn: string;
     lastUpdatedOn: string;
     visibility: NoteVisibility;
+}
+
+export enum AuditionType {
+    InPersonAudition = "in_person_audition",
+    OnlineAudition = "online_audition",
+    SelfTape = "selfTape",
+    Callback = "callback",
+    ProducerSession = "producer_session",
+    DirectorMeeting = "director_meeting",
+    Chemistry = "chemistry",
+    Other = "other"
 }
 
 export enum NoteVisibility {
