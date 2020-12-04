@@ -2,13 +2,13 @@ import React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import TextField from "@material-ui/core/TextField";
 
-function TextInput(props:any) {
+function TextInput(props) {
   const { control } = useFormContext();
   const { name, label, required, errors } = props;
   
   let isError = false;
   let errorMessage = "";
-  if (errors && errors.hasOwnProperty(name)) {
+  if (errors && Object.prototype.hasOwnProperty.call(errors, name)) {
     isError = true;
     errorMessage = errors[name].message;
   }
