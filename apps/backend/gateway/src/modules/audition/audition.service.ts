@@ -45,6 +45,8 @@ export class AuditionService {
           ],
         },
       })
+      .populate('breakdown')
+      .populate('project')
       .lean()
       .exec();
     return result;
