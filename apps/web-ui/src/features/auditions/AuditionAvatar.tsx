@@ -1,8 +1,5 @@
-import { Avatar, Card, CardActions, CardContent, CardHeader, Collapse,  IconButton, makeStyles, Typography } from '@material-ui/core';
-import { Edit, ExpandMore, MoreVert } from '@material-ui/icons';
-import clsx from 'clsx';
+import { Avatar, makeStyles } from '@material-ui/core';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -19,10 +16,11 @@ const useStyles = makeStyles((theme) => ({
 export const AuditionAvatar = (props: { type: string }) => {
     const { type } = props
     const classes = useStyles()
-    const typeName = type.toLowerCase();
+    const typeName = type?.toLowerCase();
 
     const firstLetter = () => {
-        return type.substring(0, 1).toUpperCase();
+        const letter = type?.substring(0, 1).toUpperCase();
+        return letter ? letter : "A"
     }
 
     return (

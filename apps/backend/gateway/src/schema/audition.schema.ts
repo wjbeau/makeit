@@ -12,7 +12,7 @@ export type AuditionDocument = AuditionModel & mongoose.Document;
 export class AuditionModel implements Audition {
     @Prop()
     instructions?: string;
-    @Prop({ enum: Object.values(AuditionType), type: String, required: true })
+    @Prop({ enum: Object.values(AuditionType), type: String })
     type: AuditionType;
     @Prop()
     auditionTime?: string;

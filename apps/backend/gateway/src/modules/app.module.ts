@@ -17,7 +17,7 @@ import { CommonServicesModule } from './common-services/common-services.module';
     BreakdownModule,
     AuditionModule,
     ProjectModule,
-    MongooseModule.forRoot('mongodb://localhost/makeit') //TODO move this into configuration...
+    MongooseModule.forRoot('mongodb://localhost/makeit', {'useFindAndModify': false}) //TODO move this into configuration...
   ],
   controllers: [],
   providers: [],

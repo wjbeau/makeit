@@ -63,7 +63,7 @@ export const loggingSlice = createSlice({
   }
 });
 
-export const { logInfo, logWarn, logDebug, logError, messagesHandled } = loggingSlice.actions;
+export const { logInfo, logWarn, logDebug, logError, logSuccess, messagesHandled } = loggingSlice.actions;
 
 export const selectMessages = (state: RootState) => state.logging.messages;
 export const selectErrors = (state: RootState) => state.logging.messages.filter(m => m.type === "error");

@@ -36,16 +36,23 @@ const MuiSelect = (props) => {
 
 const SelectInput = (props) => {
   const { control } = useFormContext();
-  const { name, label } = props;
+  const { name, label, defaultValue } = props;
 
   return (
     <Controller
-      as={MuiSelect}
       control={control}
       name={name}
-      label={label}
       defaultValue=""
-      {...props}
+      render={({ onChange, onBlur, value, name, ref }) => (
+        <MuiSelect
+          onBlur={onBlur}
+          onChange={onChange}
+          checked={value}
+          inputRef={ref}
+          defaultValue=""
+          {...props}
+        />
+      )}
     />
   );
 }

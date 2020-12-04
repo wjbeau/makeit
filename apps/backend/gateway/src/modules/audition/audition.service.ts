@@ -2,11 +2,14 @@ import { Audition, ParticipantType, ReferenceType } from '@makeit/types';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { AuditionDocument, AuditionModel } from '../../schema/Audition.schema';
+import { BreakdownService } from '../breakdown/breakdown.service';
 
 @Injectable()
 export class AuditionService {
   constructor(
+    private breakdownService: BreakdownService, 
     @InjectModel(AuditionModel.name)
     private auditionModel: Model<AuditionDocument>
   ) {}
@@ -17,9 +20,22 @@ export class AuditionService {
       throw new BadRequestException();
     }
     
+    //if necessary save the project first
+    if(audition.breakdown) {
+      const breakdownResult = await this.breakdownService.save(audition.breakdown._id, audition.breakdown)
+      audition.breakdown = breakdownResult;
+    }
+    
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    // Find the document and update it if required or save a new one if not
-    return await this.auditionModel.findByIdAndUpdate(audition._id, audition, options).lean().exec();
+    // Find the document and update it if required or save a new one if not.  
+    const result = await this.auditionModel.findByIdAndUpdate(
+      { _id: audition._id || mongoose.Types.ObjectId() }, audition, options).exec();
+
+    return await result
+      .populate({
+        path: 'breakdown',
+        populate: { path: 'project' }
+      }).execPopulate();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,8 +61,10 @@ export class AuditionService {
           ],
         },
       })
-      .populate('breakdown')
-      .populate('project')
+      .populate({
+        path: 'breakdown',
+        populate: { path: 'project' }
+      })
       .lean()
       .exec();
     return result;

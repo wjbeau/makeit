@@ -1,10 +1,9 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import MomentUtils from '@date-io/moment';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-const MuiDatePicker = (props) => {
+const MuiDateTimePicker = (props) => {
   const { name, required, errors } = props;
   let isError = false;
   let errorMessage = '';
@@ -13,8 +12,8 @@ const MuiDatePicker = (props) => {
     errorMessage = errors[name].message;
   }
   return (
-    <KeyboardDatePicker
-      format="DD-MM-YYYY"
+    <KeyboardDateTimePicker
+      format="DD-MM-YYYY hh:mm a"
       fullWidth={true}
       InputLabelProps={{
         className: required ? 'required-label' : '',
@@ -27,7 +26,7 @@ const MuiDatePicker = (props) => {
   );
 };
 
-function DatePickerInput(props) {
+function DateTimePickerInput(props) {
   const { control } = useFormContext();
   const { name, label } = props;
 
@@ -37,14 +36,12 @@ function DatePickerInput(props) {
         name={name}
         control={control}
         label={label}
-        initialFocusedDate={null} 
-        defaultValue={null} 
+        defaultValue={null}
         render={({ onChange, onBlur, value, name, ref }) => (
-          <MuiDatePicker
+          <MuiDateTimePicker
             onBlur={onBlur}
             onChange={onChange}
             inputRef={ref}
-            initialFocusedDate={null} 
             {...props}
           />
         )}
@@ -53,4 +50,4 @@ function DatePickerInput(props) {
   );
 }
 
-export default DatePickerInput;
+export default DateTimePickerInput;

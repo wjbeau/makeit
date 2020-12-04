@@ -55,7 +55,7 @@ export const AuditionCard = (props: {audition: Audition}) => {
           </IconButton>
         }
         title={
-          audition.breakdown.roleName + ' / ' + audition.breakdown.project.name
+          audition?.breakdown?.roleName + ' / ' + audition?.breakdown?.project?.name
         }
         subheader={
           <Moment interval={0} format="LLL">

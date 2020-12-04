@@ -1,6 +1,19 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Audition, AuditionStatus } from '@makeit/types';
-import { Breadcrumbs, Button, Grid, Typography } from '@material-ui/core';
+import {
+  Audition,
+  AuditionStatus,
+  Gender,
+  AuditionType,
+  ProjectType,
+  UnionType,
+} from '@makeit/types';
+import {
+  Breadcrumbs,
+  Button,
+  Grid,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import { ArrowBack, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
@@ -11,21 +24,30 @@ import * as yup from 'yup';
 import { Converter } from '../../app/converters';
 import { useAppDispatch } from '../../app/store';
 import DatePickerInput from '../forms/DatePickerInput';
+import DateTimePickerInput from '../forms/DatePickerTimeInput';
 import SelectInput from '../forms/SelectInput';
-import SwitchInput from '../forms/SwitchInput';
 import TextInput from '../forms/TextInput';
 import Loading from '../layout/Loading';
 import TitledPaper from '../layout/TitledPaper';
-import { logError } from '../logging/logging.slice';
+import { logError, logSuccess } from '../logging/logging.slice';
+import { Ethnicity } from '../../../../../libs/types/src/base-enums.model';
+import AddAttachmentLinks from './AddAttachmentLinks';
 import {
   saveAudition,
   selectAuditions,
   selectAuditionsLoading,
 } from './audition.slice';
 
+const useStyles = makeStyles((theme) => ({
+  attachmentContainer: {
+    position: 'relative',
+  },
+}));
+
 const validationSchema = yup.object().shape({});
 
 const AuditionEditPage = () => {
+  const classes = useStyles();
   const { auditionId } = useParams<{ auditionId: string }>();
   const [audition, setAudition] = useState<Audition>();
   const loading = useSelector(selectAuditionsLoading);
@@ -42,8 +64,14 @@ const AuditionEditPage = () => {
     setAudition({ ...audition, ...data });
     dispatch(saveAudition(data))
       .then(unwrapResult)
-      .then((p) => history.push('/auditions'))
-      .catch((e) => dispatch(logError(e)));
+      .then((p) => {
+        dispatch(logSuccess('Save completed successfully.'));
+        history.push('/auditions');
+      })
+      .catch((e) => {
+        dispatch(logError(e));
+        reset(data);
+      });
   };
   const handleCancel = (data) => {
     history.goBack();
@@ -86,22 +114,28 @@ const AuditionEditPage = () => {
                 <TitledPaper
                   variant="h6"
                   component="h2"
+                  className={classes.attachmentContainer}
                   title="Audition Details"
                 >
+                  <AddAttachmentLinks />
                   <Grid container direction="column" spacing={2}>
                     <Grid item>
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={2}>
-                          <TextInput name="type" label="Type" />
+                          <SelectInput
+                            name="type"
+                            label="Type"
+                            options={Converter.enumToOptions(AuditionType)}
+                          />
                         </Grid>
                         <Grid item xs={2}>
-                          <DatePickerInput
+                          <DateTimePickerInput
                             name="auditionTime"
                             label="Date / Time"
                           />
                         </Grid>
                         <Grid item xs={2}>
-                          <DatePickerInput
+                          <DateTimePickerInput
                             name="deadline"
                             label="Deadline"
                           />
@@ -122,12 +156,35 @@ const AuditionEditPage = () => {
                       </Grid>
                     </Grid>
                     <Grid item>
-                      <TextInput name="instructions" label="Instructions" />
+                      <TextInput
+                        name="instructions"
+                        label="Instructions"
+                        multiline
+                      />
                     </Grid>
-                    <Grid item xs={6}>
-                      <TextInput name="address" label="Address" />
+                    <Grid item>
+                      <Grid container direction="row" spacing={2}>
+                        <Grid item xs={3}>
+                          <TextInput name="address.line1" label="Address Line 1" />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <TextInput name="address.line2" label="Line 2" />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <TextInput name="address.city" label="City" />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                              <TextInput name="address.state" label="State" />
+                            </Grid>
+                            <Grid item xs={6}>
+                              <TextInput name="address.zip" label="Zip" />
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
                     </Grid>
-                    <Grid item>Add attachments here...</Grid>
                   </Grid>
                 </TitledPaper>
               </Grid>
@@ -137,8 +194,10 @@ const AuditionEditPage = () => {
                     <TitledPaper
                       variant="h6"
                       component="h2"
+                      className={classes.attachmentContainer}
                       title="Role/Breakdown Details"
                     >
+                      <AddAttachmentLinks />
                       <Grid container direction="column" spacing={2}>
                         <Grid item>
                           <Grid container direction="row" spacing={2}>
@@ -146,8 +205,6 @@ const AuditionEditPage = () => {
                               <TextInput
                                 name="breakdown.roleName"
                                 label="Role Name"
-                                required={true}
-                                errors={errors}
                               />
                             </Grid>
                             <Grid item xs={3}>
@@ -156,49 +213,53 @@ const AuditionEditPage = () => {
                                 label="Type"
                               />
                             </Grid>
+                            <Grid item xs={3}>
+                              <TextInput
+                                name="breakdown.rate"
+                                label="Rate / Pay"
+                              />
+                            </Grid>
                           </Grid>
                         </Grid>
                         <Grid item>
                           <TextInput
                             name="breakdown.roleDescription"
                             label="Description"
+                            multiline
                           />
                         </Grid>
                         <Grid item>
                           <Grid container direction="row" spacing={2}>
-                            <Grid item xs={2}>
-                              <TextInput
-                                name="breakdown.rate"
-                                label="Rate / Pay"
-                              />
-                            </Grid>
-                            <Grid item xs={2}>
-                              <TextInput
+                            <Grid item xs={3}>
+                              <SelectInput
                                 name="breakdown.gender"
                                 label="Gender"
+                                options={Converter.enumToOptions(Gender)}
                               />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                               <TextInput
                                 name="breakdown.ageMin"
                                 label="Age (from)"
+                                type="number"
                               />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                               <TextInput
                                 name="breakdown.ageMax"
                                 label="Age (to)"
+                                type="number"
                               />
                             </Grid>
-                            <Grid item xs={2}>
-                              <TextInput
+                            <Grid item xs={3}>
+                              <SelectInput
                                 name="breakdown.ethnicities"
                                 label="Ethnicities"
+                                options={Converter.enumToOptions(Ethnicity)}
                               />
                             </Grid>
                           </Grid>
                         </Grid>
-                        <Grid item>Add attachments here...</Grid>
                       </Grid>
                     </TitledPaper>
                   </Grid>
@@ -206,31 +267,37 @@ const AuditionEditPage = () => {
                     <TitledPaper
                       variant="h6"
                       component="h2"
-                      title="Project Details"
+                      className={classes.attachmentContainer}
+                      title="Role/Breakdown Details"
                     >
+                      <AddAttachmentLinks />
                       <Grid container direction="column" spacing={2}>
                         <Grid item>
+                          <TextInput
+                            name="breakdown.project.name"
+                            label="Project Name"
+                          />
+                        </Grid>
+                        <Grid item>
                           <Grid container direction="row" spacing={2}>
-                            <Grid item xs={6}>
-                              <TextInput
-                                name="breakdown.project.name"
-                                label="Project Name"
-                                required={true}
-                                errors={errors}
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
+                            <Grid item xs={4}>
+                              <SelectInput
                                 name="breakdown.project.type"
                                 label="Project Type"
-                                required={true}
-                                errors={errors}
+                                options={Converter.enumToOptions(ProjectType)}
                               />
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={4}>
                               <DatePickerInput
                                 name="breakdown.project.startDate"
                                 label="Start Date"
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <SelectInput
+                                name="breakdown.project.union"
+                                label="Union Status"
+                                options={Converter.enumToOptions(UnionType)}
                               />
                             </Grid>
                           </Grid>
@@ -239,37 +306,44 @@ const AuditionEditPage = () => {
                           <TextInput
                             name="breakdown.project.description"
                             label="Description"
+                            multiline
                           />
                         </Grid>
-                        <Grid item>
-                          <Grid container direction="row" spacing={2}>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.project.union"
-                                label="Union Status"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.project.unionContract"
-                                label="Union Contract"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <SwitchInput
-                                name="breakdown.project.unionStatusPending"
-                                label="Status Pending?"
-                              />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                        <Grid item>Add attachments here...</Grid>
-                        <Grid item>Add links here...</Grid>
-                        <Grid item>Add participants? here...</Grid>
                       </Grid>
                     </TitledPaper>
                   </Grid>
                 </Grid>
+              </Grid>
+              <Grid item>
+                <TitledPaper
+                  variant="h6"
+                  component="h2"
+                  className={classes.attachmentContainer}
+                  title="Notes"
+                >
+                  <AddAttachmentLinks />
+                  <Grid container direction="column" spacing={2}>
+                    <Grid item>
+                      <TextInput name="auditionNotes" label="Notes" multiline />
+                    </Grid>
+                  </Grid>
+                </TitledPaper>
+              </Grid>
+              <Grid item>
+                <TitledPaper variant="h6" component="h2" title="Set Reminder">
+                  <Grid container direction="row" spacing={2}>
+                    <Grid item xs={3}>
+                      <DateTimePickerInput name="reminderDate" label="Date" />
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextInput
+                        name="reminderDescription"
+                        label="Description"
+                        multiline
+                      />
+                    </Grid>
+                  </Grid>
+                </TitledPaper>
               </Grid>
               <Grid item>
                 <Grid container spacing={2} direction="row">

@@ -76,7 +76,7 @@ export const saveAudition = createAsyncThunk('auditions/saveAudition', async (au
     thunkAPI.dispatch(auditionSaved(result.data))
   }
   else {
-    const result = await apiClient().post('/auditions');
+    const result = await apiClient().post('/auditions', audition);
     thunkAPI.dispatch(auditionSaved(result.data))
   }
 })
