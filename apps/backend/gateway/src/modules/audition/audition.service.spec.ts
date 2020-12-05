@@ -1,12 +1,12 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Document } from 'mongoose';
 import {
   anything,
   deepEqual,
   instance,
   mock,
   reset,
+  strictEqual,
   verify,
   when,
 } from 'ts-mockito';
@@ -17,22 +17,28 @@ import {
   Audition,
   AuditionStatus,
   AuditionType,
+  Breakdown,
   ParticipantType,
   ReferenceType,
 } from '@makeit/types';
 import { BadRequestException } from '@nestjs/common';
+import { BreakdownService } from '../breakdown/breakdown.service';
 
 describe('AuditionService', () => {
   let classUnderTest: AuditionService;
 
   const mockModel = mock(MockableModel);
   const mockQuery = mock(MockableDocumentQuery);
-  const mockDocument = mock(Document);
+  const mockBreakdownService = mock(BreakdownService);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuditionService,
+        {
+          provide: BreakdownService,
+          useValue: instance(mockBreakdownService),
+        },
         {
           provide: getModelToken(AuditionModel.name),
           useValue: instance(mockModel),
@@ -46,7 +52,7 @@ describe('AuditionService', () => {
   afterEach(async () => {
     reset(mockModel);
     reset(mockQuery);
-    reset(mockDocument);
+    reset(mockBreakdownService);
   });
 
   describe('save', () => {
@@ -60,14 +66,14 @@ describe('AuditionService', () => {
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Promise<any>((resolve) => {
+        new Promise<Audition>((resolve) => {
           resolve(audition);
         })
       );
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
       when(
         mockModel.findByIdAndUpdate(
-          audition._id,
+          deepEqual({_id: audition._id}),
           deepEqual(audition),
           deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
         )
@@ -77,11 +83,58 @@ describe('AuditionService', () => {
       const result = await classUnderTest.save(audition._id, audition);
       verify(
         mockModel.findByIdAndUpdate(
-          audition._id,
+          deepEqual({_id: audition._id}),
           deepEqual(audition),
           deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
         )
       ).once();
+      expect(result).toEqual(audition);
+    });
+
+    it('should return valid Audition when properly updated with a breakdown', async () => {
+      const audition: Audition = {
+        _id: 'auditionid',
+        type: AuditionType.InPersonAudition,
+        breakdown: {
+          _id: 'someid'
+        },
+        status: AuditionStatus.Accepted,
+      };
+
+      when(mockBreakdownService.save(
+        strictEqual(audition.breakdown._id),
+        deepEqual(audition.breakdown),
+      )).thenReturn(
+        new Promise<Breakdown>((resolve) => {
+          resolve(audition.breakdown);
+        }));
+
+      when(mockQuery.lean()).thenReturn(instance(mockQuery));
+      when(mockQuery.exec()).thenReturn(
+        new Promise<Audition>((resolve) => {
+          resolve(audition);
+        })
+      );
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
+      when(
+        mockModel.findByIdAndUpdate(
+          deepEqual({_id: audition._id}),
+          deepEqual(audition),
+          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
+        )
+      ).thenReturn(instance(mockQuery));
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.save(audition._id, audition);
+      verify(mockModel.findByIdAndUpdate(
+        deepEqual({_id: audition._id}),
+        deepEqual(audition),
+        deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
+      )).once();
+      verify(mockBreakdownService.save(
+        strictEqual(audition.breakdown._id),
+        deepEqual(audition.breakdown),
+      )).once();
       expect(result).toEqual(audition);
     });
 
@@ -100,9 +153,10 @@ describe('AuditionService', () => {
           resolve(audition);
         })
       );
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
       when(
         mockModel.findByIdAndUpdate(
-          audition._id,
+          deepEqual(anything()),
           deepEqual(audition),
           deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
         )
@@ -112,7 +166,7 @@ describe('AuditionService', () => {
       const result = await classUnderTest.save(audition._id, audition);
       verify(
         mockModel.findByIdAndUpdate(
-          audition._id,
+          deepEqual(anything()),
           deepEqual(audition),
           deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
         )
@@ -181,10 +235,11 @@ describe('AuditionService', () => {
 
       const err = new Error('database problem!');
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenThrow(err);
       when(
         mockModel.findByIdAndUpdate(
-          audition._id,
+          deepEqual({_id: audition._id}),
           deepEqual(audition),
           deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
         )
@@ -276,6 +331,7 @@ describe('AuditionService', () => {
       ];
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new Promise<any>((resolve) => {
@@ -304,10 +360,14 @@ describe('AuditionService', () => {
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.findAllForUser(id);
       expect(result).toEqual(auditions);
+
+      verify(mockQuery.populate(anything())).once();
+      verify(mockQuery.exec()).once();
     });
     it('should return null Audition when not found', async () => {
       const id = 'someid';
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new Promise<any>((resolve) => {

@@ -8,6 +8,10 @@ export class MockableDocumentQuery {
     public lean(): any {
         return null;
     }
+
+    public populate(spec: any) {
+        return null;
+    }
 }
 
 export class MockableModel {

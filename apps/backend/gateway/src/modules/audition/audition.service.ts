@@ -29,13 +29,17 @@ export class AuditionService {
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
     // Find the document and update it if required or save a new one if not.  
     const result = await this.auditionModel.findByIdAndUpdate(
-      { _id: audition._id || mongoose.Types.ObjectId() }, audition, options).exec();
+            { _id: audition._id || mongoose.Types.ObjectId() }, 
+            audition, 
+            options
+        )
+        .populate({
+          path: 'breakdown',
+          populate: { path: 'project' }
+        })
+        .exec();
 
-    return await result
-      .populate({
-        path: 'breakdown',
-        populate: { path: 'project' }
-      }).execPopulate();
+    return result;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
