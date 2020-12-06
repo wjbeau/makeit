@@ -56,7 +56,8 @@ export class AuditionService {
         'participants.reference': id,
         'participants.roleType': {
           $in: [
-            ParticipantType.Performer,
+            ParticipantType.Auditioning,
+            ParticipantType.Cast,
             ParticipantType.AgentManager,
             ParticipantType.CastingAssociate,
             ParticipantType.CastingDirector,

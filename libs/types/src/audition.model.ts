@@ -1,12 +1,11 @@
-import { Breakdown } from './breakdown.model';
 import { Address } from './address.model';
-import { Link } from './link.model';
-import { RoleAssignment } from './user.model';
-import { Attachment } from './attachment.model';
+import { HasAttachments } from './attachment.model';
 import { BaseEntity } from './base.model';
+import { Breakdown } from './breakdown.model';
+import { HasParticipants } from './participant.model';
 
 
-export interface Audition extends BaseEntity {
+export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
     breakdown: Breakdown;
     
     instructions?: string;
@@ -17,21 +16,18 @@ export interface Audition extends BaseEntity {
     address?: Address;
     status: AuditionStatus;
     statusReason?: string;  //reason for status
-    links?: Link[];
-    participants?: RoleAssignment[];
-    notes?: AuditionNotes[];
 
     followUpTo?: string;
+
+    reminderNote?: string;
+    reminderTime?: string;
+
+    notes?: AuditionNote[];
 }
 
-export interface AuditionNotes {
+export interface AuditionNote extends HasAttachments {
     noteType: string;
     description: string;
-    attachments: Attachment[];
-    
-    author: string;
-    createdOn: string;
-    lastUpdatedOn: string;
     visibility: NoteVisibility;
 }
 

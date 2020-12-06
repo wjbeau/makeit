@@ -1,4 +1,9 @@
 
+export interface HasAttachments {
+    links?: Link[];
+    attachments?: Attachment[];
+}
+
 export interface Attachment {
     reference: string;
     attachmentType: AttachmentType;
@@ -20,3 +25,10 @@ export enum AttachmentType {
     Video = "video",
     Document = "document"
 }
+
+export interface Link {
+    type: string;
+    url: string;
+    display?: string;
+}
+

@@ -1,3 +1,4 @@
+import { Breakdown } from '@makeit/types';
 import { BadRequestException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -10,8 +11,8 @@ import {
   verify,
   when
 } from 'ts-mockito';
-import { Breakdown } from '../../../../../../libs/types/src/breakdown.model';
-import { BreakdownModel, ProjectBreakdownsModel } from '../../schema/breakdown.schema';
+import { BreakdownModel } from '../../schema/breakdown.schema';
+import { ProjectModel } from '../../schema/project.schema';
 import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
 import { BreakdownService } from './breakdown.service';
 
@@ -32,7 +33,7 @@ describe('BreakdownService', () => {
           useValue: instance(mockModel),
         },
         {
-          provide: getModelToken(ProjectBreakdownsModel.name),
+          provide: getModelToken(ProjectModel.name),
           useValue: instance(mockProjectModel),
         },
       ],

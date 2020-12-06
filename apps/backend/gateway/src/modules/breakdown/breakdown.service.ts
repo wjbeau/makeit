@@ -3,15 +3,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { BreakdownDocument, BreakdownModel, ProjectBreakdownsModelDocument, ProjectBreakdownsModel } from '../../schema/breakdown.schema';
+import { BreakdownDocument, BreakdownModel } from '../../schema/breakdown.schema';
+import { ProjectModel, ProjectModelDocument } from '../../schema/project.schema';
 
 @Injectable()
 export class BreakdownService {
   constructor(
     @InjectModel(BreakdownModel.name)
     private breakdownModel: Model<BreakdownDocument>,
-    @InjectModel(ProjectBreakdownsModel.name)
-    private projectModel: Model<ProjectBreakdownsModelDocument>
+    @InjectModel(ProjectModel.name)
+    private projectModel: Model<ProjectModelDocument>
   ) {}
 
   async save(id: string, breakdown: Breakdown): Promise<Breakdown | undefined> {

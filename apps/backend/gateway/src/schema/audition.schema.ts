@@ -1,10 +1,22 @@
-import { Address, Audition, AuditionStatus, AuditionType, Breakdown, Link, RoleAssignment } from '@makeit/types';
+import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, NoteVisibility, Participant } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { AddressSchema } from './address.schema';
+import { AttachmentSchema } from './attachment.schema';
 import { BreakdownModel } from './breakdown.schema';
 import { LinkSchema } from './link.schema';
-import { RoleAssignmentSchema } from './role-assignment.schema';
-import { AddressSchema } from './address.schema';
+import { ParticipantSchema } from './participant.schema';
+
+export type AuditionNoteDocument = AuditionNoteModel & mongoose.Document;
+
+@Schema()
+export class AuditionNoteModel implements AuditionNote {
+    noteType: string;
+    description: string;
+    visibility: NoteVisibility;
+}
+
+export const AuditionNoteSchema = SchemaFactory.createForClass(AuditionNoteModel);
 
 export type AuditionDocument = AuditionModel & mongoose.Document;
 
@@ -27,11 +39,22 @@ export class AuditionModel implements Audition {
     status: AuditionStatus;
     @Prop()
     statusReason?: string;  //reason for status
-    @Prop({ type: LinkSchema })
-    links?: Link[];
+    
 
-    @Prop({ type: RoleAssignmentSchema })
-    participants?: RoleAssignment[];
+    @Prop({ type: AttachmentSchema })
+    attachments?: Attachment[]; 
+    @Prop({ type: LinkSchema })
+    links?: Link[]; 
+    @Prop({ type: ParticipantSchema })
+    participants?: Participant[];
+
+    @Prop({ type: AuditionNoteSchema })
+    notes?: AuditionNote[];
+
+    @Prop()
+    reminderNote?: string;
+    @Prop()
+    reminderTime?: string;
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: BreakdownModel.name }] })
     breakdown: Breakdown;

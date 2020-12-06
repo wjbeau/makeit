@@ -1,28 +1,12 @@
-import { Attachment, Breakdown, ProjectBreakdowns, ProjectType, UnionType, Link } from '@makeit/types';
+import { Attachment, Breakdown, Link, Participant, Project } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { AttachmentSchema } from './attachment.schema';
+import { LinkSchema } from './link.schema';
+import { ParticipantSchema } from './participant.schema';
+import { ProjectModel } from './project.schema';
 
 export type BreakdownDocument = BreakdownModel & mongoose.Document;
-export type ProjectBreakdownsModelDocument = ProjectBreakdownsModel & mongoose.Document;
-
-@Schema()
-export class ProjectBreakdownsModel implements ProjectBreakdowns {
-    @Prop()
-    name?: string;
-    @Prop({ enum: Object.values(ProjectType), type: String })
-    projectType?: ProjectType; 
-    @Prop()
-    description?: string;
-    @Prop({ enum: Object.values(UnionType), type: String })
-    union?: UnionType;
-    @Prop()
-    startDate?: string;
-
-    @Prop()
-    attachments?: Attachment[]; 
-    @Prop()
-    links?: Link[];
-}
 
 @Schema()
 export class BreakdownModel implements Breakdown {
@@ -43,13 +27,17 @@ export class BreakdownModel implements Breakdown {
     ageMax?: number;
     @Prop()
     ethnicities?: string[];
-    @Prop()
-    attachments?: Attachment[];
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: ProjectBreakdownsModel.name }] })
-    project: ProjectBreakdowns;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: ProjectModel.name }] })
+    project: Project;
+
+    @Prop({ type: AttachmentSchema })
+    attachments?: Attachment[]; 
+    @Prop({ type: LinkSchema })
+    links?: Link[]; 
+    @Prop({ type: ParticipantSchema })
+    participants?: Participant[];
 }
 
 
 export const BreakdownSchema = SchemaFactory.createForClass(BreakdownModel);
-export const ProjectBreakdownsSchema = SchemaFactory.createForClass(ProjectBreakdownsModel);

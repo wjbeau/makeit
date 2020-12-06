@@ -19,25 +19,3 @@ export interface UserAccount extends BaseEntity {
     
     profiles: Profile[];
 }
-
-export interface RoleAssignment {
-    reference: string;
-    referenceType: ReferenceType;
-    role: ParticipantType;
-}
-
-export enum ReferenceType {
-    UserAccount  = "UserAccount",
-    Name = "Name"
-}
-
-export enum ParticipantType {
-    Performer  = "performer",
-    Reader = "reader",
-    AgentManager = "agent_manager",
-    CastingDirector = "casting_director",
-    CastingAssociate = "casting_associate",
-    Producer = "producer",
-    Director = "director",
-    Writer = "writer"
-}

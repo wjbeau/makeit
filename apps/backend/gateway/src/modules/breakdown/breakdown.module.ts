@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BreakdownModel, BreakdownSchema, ProjectBreakdownsModel, ProjectBreakdownsSchema } from '../../schema/breakdown.schema';
+import { BreakdownModel, BreakdownSchema } from '../../schema/breakdown.schema';
+import { ProjectModel, ProjectSchema } from '../../schema/project.schema';
 import { BreakdownService } from './breakdown.service';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: BreakdownModel.name, schema: BreakdownSchema },
-            { name: ProjectBreakdownsModel.name, schema: ProjectBreakdownsSchema }
+            { name: ProjectModel.name, schema: ProjectSchema }
         ])
     ],
     providers: [

@@ -37,6 +37,9 @@ import {
   selectAuditions,
   selectAuditionsLoading,
 } from './audition.slice';
+import AuditionDetailsEdit from './AuditionDetailsEdit';
+import BreakdownDetailsEdit from './ProjectDetailsEdit';
+import ProjectDetailsEdit from './ProjectDetailsEdit';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -111,206 +114,15 @@ const AuditionEditPage = () => {
                 </Typography>
               </Grid>
               <Grid item>
-                <TitledPaper
-                  variant="h6"
-                  component="h2"
-                  className={classes.attachmentContainer}
-                  title="Audition Details"
-                >
-                  <AddAttachmentLinks />
-                  <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                      <Grid container direction="row" spacing={2}>
-                        <Grid item xs={2}>
-                          <SelectInput
-                            name="type"
-                            label="Type"
-                            options={Converter.enumToOptions(AuditionType)}
-                          />
-                        </Grid>
-                        <Grid item xs={2}>
-                          <DateTimePickerInput
-                            name="auditionTime"
-                            label="Date / Time"
-                          />
-                        </Grid>
-                        <Grid item xs={2}>
-                          <DateTimePickerInput
-                            name="deadline"
-                            label="Deadline"
-                          />
-                        </Grid>
-                        <Grid item xs={2}>
-                          <DatePickerInput
-                            name="callbackDate"
-                            label="Callback Date"
-                          />
-                        </Grid>
-                        <Grid item xs={2}>
-                          <SelectInput
-                            name="status"
-                            label="Status"
-                            options={Converter.enumToOptions(AuditionStatus)}
-                          />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item>
-                      <TextInput
-                        name="instructions"
-                        label="Instructions"
-                        multiline
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Grid container direction="row" spacing={2}>
-                        <Grid item xs={3}>
-                          <TextInput name="address.line1" label="Address Line 1" />
-                        </Grid>
-                        <Grid item xs={3}>
-                          <TextInput name="address.line2" label="Line 2" />
-                        </Grid>
-                        <Grid item xs={3}>
-                          <TextInput name="address.city" label="City" />
-                        </Grid>
-                        <Grid item xs={3}>
-                          <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                              <TextInput name="address.state" label="State" />
-                            </Grid>
-                            <Grid item xs={6}>
-                              <TextInput name="address.zip" label="Zip" />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </TitledPaper>
+                <AuditionDetailsEdit />
               </Grid>
               <Grid item>
                 <Grid container direction="row" spacing={3}>
                   <Grid item xs={6}>
-                    <TitledPaper
-                      variant="h6"
-                      component="h2"
-                      className={classes.attachmentContainer}
-                      title="Role/Breakdown Details"
-                    >
-                      <AddAttachmentLinks />
-                      <Grid container direction="column" spacing={2}>
-                        <Grid item>
-                          <Grid container direction="row" spacing={2}>
-                            <Grid item xs={6}>
-                              <TextInput
-                                name="breakdown.roleName"
-                                label="Role Name"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.roleType"
-                                label="Type"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.rate"
-                                label="Rate / Pay"
-                              />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                        <Grid item>
-                          <TextInput
-                            name="breakdown.roleDescription"
-                            label="Description"
-                            multiline
-                          />
-                        </Grid>
-                        <Grid item>
-                          <Grid container direction="row" spacing={2}>
-                            <Grid item xs={3}>
-                              <SelectInput
-                                name="breakdown.gender"
-                                label="Gender"
-                                options={Converter.enumToOptions(Gender)}
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.ageMin"
-                                label="Age (from)"
-                                type="number"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <TextInput
-                                name="breakdown.ageMax"
-                                label="Age (to)"
-                                type="number"
-                              />
-                            </Grid>
-                            <Grid item xs={3}>
-                              <SelectInput
-                                name="breakdown.ethnicities"
-                                label="Ethnicities"
-                                options={Converter.enumToOptions(Ethnicity)}
-                              />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </TitledPaper>
+                    <BreakdownDetailsEdit />
                   </Grid>
                   <Grid item xs={6}>
-                    <TitledPaper
-                      variant="h6"
-                      component="h2"
-                      className={classes.attachmentContainer}
-                      title="Role/Breakdown Details"
-                    >
-                      <AddAttachmentLinks />
-                      <Grid container direction="column" spacing={2}>
-                        <Grid item>
-                          <TextInput
-                            name="breakdown.project.name"
-                            label="Project Name"
-                          />
-                        </Grid>
-                        <Grid item>
-                          <Grid container direction="row" spacing={2}>
-                            <Grid item xs={4}>
-                              <SelectInput
-                                name="breakdown.project.type"
-                                label="Project Type"
-                                options={Converter.enumToOptions(ProjectType)}
-                              />
-                            </Grid>
-                            <Grid item xs={4}>
-                              <DatePickerInput
-                                name="breakdown.project.startDate"
-                                label="Start Date"
-                              />
-                            </Grid>
-                            <Grid item xs={4}>
-                              <SelectInput
-                                name="breakdown.project.union"
-                                label="Union Status"
-                                options={Converter.enumToOptions(UnionType)}
-                              />
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                        <Grid item>
-                          <TextInput
-                            name="breakdown.project.description"
-                            label="Description"
-                            multiline
-                          />
-                        </Grid>
-                      </Grid>
-                    </TitledPaper>
+                    <ProjectDetailsEdit />
                   </Grid>
                 </Grid>
               </Grid>
