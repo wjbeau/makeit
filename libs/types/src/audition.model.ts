@@ -6,7 +6,7 @@ import { HasParticipants } from './participant.model';
 
 
 export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
-    breakdown: Breakdown;
+    breakdown?: Breakdown;
     
     instructions?: string;
     type: AuditionType;
@@ -26,9 +26,9 @@ export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
 }
 
 export interface AuditionNote extends HasAttachments {
-    noteType: string;
-    description: string;
-    visibility: NoteVisibility;
+    noteType?: string;
+    description?: string;
+    visibility?: NoteVisibility;
 }
 
 export enum AuditionType {

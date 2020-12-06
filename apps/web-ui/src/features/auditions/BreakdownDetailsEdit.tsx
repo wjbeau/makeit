@@ -1,17 +1,18 @@
 import {
+    Breakdown,
     Gender
 } from '@makeit/types';
 import {
     Grid,
     makeStyles
 } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { Ethnicity } from '../../../../../libs/types/src/base-enums.model';
 import { Converter } from '../../app/converters';
 import SelectInput from '../forms/SelectInput';
 import TextInput from '../forms/TextInput';
 import TitledPaper from '../layout/TitledPaper';
-import AddAttachmentLinks from './AddAttachmentLinks';
+import ActionButtons from './ActionButtons';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -19,8 +20,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BreakdownDetailsEdit = () => {
+const BreakdownDetailsEdit = (props: {breakdown: Breakdown}) => {
   const classes = useStyles();
+  const [breakdown, setBreakdown] = useState(null);
 
   return (
     <TitledPaper
@@ -29,7 +31,6 @@ const BreakdownDetailsEdit = () => {
       className={classes.attachmentContainer}
       title="Role/Breakdown Details"
     >
-      <AddAttachmentLinks />
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <Grid container direction="row" spacing={2}>
@@ -84,6 +85,7 @@ const BreakdownDetailsEdit = () => {
           </Grid>
         </Grid>
       </Grid>
+      <ActionButtons />
     </TitledPaper>
   );
 };

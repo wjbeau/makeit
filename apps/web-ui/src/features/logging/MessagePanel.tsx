@@ -3,8 +3,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { messagesHandled, selectMessages } from '../logging/logging.slice';
-import { LogMessage } from '../../../../../libs/types/src/logging.model';
 import MuiAlert from '@material-ui/lab/Alert';
+import { LogMessage } from '@makeit/types';
 
 function Alert(props) {
   return <MuiAlert elevation={6} {...props} />;

@@ -1,12 +1,12 @@
-import { ProjectType, UnionType } from '@makeit/types';
+import { Project, ProjectType, UnionType } from '@makeit/types';
 import { Grid, makeStyles } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { Converter } from '../../app/converters';
 import DatePickerInput from '../forms/DatePickerInput';
 import SelectInput from '../forms/SelectInput';
 import TextInput from '../forms/TextInput';
 import TitledPaper from '../layout/TitledPaper';
-import AddAttachmentLinks from './AddAttachmentLinks';
+import ActionButtons from './ActionButtons';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -14,8 +14,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProjectDetailsEdit = () => {
+const ProjectDetailsEdit = (props: {project: Project}) => {
   const classes = useStyles();
+  const [project, setProject] = useState(null);
 
   return (
     <TitledPaper
@@ -24,7 +25,6 @@ const ProjectDetailsEdit = () => {
       className={classes.attachmentContainer}
       title="Project Details"
     >
-      <AddAttachmentLinks />
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <TextInput name="breakdown.project.name" label="Project Name" />
@@ -61,6 +61,7 @@ const ProjectDetailsEdit = () => {
           />
         </Grid>
       </Grid>
+      <ActionButtons />
     </TitledPaper>
   );
 };
