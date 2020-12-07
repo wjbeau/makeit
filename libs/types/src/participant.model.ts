@@ -1,10 +1,11 @@
 
 export interface HasParticipants {
-    participants?: Participant[];
+    participants: Participant[];
 }
 
 export interface Participant {
-    reference: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    reference: any;
     referenceType: ReferenceType;
     role: ParticipantType;
 }

@@ -16,7 +16,7 @@ export class UserAccountModel implements UserAccount {
     @Prop({ required: true })
     lastName: string;
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: ProfileModel.name }] })
+    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: ProfileModel.name }])
     profiles: Profile[];
 }
 

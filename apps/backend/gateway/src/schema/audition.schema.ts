@@ -1,19 +1,27 @@
-import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, NoteVisibility, Participant } from '@makeit/types';
+import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, Participant, UserAccount } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
-import { AttachmentSchema } from './attachment.schema';
+import { AttachmentSchema, AttachmentModel } from './attachment.schema';
 import { BreakdownModel } from './breakdown.schema';
-import { LinkSchema } from './link.schema';
+import { LinkModel, LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
+import { UserAccountModel } from './user.schema';
 
 export type AuditionNoteDocument = AuditionNoteModel & mongoose.Document;
 
 @Schema()
 export class AuditionNoteModel implements AuditionNote {
-    noteType: string;
+    @Prop()
     description: string;
-    visibility: NoteVisibility;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: UserAccountModel.name }] })
+    createdBy: UserAccount;
+    @Prop()
+    createdOn: Date;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: LinkModel.name }] })
+    links: Link[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: AttachmentModel.name }] })
+    attachments: Attachment[];
 }
 
 export const AuditionNoteSchema = SchemaFactory.createForClass(AuditionNoteModel);
@@ -23,40 +31,43 @@ export type AuditionDocument = AuditionModel & mongoose.Document;
 @Schema()
 export class AuditionModel implements Audition {
     @Prop()
-    instructions?: string;
+    instructions: string;
     @Prop({ enum: Object.values(AuditionType), type: String })
     type: AuditionType;
     @Prop()
-    auditionTime?: string;
+    auditionTime: Date;
     @Prop()
-    deadline?: string;
+    deadline: Date;
     @Prop()
-    callbackDate?: string;
+    callbackDate: Date;
     @Prop({ type: AddressSchema })
-    address?: Address;
+    address: Address;
 
     @Prop({ enum: Object.values(AuditionStatus), type: String, required: true })
     status: AuditionStatus;
     @Prop()
-    statusReason?: string;  //reason for status
+    statusReason: string;  //reason for status
     
 
-    @Prop({ type: AttachmentSchema })
-    attachments?: Attachment[]; 
-    @Prop({ type: LinkSchema })
-    links?: Link[]; 
-    @Prop({ type: ParticipantSchema })
-    participants?: Participant[];
+    @Prop({ type: [AttachmentSchema] })
+    attachments: Attachment[]; 
+    @Prop({ type: [LinkSchema] })
+    links: Link[]; 
+    @Prop({ type: [ParticipantSchema] })
+    participants: Participant[];
 
-    @Prop({ type: AuditionNoteSchema })
-    notes?: AuditionNote[];
+    @Prop({ type: [AuditionNoteSchema] })
+    notes: AuditionNote[];
 
     @Prop()
-    reminderNote?: string;
+    reminderNote: string;
     @Prop()
-    reminderTime?: string;
+    reminderTime: Date;
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: BreakdownModel.name }] })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: AuditionModel.name })
+    followUpTo: Audition;
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: BreakdownModel.name })
     breakdown: Breakdown;
 }
 

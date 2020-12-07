@@ -1,16 +1,15 @@
+import { Breakdown, Gender } from '@makeit/types';
 import {
-    Breakdown,
-    Gender
-} from '@makeit/types';
-import {
+    FormControl,
     Grid,
+    InputLabel,
     makeStyles
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import { FastField } from 'formik';
+import { Select, TextField } from 'formik-material-ui';
+import React from 'react';
 import { Ethnicity } from '../../../../../libs/types/src/base-enums.model';
-import { Converter } from '../../app/converters';
-import SelectInput from '../forms/SelectInput';
-import TextInput from '../forms/TextInput';
+import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
 import ActionButtons from './ActionButtons';
 
@@ -20,9 +19,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BreakdownDetailsEdit = (props: {breakdown: Breakdown}) => {
+const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
   const classes = useStyles();
-  const [breakdown, setBreakdown] = useState(null);
 
   return (
     <TitledPaper
@@ -35,52 +33,88 @@ const BreakdownDetailsEdit = (props: {breakdown: Breakdown}) => {
         <Grid item>
           <Grid container direction="row" spacing={2}>
             <Grid item xs={6}>
-              <TextInput name="breakdown.roleName" label="Role Name" />
+              <FastField
+                component={TextField}
+                name="breakdown.roleName"
+                label="Role Name"
+                fullWidth={true}
+              />
             </Grid>
             <Grid item xs={3}>
-              <TextInput name="breakdown.roleType" label="Type" />
+              <FastField
+                component={TextField}
+                name="breakdown.roleType"
+                label="Type"
+                fullWidth={true}
+              />
             </Grid>
             <Grid item xs={3}>
-              <TextInput name="breakdown.rate" label="Rate / Pay" />
+              <FastField
+                component={TextField}
+                name="breakdown.rate"
+                label="Rate / Pay"
+                fullWidth={true}
+              />
             </Grid>
           </Grid>
         </Grid>
         <Grid item>
-          <TextInput
+          <FastField
+            component={TextField}
             name="breakdown.roleDescription"
             label="Description"
             multiline
+            fullWidth={true}
           />
         </Grid>
         <Grid item>
           <Grid container direction="row" spacing={2}>
             <Grid item xs={3}>
-              <SelectInput
-                name="breakdown.gender"
-                label="Gender"
-                options={Converter.enumToOptions(Gender)}
-              />
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="ethnicities">Gender</InputLabel>
+                <FastField
+                  component={Select}
+                  name="breakdown.gender"
+                  inputProps={{
+                    id: 'gender',
+                  }}
+                >
+                  {Converter.enumToMenuItems("Gender", Gender)}
+                </FastField>
+              </FormControl>
             </Grid>
             <Grid item xs={3}>
-              <TextInput
+              <FastField
+                component={TextField}
                 name="breakdown.ageMin"
                 label="Age (from)"
                 type="number"
+                fullWidth={true}
               />
             </Grid>
             <Grid item xs={3}>
-              <TextInput
+              <FastField
+                component={TextField}
                 name="breakdown.ageMax"
                 label="Age (to)"
                 type="number"
+                fullWidth={true}
               />
             </Grid>
             <Grid item xs={3}>
-              <SelectInput
-                name="breakdown.ethnicities"
-                label="Ethnicities"
-                options={Converter.enumToOptions(Ethnicity)}
-              />
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="ethnicities">Ethnicities</InputLabel>
+                <FastField
+                  component={Select}
+                  name="breakdown.ethnicities"
+                  inputProps={{
+                    id: 'ethnicities',
+                  }}
+                  multiple
+                >
+                  {Converter.enumToMenuItems("Ethnicity", Ethnicity)}
+                </FastField>
+              </FormControl>
             </Grid>
           </Grid>
         </Grid>

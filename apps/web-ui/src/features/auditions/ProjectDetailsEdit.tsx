@@ -1,10 +1,15 @@
-import { Project, ProjectType, UnionType } from '@makeit/types';
-import { Grid, makeStyles } from '@material-ui/core';
-import React, { useState } from 'react';
-import { Converter } from '../../app/converters';
-import DatePickerInput from '../forms/DatePickerInput';
-import SelectInput from '../forms/SelectInput';
-import TextInput from '../forms/TextInput';
+import { ProjectType, UnionType } from '@makeit/types';
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  makeStyles
+} from '@material-ui/core';
+import { FastField } from 'formik';
+import { Select, TextField } from 'formik-material-ui';
+import { KeyboardDatePicker } from 'formik-material-ui-pickers';
+import React from 'react';
+import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
 import ActionButtons from './ActionButtons';
 
@@ -14,9 +19,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProjectDetailsEdit = (props: {project: Project}) => {
+const ProjectDetailsEdit = () => {
   const classes = useStyles();
-  const [project, setProject] = useState(null);
 
   return (
     <TitledPaper
@@ -27,37 +31,63 @@ const ProjectDetailsEdit = (props: {project: Project}) => {
     >
       <Grid container direction="column" spacing={2}>
         <Grid item>
-          <TextInput name="breakdown.project.name" label="Project Name" />
+          <FastField
+            component={TextField}
+            name="breakdown.project.name"
+            label="Project Name"
+            fullWidth={true}
+          />
         </Grid>
         <Grid item>
           <Grid container direction="row" spacing={2}>
             <Grid item xs={4}>
-              <SelectInput
-                name="breakdown.project.type"
-                label="Project Type"
-                options={Converter.enumToOptions(ProjectType)}
-              />
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="project-type">Project Type</InputLabel>
+                <FastField
+                  component={Select}
+                  name="breakdown.project.projectType"
+                  inputProps={{
+                    id: 'project-type',
+                  }}
+                >
+                  {Converter.enumToMenuItems("ProjectType", ProjectType)}
+                </FastField>
+              </FormControl>
             </Grid>
             <Grid item xs={4}>
-              <DatePickerInput
+              <FastField
+                component={KeyboardDatePicker}
                 name="breakdown.project.startDate"
                 label="Start Date"
+                fullWidth={true}
+                initialFocusedDate={null}
+                format="MM/DD/YYYY"
               />
             </Grid>
             <Grid item xs={4}>
-              <SelectInput
-                name="breakdown.project.union"
-                label="Union Status"
-                options={Converter.enumToOptions(UnionType)}
-              />
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="union-status">Union Status</InputLabel>
+                <FastField
+                  component={Select}
+                  name="breakdown.project.union"
+                  inputProps={{
+                    id: 'union-status',
+                  }}
+                  fullWidth={true}
+                >
+                  {Converter.enumToMenuItems("UnionType", UnionType)}
+                </FastField>
+              </FormControl>
             </Grid>
           </Grid>
         </Grid>
         <Grid item>
-          <TextInput
+          <FastField
+            component={TextField}
             name="breakdown.project.description"
             label="Description"
             multiline
+            fullWidth={true}
           />
         </Grid>
       </Grid>

@@ -10,12 +10,14 @@ function Alert(props) {
   return <MuiAlert elevation={6} {...props} />;
 }
 
+const autohideDuration = 5000;
+
 const useStyles = makeStyles((theme) => ({
   alertContainer: {
     position: 'fixed',
     margin: theme.spacing(3) + 'px 0',
     zIndex: theme.zIndex.drawer + 2,
-    width: "100vw"
+    width: '100vw',
   },
   alertInner: {
     maxWidth: '50vw',
@@ -38,15 +40,31 @@ export const MessagePanel = () => {
       {messages && messages.length > 0 && (
         <div className={classes.alertContainer}>
           <div className={classes.alertInner}>
-            {messages.map((message) => (
-              <Alert
-                onClose={() => handleSingleClose(message)}
-                severity={message.type}
-                key={message.message}
-              >
-                {message.message}
-              </Alert>
-            ))}
+            {messages.map((message, index) =>
+              message.type !== 'success' ? 
+                <Alert
+                  onClose={() => handleSingleClose(message)}
+                  severity={message.type}
+                  key={index}
+                >
+                  {message.message}
+                </Alert>
+               : 
+                <Snackbar
+                  open={true}
+                  autoHideDuration={autohideDuration}
+                  onClose={() => handleSingleClose(message)}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                  key={index}
+                >
+                  <Alert
+                    onClose={() => handleSingleClose(message)}
+                    severity={message.type}
+                  >
+                    {message.message}
+                  </Alert>
+                </Snackbar>
+            )}
           </div>
         </div>
       )}

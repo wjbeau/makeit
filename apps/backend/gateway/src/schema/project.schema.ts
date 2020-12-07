@@ -11,22 +11,22 @@ export type ProjectModelDocument = ProjectModel & mongoose.Document;
 @Schema()
 export class ProjectModel implements Project {
     @Prop()
-    name?: string;
+    name: string;
     @Prop({ enum: Object.values(ProjectType), type: String })
-    projectType?: ProjectType; 
+    projectType: ProjectType; 
     @Prop()
-    description?: string;
+    description: string;
     @Prop({ enum: Object.values(UnionType), type: String })
-    union?: UnionType;
+    union: UnionType;
     @Prop()
-    startDate?: string;
+    startDate: Date;
 
-    @Prop({ type: AttachmentSchema })
-    attachments?: Attachment[]; 
-    @Prop({ type: LinkSchema })
-    links?: Link[]; 
-    @Prop({ type: ParticipantSchema })
-    participants?: Participant[];
+    @Prop({ type: [AttachmentSchema] })
+    attachments: Attachment[]; 
+    @Prop({ type: [LinkSchema] })
+    links: Link[]; 
+    @Prop({ type: [ParticipantSchema] })
+    participants: Participant[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(ProjectModel);

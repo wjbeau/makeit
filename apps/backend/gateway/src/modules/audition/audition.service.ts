@@ -54,7 +54,7 @@ export class AuditionService {
       .find({
         'participants.referenceType': ReferenceType.UserAccount,
         'participants.reference': id,
-        'participants.roleType': {
+        'participants.role': {
           $in: [
             ParticipantType.Auditioning,
             ParticipantType.Cast,

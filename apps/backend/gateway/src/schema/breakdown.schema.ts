@@ -11,32 +11,32 @@ export type BreakdownDocument = BreakdownModel & mongoose.Document;
 @Schema()
 export class BreakdownModel implements Breakdown {
     @Prop()
-    roleName?: string;
+    roleName: string;
     @Prop()
-    roleDescription?: string;
+    roleDescription: string;
     @Prop()
-    roleType?: string;
+    roleType: string;
     @Prop()
-    rate?: string; //how much does it pay
+    rate: string; //how much does it pay
 
     @Prop()
-    gender?: string;
+    gender: string;
     @Prop()
-    ageMin?: number;
+    ageMin: number;
     @Prop()
-    ageMax?: number;
+    ageMax: number;
     @Prop()
-    ethnicities?: string[];
+    ethnicities: string[];
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: ProjectModel.name }] })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ProjectModel.name })
     project: Project;
 
-    @Prop({ type: AttachmentSchema })
-    attachments?: Attachment[]; 
-    @Prop({ type: LinkSchema })
-    links?: Link[]; 
-    @Prop({ type: ParticipantSchema })
-    participants?: Participant[];
+    @Prop({ type: [AttachmentSchema] })
+    attachments: Attachment[]; 
+    @Prop({ type: [LinkSchema] })
+    links: Link[]; 
+    @Prop({ type: [ParticipantSchema] })
+    participants: Participant[];
 }
 
 

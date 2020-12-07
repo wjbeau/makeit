@@ -1,22 +1,25 @@
+import { Audition, AuditionType } from '@makeit/types';
 import {
-  Avatar,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   Collapse,
   Grid,
+
   IconButton,
   makeStyles,
-  Typography,
+  Typography
 } from '@material-ui/core';
-import { Edit, ExpandMore, MoreVert } from '@material-ui/icons';
+import { Edit, ExpandMore, MoreVert, Warning } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { AuditionAvatar } from './AuditionAvatar';
 import Moment from 'react-moment';
-import { Audition } from '@makeit/types';
+import { useHistory } from 'react-router-dom';
+import { Converter } from '../../app/Converters';
+import { AuditionAvatar } from './AuditionAvatar';
+import * as moment from 'moment';
+import MomentUtils from '@date-io/moment';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -45,6 +48,35 @@ export const AuditionCard = (props: {audition: Audition}) => {
     history.push('/auditions/' + audition._id + '/edit');
   };
 
+  const isSoon = (when: Date) => {
+    if(!when) {
+      return false;
+    }
+    const now = new Date();
+    const diff = when.getTime() - now.getTime();
+
+    return diff < 1000 * 60 * 60 * 24; //is the due date within a day
+  }
+  const buildTitle = () => {
+    let result = ''
+
+    if(audition?.breakdown?.roleName) { 
+      result += audition?.breakdown?.roleName;
+    }
+    if(audition?.breakdown?.project?.name) { 
+      if(result.length) {
+        result += ' / '
+      }
+      result += audition?.breakdown?.project?.name;
+    }
+
+    if(!result.length) {
+      result = Converter.getLabelForEnum(AuditionType, audition.type);
+    }
+
+    return result 
+  }
+
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -55,12 +87,19 @@ export const AuditionCard = (props: {audition: Audition}) => {
           </IconButton>
         }
         title={
-          audition?.breakdown?.roleName + ' / ' + audition?.breakdown?.project?.name
+          buildTitle()
         }
         subheader={
-          <Moment interval={0} format="LLL">
-            {audition.auditionTime}
-          </Moment>
+          <>
+            {audition.auditionTime && <Moment interval={0} format="LLL">
+                {audition.auditionTime}
+              </Moment>
+            }
+            {isSoon(audition.auditionTime) && <Warning></Warning>
+            }
+            {!audition.auditionTime && 'No date set'
+            }
+          </>
         }
       />
       <CardActions disableSpacing>

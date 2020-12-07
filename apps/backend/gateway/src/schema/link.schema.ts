@@ -11,7 +11,7 @@ export class LinkModel implements Link {
     @Prop({required: true})
     url: string;
     @Prop()
-    display?: string
+    display: string
 }
 
 export const LinkSchema = SchemaFactory.createForClass(LinkModel);

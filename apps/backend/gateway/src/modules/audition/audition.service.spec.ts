@@ -1,3 +1,12 @@
+import {
+  Audition,
+
+
+  Breakdown,
+  ParticipantType,
+  ReferenceType
+} from '@makeit/types';
+import { BadRequestException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -8,21 +17,13 @@ import {
   reset,
   strictEqual,
   verify,
-  when,
+  when
 } from 'ts-mockito';
-import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
+import { ModelFactory } from '../../../../../../libs/types/src/factory.model';
 import { AuditionModel } from '../../schema/Audition.schema';
-import { AuditionService } from './Audition.service';
-import {
-  Audition,
-  AuditionStatus,
-  AuditionType,
-  Breakdown,
-  ParticipantType,
-  ReferenceType,
-} from '@makeit/types';
-import { BadRequestException } from '@nestjs/common';
+import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
 import { BreakdownService } from '../breakdown/breakdown.service';
+import { AuditionService } from './Audition.service';
 
 describe('AuditionService', () => {
   let classUnderTest: AuditionService;
@@ -57,12 +58,9 @@ describe('AuditionService', () => {
 
   describe('save', () => {
     it('should return valid Audition when properly updated', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition.breakdown = null;
+      audition._id = 'auditionid';
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
@@ -92,14 +90,9 @@ describe('AuditionService', () => {
     });
 
     it('should return valid Audition when properly updated with a breakdown', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: {
-          _id: 'someid'
-        },
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = 'auditionid'
+      audition.breakdown._id = 'someid'
 
       when(mockBreakdownService.save(
         strictEqual(audition.breakdown._id),
@@ -139,12 +132,9 @@ describe('AuditionService', () => {
     });
 
     it('should return valid Audition when properly inserted', async () => {
-      const audition: Audition = {
-        _id: null,
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = null;
+      audition.breakdown = null;
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
@@ -175,12 +165,9 @@ describe('AuditionService', () => {
     });
 
     it('should throw error when ids arent a match', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = 'auditionid';
+      audition.breakdown = null;
 
       expect(classUnderTest).toBeDefined();
       try {
@@ -192,12 +179,9 @@ describe('AuditionService', () => {
     });
 
     it('should throw error when insert attempted with id-holding audition', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = 'auditionid';
+      audition.breakdown = null;
 
       expect(classUnderTest).toBeDefined();
       try {
@@ -209,12 +193,8 @@ describe('AuditionService', () => {
     });
 
     it('should throw error when update attempted with new audition', async () => {
-      const audition: Audition = {
-        _id: null,
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition.breakdown = null;
 
       expect(classUnderTest).toBeDefined();
       try {
@@ -226,12 +206,9 @@ describe('AuditionService', () => {
     });
 
     it('should return throw error when database interaction fails', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = 'auditionid';
+      audition.breakdown = null;
 
       const err = new Error('database problem!');
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
@@ -257,12 +234,9 @@ describe('AuditionService', () => {
 
   describe('findById', () => {
     it('should return valid Audition when found', async () => {
-      const audition: Audition = {
-        _id: 'auditionid',
-        type: AuditionType.InPersonAudition,
-        breakdown: null,
-        status: AuditionStatus.Accepted,
-      };
+      const audition: Audition = ModelFactory.createEmptyAudition();
+      audition._id = 'auditionid';
+      audition.breakdown = null;
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
@@ -315,20 +289,13 @@ describe('AuditionService', () => {
   describe('findAllForUser', () => {
     it('should return valid Auditions when found', async () => {
       const id = 'someid';
-      const auditions: Audition[] = [
-        {
-          _id: 'auditionid1',
-          type: AuditionType.InPersonAudition,
-          breakdown: null,
-          status: AuditionStatus.Accepted,
-        },
-        {
-          _id: 'auditionid2',
-          type: AuditionType.InPersonAudition,
-          breakdown: null,
-          status: AuditionStatus.Accepted,
-        },
-      ];
+      const audition1: Audition = ModelFactory.createEmptyAudition();
+      audition1._id = 'auditionid1';
+      audition1.breakdown = null;
+      const audition2: Audition = ModelFactory.createEmptyAudition();
+      audition2._id = 'auditionid2';
+      audition2.breakdown = null;
+      const auditions: Audition[] = [audition1, audition2];
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
@@ -343,7 +310,7 @@ describe('AuditionService', () => {
           deepEqual({
             'participants.referenceType': ReferenceType.UserAccount,
             'participants.reference': id,
-            'participants.roleType': {
+            'participants.role': {
               $in: [
                 ParticipantType.Auditioning,
                 ParticipantType.Cast,
@@ -380,7 +347,7 @@ describe('AuditionService', () => {
           deepEqual({
             'participants.referenceType': ReferenceType.UserAccount,
             'participants.reference': id,
-            'participants.roleType': {
+            'participants.role': {
               $in: [
                 ParticipantType.Auditioning,
                 ParticipantType.Cast,

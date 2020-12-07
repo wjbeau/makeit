@@ -1,29 +1,35 @@
-import { yupResolver } from '@hookform/resolvers/yup';
+import DateFnsUtils from '@date-io/moment';
 import {
-  Audition, AuditionStatus, AuditionType
+  Audition,
+  ModelFactory,
+  ParticipantType,
+  ReferenceType,
 } from '@makeit/types';
 import {
   Breadcrumbs,
   Button,
-
   Grid,
   makeStyles,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { ArrowBack, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { FastField, Form, Formik } from 'formik';
+import { TextField } from 'formik-material-ui';
+import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import React, { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
-import DateTimePickerInput from '../forms/DatePickerTimeInput';
-import TextInput from '../forms/TextInput';
+import { selectAuthed } from '../auth/auth.slice';
 import Loading from '../layout/Loading';
 import TitledPaper from '../layout/TitledPaper';
+import { logError, logSuccess } from '../logging/logging.slice';
 import {
+  saveAudition,
   selectAuditions,
-  selectAuditionsLoading
+  selectAuditionsLoading,
 } from './audition.slice';
 import AuditionDetailsEdit from './AuditionDetailsEdit';
 import AuditionNotesEdit from './AuditionNotesEdit';
@@ -35,46 +41,49 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   addNoteContainer: {
-    marginTop: theme.spacing(3)
-  }
+    marginTop: theme.spacing(3),
+  },
 }));
-
-const validationSchema = yup.object().shape({});
 
 const AuditionEditPage = () => {
   const classes = useStyles();
   const { auditionId } = useParams<{ auditionId: string }>();
-  const [audition, setAudition] = useState<Audition>({type: AuditionType.InPersonAudition, status: AuditionStatus.Invited});
+  const [formValues, setFormValues] = useState<Audition>(
+    ModelFactory.createEmptyAudition()
+  );
   const loading = useSelector(selectAuditionsLoading);
   const auditions = useSelector(selectAuditions);
+  const currentUser = useSelector(selectAuthed);
   const history = useHistory();
-  const methods = useForm<Audition>({
-    resolver: yupResolver(validationSchema),
-  });
-  const { handleSubmit, errors, reset, control } = methods;
   const dispatch = useAppDispatch();
 
-  const handleSave = (data) => {
-    setAudition({ ...audition, ...data });
+  const handleSave = (values) => {
+    if (
+      !values.participants.find(
+        (p) =>
+          p.role === ParticipantType.Auditioning &&
+          p.reference === currentUser._id &&
+          p.referenceType === ReferenceType.UserAccount
+      )
+    ) {
+      values.participants.push({
+        role: ParticipantType.Auditioning,
+        reference: currentUser._id,
+        referenceType: ReferenceType.UserAccount
+      });
+    }
 
-    console.log('Data: ');
-    console.log(data);
-
-    console.log('Audition: ')
-    console.log(audition);
-
-    // dispatch(saveAudition(data))
-    //   .then(unwrapResult)
-    //   .then((p) => {
-    //     dispatch(logSuccess('Save completed successfully.'));
-    //     history.push('/auditions');
-    //   })
-    //   .catch((e) => {
-    //     dispatch(logError(e));
-    //     reset(data);
-    //   });
+    dispatch(saveAudition(values))
+      .then(unwrapResult)
+      .then((p) => {
+        dispatch(logSuccess({ message: 'Save completed successfully.' }));
+        history.push('/auditions');
+      })
+      .catch((e) => {
+        dispatch(logError(e));
+      });
   };
-  const handleCancel = (data) => {
+  const handleCancel = () => {
     history.goBack();
   };
 
@@ -82,94 +91,111 @@ const AuditionEditPage = () => {
 
   useEffect(() => {
     if (auditionId !== 'new') {
-      setAudition(auditions.find((a) => a.id === auditionId));
-      reset(audition);
+      setFormValues(auditions.find((a) => a.id === auditionId));
     }
-  }, [auditionId, setAudition, auditions, audition, reset]);
+  }, [auditionId, setFormValues, formValues, auditions]);
 
   return (
     <div>
       {loading && <Loading />}
       {!loading && (
-        <FormProvider {...methods}>
-          <form>
-            <Grid container direction="column" spacing={3}>
-              <Grid item>
-                <Breadcrumbs>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    onClick={handleCancel}
-                    startIcon={<ArrowBack />}
-                  >
-                    Back to Auditions
-                  </Button>
-                </Breadcrumbs>
-              </Grid>
-              <Grid item>
-                <Typography variant="h4" component="h1">
-                  {title}
-                </Typography>
-              </Grid>
-              <Grid item>
-                <AuditionDetailsEdit />
-              </Grid>
-              <Grid item>
-                <Grid container direction="row" spacing={3}>
-                  <Grid item xs={6}>
-                    <BreakdownDetailsEdit breakdown={audition?.breakdown} />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <ProjectDetailsEdit project={audition?.breakdown?.project}/>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <AuditionNotesEdit audition={audition} />
-              </Grid>
-              <Grid item>
-                <TitledPaper variant="h6" component="h2" title="Set Reminder">
-                  <Grid container direction="row" spacing={2}>
-                    <Grid item xs={3}>
-                      <DateTimePickerInput name="reminderDate" label="Date" />
-                    </Grid>
-                    <Grid item xs={9}>
-                      <TextInput
-                        name="reminderDescription"
-                        label="Description"
-                        multiline
-                      />
-                    </Grid>
-                  </Grid>
-                </TitledPaper>
-              </Grid>
-              <Grid item>
-                <Grid container spacing={2} direction="row">
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Formik initialValues={formValues} onSubmit={handleSave}>
+            {({ values, submitForm, isSubmitting }) => (
+              <Form>
+                <Grid container direction="column" spacing={3}>
                   <Grid item>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSubmit(handleSave)}
-                      startIcon={<SaveAltOutlined />}
-                    >
-                      Save
-                    </Button>
+                    <Breadcrumbs>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        onClick={handleCancel}
+                        startIcon={<ArrowBack />}
+                      >
+                        Back to Auditions
+                      </Button>
+                    </Breadcrumbs>
                   </Grid>
                   <Grid item>
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={handleCancel}
-                      startIcon={<CancelOutlined />}
+                    <Typography variant="h4" component="h1">
+                      {title}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <AuditionDetailsEdit />
+                  </Grid>
+                  <Grid item>
+                    <Grid container direction="row" spacing={3}>
+                      <Grid item xs={6}>
+                        <BreakdownDetailsEdit breakdown={values.breakdown} />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <ProjectDetailsEdit />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item>
+                    <AuditionNotesEdit formValues={values} />
+                  </Grid>
+                  <Grid item>
+                    <TitledPaper
+                      variant="h6"
+                      component="h2"
+                      title="Set Reminder"
                     >
-                      Cancel
-                    </Button>
+                      <Grid container direction="row" spacing={2}>
+                        <Grid item xs={3}>
+                          <FastField
+                            component={KeyboardDateTimePicker}
+                            name="reminderTime"
+                            label="Date / Time"
+                            format="MM/DD/YYYY hh:mm a"
+                            fullWidth={true}
+                            initialFocusedDate={null}
+                          />
+                        </Grid>
+                        <Grid item xs={9}>
+                          <FastField
+                            component={TextField}
+                            name="reminderDescription"
+                            label="Description"
+                            multiline
+                            fullWidth={true}
+                          />
+                        </Grid>
+                      </Grid>
+                    </TitledPaper>
+                  </Grid>
+                  <Grid item>
+                    <Grid container spacing={2} direction="row">
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<SaveAltOutlined />}
+                          disabled={isSubmitting}
+                          onClick={submitForm}
+                        >
+                          Save
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          color="default"
+                          onClick={handleCancel}
+                          startIcon={<CancelOutlined />}
+                        >
+                          Cancel
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-            </Grid>
-          </form>
-        </FormProvider>
+              </Form>
+            )}
+          </Formik>
+        </MuiPickersUtilsProvider>
       )}
     </div>
   );

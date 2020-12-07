@@ -15,9 +15,9 @@ export class AddressModel implements Address {
     @Prop({required: true})
     city: string;
     @Prop()
-    state?: string;
+    state: string;
     @Prop()
-    zip?: string;
+    zip: string;
     @Prop()
     country: string;
 }

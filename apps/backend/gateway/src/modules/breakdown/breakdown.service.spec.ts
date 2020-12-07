@@ -15,6 +15,7 @@ import { BreakdownModel } from '../../schema/breakdown.schema';
 import { ProjectModel } from '../../schema/project.schema';
 import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
 import { BreakdownService } from './breakdown.service';
+import { ModelFactory } from '../../../../../../libs/types/src/factory.model';
 
 describe('BreakdownService', () => {
   let classUnderTest: BreakdownService;
@@ -50,9 +51,9 @@ describe('BreakdownService', () => {
 
   describe('save', () => {
     it('should return valid Breakdown when properly updated without a project', async () => {
-      const breakdown: Breakdown = {
-        _id: 'bd'
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = 'bd';
+      breakdown.project = null;
 
       when(mockQuery.exec()).thenReturn(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,12 +82,9 @@ describe('BreakdownService', () => {
     });
 
     it('should return valid Breakdown when properly updated with a project', async () => {
-      const breakdown: Breakdown = {
-        _id: 'bd',
-        project: {
-          _id: 'someproject'
-        }
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = 'bd';
+      breakdown.project._id = 'someproject'
 
       when(mockQuery2.exec()).thenReturn(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,9 +134,9 @@ describe('BreakdownService', () => {
     });
 
     it('should return valid Breakdown when properly inserted (no project)', async () => {
-      const breakdown: Breakdown = {
-        _id: null,
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = null;
+      breakdown.project = null;
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
@@ -168,9 +166,8 @@ describe('BreakdownService', () => {
     });
 
     it('should throw error when ids arent a match', async () => {
-      const breakdown: Breakdown = {
-        _id: 'someid',
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = 'someid';
 
       expect(classUnderTest).toBeDefined();
       try {
@@ -182,9 +179,8 @@ describe('BreakdownService', () => {
     });
 
     it('should throw error when insert attempted with id-holding audition', async () => {
-      const breakdown: Breakdown = {
-        _id: 'someid',
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = 'someid';
 
       expect(classUnderTest).toBeDefined();
       try {
@@ -196,9 +192,8 @@ describe('BreakdownService', () => {
     });
 
     it('should throw error when update attempted with new audition', async () => {
-      const breakdown: Breakdown = {
-        _id: null,
-      };
+      const breakdown: Breakdown = ModelFactory.createEmptyBreakdown();
+      breakdown._id = null;
 
       expect(classUnderTest).toBeDefined();
       try {

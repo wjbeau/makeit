@@ -3,32 +3,33 @@ import { HasAttachments } from './attachment.model';
 import { BaseEntity } from './base.model';
 import { Breakdown } from './breakdown.model';
 import { HasParticipants } from './participant.model';
+import { UserAccount } from './user.model';
 
 
 export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
-    breakdown?: Breakdown;
+    breakdown: Breakdown;
     
-    instructions?: string;
+    instructions: string;
     type: AuditionType;
-    auditionTime?: string;
-    deadline?: string;
-    callbackDate?: string;
-    address?: Address;
+    auditionTime: Date;
+    deadline: Date;
+    callbackDate: Date;
+    address: Address;
     status: AuditionStatus;
-    statusReason?: string;  //reason for status
+    statusReason: string;  //reason for status
 
-    followUpTo?: string;
+    followUpTo?: Audition;
 
-    reminderNote?: string;
-    reminderTime?: string;
+    reminderNote: string;
+    reminderTime: Date;
 
-    notes?: AuditionNote[];
+    notes: AuditionNote[];
 }
 
 export interface AuditionNote extends HasAttachments {
-    noteType?: string;
-    description?: string;
-    visibility?: NoteVisibility;
+    description: string;
+    createdBy: UserAccount;
+    createdOn: Date;
 }
 
 export enum AuditionType {

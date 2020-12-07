@@ -1,7 +1,7 @@
 
 export interface HasAttachments {
-    links?: Link[];
-    attachments?: Attachment[];
+    links: Link[];
+    attachments: Attachment[];
 }
 
 export interface Attachment {
@@ -29,6 +29,6 @@ export enum AttachmentType {
 export interface Link {
     type: string;
     url: string;
-    display?: string;
+    display: string;
 }
 

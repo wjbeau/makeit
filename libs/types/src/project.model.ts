@@ -3,11 +3,11 @@ import { BaseEntity } from './base.model';
 import { HasParticipants } from './participant.model';
 
 export interface Project extends BaseEntity, HasAttachments, HasParticipants {
-    name?: string;
-    projectType?: ProjectType; 
-    description?: string;
-    union?: UnionType;
-    startDate?: string;
+    name: string;
+    projectType: ProjectType; 
+    description: string;
+    union: UnionType;
+    startDate: Date;
 }
 
 export enum UnionType {
