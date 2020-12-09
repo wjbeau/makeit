@@ -10,7 +10,7 @@ export type ProjectModelDocument = ProjectModel & mongoose.Document;
 
 @Schema()
 export class ProjectModel implements Project {
-    @Prop()
+    @Prop({required: true})
     name: string;
     @Prop({ enum: Object.values(ProjectType), type: String })
     projectType: ProjectType; 

@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TitledSection = (props:any) => {
     const {variant, title, className} = props
     const classes = useStyles()

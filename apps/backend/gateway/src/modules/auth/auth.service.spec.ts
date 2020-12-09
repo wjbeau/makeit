@@ -33,6 +33,7 @@ describe('AuthService', () => {
         email: 'uid',
         firstName: 'fname',
         lastName: 'lname',
+        avatar: '',
         profiles: []
       }
       when(mockedJwtService.sign(strictEqual(user))).thenReturn('test_jwt');
@@ -54,6 +55,7 @@ describe('AuthService', () => {
         firstName: 'fname',
         lastName: 'lname',
         password: password,
+        avatar: '',
         profiles: []
       }
       when(mockedCryptoService.compare(password, user.password)).thenReturn(
@@ -80,6 +82,7 @@ describe('AuthService', () => {
         firstName: 'fname',
         lastName: 'lname',
         password: 'otherpassword',
+        avatar: '',
         profiles: []
       }
       when(mockedUserService.findByEmail(username)).thenReturn(

@@ -32,9 +32,9 @@ export type AuditionDocument = AuditionModel & mongoose.Document;
 export class AuditionModel implements Audition {
     @Prop()
     instructions: string;
-    @Prop({ enum: Object.values(AuditionType), type: String })
+    @Prop({ enum: Object.values(AuditionType), type: String, required: true })
     type: AuditionType;
-    @Prop()
+    @Prop({required: true})
     auditionTime: Date;
     @Prop()
     deadline: Date;

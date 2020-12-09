@@ -1,17 +1,15 @@
-import { AuditionStatus, AuditionType } from '@makeit/types';
-import {
-    FormControl,
-    Grid,
-    InputLabel,
-    makeStyles
-} from '@material-ui/core';
+import { Audition, AuditionStatus, AuditionType } from '@makeit/types';
+import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
-import { KeyboardDatePicker, KeyboardDateTimePicker } from 'formik-material-ui-pickers';
+import {
+  KeyboardDatePicker,
+  KeyboardDateTimePicker,
+} from 'formik-material-ui-pickers';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
-import ActionButtons from './ActionButtons';
+import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -19,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AuditionDetailsEdit = () => {
+const AuditionDetailsEdit = (props: { audition: Audition }) => {
   const classes = useStyles();
 
   return (
@@ -42,7 +40,7 @@ const AuditionDetailsEdit = () => {
                     id: 'type',
                   }}
                 >
-                  {Converter.enumToMenuItems("AuditionType", AuditionType)}
+                  {Converter.enumToMenuItems('AuditionType', AuditionType)}
                 </FastField>
               </FormControl>
             </Grid>
@@ -86,7 +84,7 @@ const AuditionDetailsEdit = () => {
                     id: 'status',
                   }}
                 >
-                  {Converter.enumToMenuItems("AuditionStatus", AuditionStatus)}
+                  {Converter.enumToMenuItems('AuditionStatus', AuditionStatus)}
                 </FastField>
               </FormControl>
             </Grid>
@@ -120,8 +118,12 @@ const AuditionDetailsEdit = () => {
               />
             </Grid>
             <Grid item xs={3}>
-              <FastField component={TextField} name="address.city" label="City" 
-                  fullWidth={true}/>
+              <FastField
+                component={TextField}
+                name="address.city"
+                label="City"
+                fullWidth={true}
+              />
             </Grid>
             <Grid item xs={3}>
               <Grid container spacing={2}>
@@ -134,15 +136,21 @@ const AuditionDetailsEdit = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <FastField component={TextField} name="address.zip" label="Zip" 
-                  fullWidth={true}/>
+                  <FastField
+                    component={TextField}
+                    name="address.zip"
+                    label="Zip"
+                    fullWidth={true}
+                  />
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
+        <Grid item>
+          <AttachmentPanel container={props.audition} />
+        </Grid>
       </Grid>
-      <ActionButtons />
     </TitledPaper>
   );
 };

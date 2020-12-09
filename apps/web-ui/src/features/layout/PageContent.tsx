@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Suspense } from 'react';
 import { routeDefinitions } from "../../app/Routes";
 import { SidebarMenu } from "./SidebarMenu";

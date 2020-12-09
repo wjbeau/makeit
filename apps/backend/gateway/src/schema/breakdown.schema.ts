@@ -10,7 +10,7 @@ export type BreakdownDocument = BreakdownModel & mongoose.Document;
 
 @Schema()
 export class BreakdownModel implements Breakdown {
-    @Prop()
+    @Prop({required: true})
     roleName: string;
     @Prop()
     roleDescription: string;

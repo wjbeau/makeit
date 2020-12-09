@@ -2,8 +2,9 @@ import DateFnsUtils from '@date-io/moment';
 import {
   Audition,
   ModelFactory,
+  ParticipantReferenceType,
   ParticipantType,
-  ReferenceType,
+  toParticipantReference
 } from '@makeit/types';
 import {
   Breadcrumbs,
@@ -35,6 +36,7 @@ import AuditionDetailsEdit from './AuditionDetailsEdit';
 import AuditionNotesEdit from './AuditionNotesEdit';
 import BreakdownDetailsEdit from './BreakdownDetailsEdit';
 import ProjectDetailsEdit from './ProjectDetailsEdit';
+import * as yup from 'yup';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -62,24 +64,23 @@ const AuditionEditPage = () => {
       !values.participants.find(
         (p) =>
           p.role === ParticipantType.Auditioning &&
-          p.reference === currentUser._id &&
-          p.referenceType === ReferenceType.UserAccount
+          p.info.ref === currentUser._id &&
+          p.info.type === ParticipantReferenceType.UserAccount
       )
     ) {
       values.participants.push({
         role: ParticipantType.Auditioning,
-        reference: currentUser._id,
-        referenceType: ReferenceType.UserAccount
+        info: toParticipantReference(currentUser)
       });
     }
-
     dispatch(saveAudition(values))
       .then(unwrapResult)
       .then((p) => {
-        dispatch(logSuccess({ message: 'Save completed successfully.' }));
         history.push('/auditions');
+        dispatch(logSuccess({ message: 'Save completed successfully.' }));
       })
       .catch((e) => {
+        setFormValues(values);
         dispatch(logError(e));
       });
   };
@@ -89,9 +90,21 @@ const AuditionEditPage = () => {
 
   const title = auditionId === 'new' ? 'New Audition' : 'Edit Audition';
 
+  const validationSchema = yup.object().shape({
+    type: yup.string().required('Required'),
+    auditionTime: yup.date().required('Required').nullable(),
+    status: yup.string().required('Required'),
+    breakdown: yup.object({
+      roleName: yup.string().required('Required'),
+      project: yup.object({
+        name: yup.string().required('Required'),
+      })
+    })
+  });
+
   useEffect(() => {
     if (auditionId !== 'new') {
-      setFormValues(auditions.find((a) => a.id === auditionId));
+      setFormValues(auditions.find((a) => a._id === auditionId));
     }
   }, [auditionId, setFormValues, formValues, auditions]);
 
@@ -100,7 +113,8 @@ const AuditionEditPage = () => {
       {loading && <Loading />}
       {!loading && (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Formik initialValues={formValues} onSubmit={handleSave}>
+          <Formik initialValues={formValues} onSubmit={handleSave} 
+              enableReinitialize={true} validationSchema={validationSchema}>
             {({ values, submitForm, isSubmitting }) => (
               <Form>
                 <Grid container direction="column" spacing={3}>
@@ -122,7 +136,7 @@ const AuditionEditPage = () => {
                     </Typography>
                   </Grid>
                   <Grid item>
-                    <AuditionDetailsEdit />
+                    <AuditionDetailsEdit audition={values}/>
                   </Grid>
                   <Grid item>
                     <Grid container direction="row" spacing={3}>
@@ -130,7 +144,7 @@ const AuditionEditPage = () => {
                         <BreakdownDetailsEdit breakdown={values.breakdown} />
                       </Grid>
                       <Grid item xs={6}>
-                        <ProjectDetailsEdit />
+                        <ProjectDetailsEdit project={values.breakdown.project}/>
                       </Grid>
                     </Grid>
                   </Grid>

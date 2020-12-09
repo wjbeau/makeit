@@ -1,4 +1,4 @@
-import { Audition, AuditionType } from '@makeit/types';
+import { Audition, AuditionStatus, AuditionType } from '@makeit/types';
 import {
   Card,
   CardActions,
@@ -6,20 +6,23 @@ import {
   CardHeader,
   Collapse,
   Grid,
-
   IconButton,
+  Link,
   makeStyles,
-  Typography
+  Typography,
 } from '@material-ui/core';
-import { Edit, ExpandMore, MoreVert, Warning } from '@material-ui/icons';
+import { Done, Edit, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
 import { useHistory } from 'react-router-dom';
 import { Converter } from '../../app/Converters';
+import { useAppDispatch } from '../../app/store';
+import { logError, logSuccess } from '../logging/logging.slice';
+import { saveAudition } from './audition.slice';
 import { AuditionAvatar } from './AuditionAvatar';
-import * as moment from 'moment';
-import MomentUtils from '@date-io/moment';
+import AuditionCardActions from './AuditionCardActions';
+import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -30,16 +33,21 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.shortest,
     }),
   },
+  bold: {
+    fontWeight: 'bold',
+    marginTop: theme.spacing(0.5),
+  },
   expandOpen: {
     transform: 'rotate(180deg)',
   },
 }));
 
-export const AuditionCard = (props: {audition: Audition}) => {
+export const AuditionCard = (props: { audition: Audition }) => {
   const { audition } = props;
   const classes = useStyles();
   const history = useHistory();
   const [expanded, setExpanded] = React.useState(false);
+  const dispatch = useAppDispatch();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -48,64 +56,62 @@ export const AuditionCard = (props: {audition: Audition}) => {
     history.push('/auditions/' + audition._id + '/edit');
   };
 
-  const isSoon = (when: Date) => {
-    if(!when) {
-      return false;
-    }
-    const now = new Date();
-    const diff = when.getTime() - now.getTime();
+  const markAsComplete = () => {
+    const oldStatus = audition.status;
+    audition.status = AuditionStatus.Performed;
+    dispatch(saveAudition(audition))
+      .then((p) => {
+        dispatch(logSuccess({ message: 'Audition marked as completed.' }));
+      })
+      .catch((e) => {
+        audition.status = oldStatus;
+        dispatch(logError(e));
+      });
+  };
 
-    return diff < 1000 * 60 * 60 * 24; //is the due date within a day
-  }
   const buildTitle = () => {
-    let result = ''
+    let result = '';
 
-    if(audition?.breakdown?.roleName) { 
+    if (audition?.breakdown?.roleName) {
       result += audition?.breakdown?.roleName;
     }
-    if(audition?.breakdown?.project?.name) { 
-      if(result.length) {
-        result += ' / '
+    if (audition?.breakdown?.project?.name) {
+      if (result.length) {
+        result += ' / ';
       }
       result += audition?.breakdown?.project?.name;
     }
 
-    if(!result.length) {
+    if (!result.length) {
       result = Converter.getLabelForEnum(AuditionType, audition.type);
     }
 
-    return result 
-  }
+    return result;
+  };
 
   return (
     <Card className={classes.root}>
       <CardHeader
-        avatar={<AuditionAvatar type={audition.type} />}
+        avatar={<AuditionAvatar audition={audition} />}
         action={
           <IconButton aria-label="settings">
             <MoreVert />
           </IconButton>
         }
-        title={
-          buildTitle()
-        }
+        title={buildTitle()}
         subheader={
           <>
-            {audition.auditionTime && <Moment interval={0} format="LLL">
+            {audition.auditionTime && (
+              <Moment interval={0} format="LLL">
                 {audition.auditionTime}
               </Moment>
-            }
-            {isSoon(audition.auditionTime) && <Warning></Warning>
-            }
-            {!audition.auditionTime && 'No date set'
-            }
+            )}
+            {!audition.auditionTime && 'No date set'}
           </>
         }
       />
       <CardActions disableSpacing>
-        <IconButton aria-label="edit" onClick={goToEdit}>
-          <Edit />
-        </IconButton>
+        <AuditionCardActions audition={audition} />
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
@@ -120,34 +126,68 @@ export const AuditionCard = (props: {audition: Audition}) => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container>
-            {audition.address && (
-              <Grid item xs={6}>
-                <Typography variant="h5">Address</Typography>
-                <Typography paragraph>{audition?.address?.line1}</Typography>
-                <Typography paragraph>{audition?.address?.line2}</Typography>
-                <Typography paragraph>{audition?.address?.line3}</Typography>
-                <Typography paragraph>
-                  {audition?.address?.city}, {audition?.address?.state}{' '}
-                  {audition?.address?.zip}
+            {audition.instructions && (
+              <Grid item xs={12}>
+                <Typography variant="body2" className={classes.bold}>
+                  Instructions
+                </Typography>
+                <Typography variant="body2">
+                  {audition?.instructions}
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={6}>
-              {audition.instructions && (
-                <>
-                  <Typography variant="h5">Instructions</Typography>
-                  <Typography paragraph>{audition?.instructions}</Typography>
-                </>
-              )}
-              {audition.participants && audition.participants.length > 0 && (
-                <>
-                  <Typography variant="h5">Participants</Typography>
-                  {audition.participants.map((p) => (
-                    <Typography paragraph>{p}</Typography>
-                  ))}
-                </>
-              )}
-            </Grid>
+            {audition.address && audition.address.line1 && (
+              <Grid item xs={6}>
+                <Typography variant="body2" className={classes.bold}>
+                  Address
+                </Typography>
+                <Typography variant="body2">
+                  {audition?.address?.line1}
+                </Typography>
+                <Typography variant="body2">
+                  {audition?.address?.line2}
+                </Typography>
+                <Typography variant="body2">
+                  {audition?.address?.line3}
+                </Typography>
+                <Typography variant="body2">
+                  {audition?.address?.city}
+                  {', ' + audition?.address?.state} {audition?.address?.zip}
+                </Typography>
+              </Grid>
+            )}
+            {audition.participants && audition.participants.length > 0 && (
+              <Grid item xs={6}>
+                <Typography variant="body2" className={classes.bold}>
+                  Participants
+                </Typography>
+                <ParticipantAttachmentList participants={audition.participants} readOnly={true} />
+              </Grid>
+            )}
+            {audition.attachments && audition.attachments.length > 0 && (
+              <Grid item xs={6}>
+                <Typography variant="body2" className={classes.bold}>
+                  Attachments
+                </Typography>
+                {audition.attachments.map((a) => (
+                  <Link key={a.reference} href={a.reference} target="_blank">
+                    {a.displayName}
+                  </Link>
+                ))}
+              </Grid>
+            )}
+            {audition.links && audition.links.length > 0 && (
+              <Grid item xs={6}>
+                <Typography variant="body2" className={classes.bold}>
+                  Links
+                </Typography>
+                {audition.links.map((l) => (
+                  <Link key={l.url} href={l.url} target="_blank">
+                    {l.display}
+                  </Link>
+                ))}
+              </Grid>
+            )}
           </Grid>
         </CardContent>
       </Collapse>

@@ -1,20 +1,99 @@
+import { AuditionType } from '@makeit/types';
+import * as moment from 'moment';
+import MUIDataTable from 'mui-datatables';
 import React from 'react';
-import { Audition } from '@makeit/types';
+import { Converter } from '../../app/Converters';
+import AuditionEditButton from './AuditionEditButton';
+import { makeStyles } from '@material-ui/core';
 
+const useStyles = makeStyles((theme) => ({
+  padding: {
+    marginBottom: '20px',
+  },
+}));
+
+const columns = [
+  {
+    name: 'breakdown.roleName',
+    label: 'Role',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: 'breakdown.project.name',
+    label: 'Project',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: 'instructions',
+    label: 'Instructions',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: 'auditionTime',
+    label: 'Date / Time',
+    options: {
+      filter: true,
+      sort: true,
+      customBodyRender: (value, tableMeta, updateValue) => {
+        return value ? moment.default(value).format("LLL") : "Not set";
+      },
+    },
+  },
+  {
+    name: 'type',
+    label: 'Type',
+    options: {
+      filter: true,
+      sort: true,
+      customBodyRender: (value, tableMeta, updateValue) => {
+        return Converter.getLabelForEnum(AuditionType, value);
+      },
+    },
+  },
+  {
+    name: '_id',
+    label: 'Actions',
+    options: {
+      filter: false,
+      sort: false,
+      print: false,
+      searchable: false,
+      customBodyRender: (value, tableMeta, updateValue) => {
+        return <AuditionEditButton id={value} />
+      },
+    },
+  },
+];
+
+const options = {
+  filtertype: 'checkbox',
+  enableNestedDataAccess: '.',
+  selectableRows: 'none'
+};
 
 export const AuditionsList = (props) => {
-  const { auditions } = props
-   
+  const { auditions } = props;
+  const classes = useStyles();
+
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      { auditions.map((audition:Audition) => 
-          <div  key={audition._id}>
-              This is an audition: {audition?.breakdown?.project?.name}
-          </div>
-      )}
-    </>
+    <div className={classes.padding}>
+      <MUIDataTable
+        title="Auditions"
+        data={auditions}
+        columns={columns}
+        options={options}
+      />
+    </div>
   );
-}
+};
 
 export default AuditionsList;

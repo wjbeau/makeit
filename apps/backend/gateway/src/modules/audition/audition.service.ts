@@ -1,4 +1,4 @@
-import { Audition, ParticipantType, ReferenceType } from '@makeit/types';
+import { Audition, ParticipantType, ParticipantReferenceType } from '@makeit/types';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -15,6 +15,9 @@ export class AuditionService {
   ) {}
 
   async save(id: string, audition: Audition): Promise<Audition | undefined> {
+    
+    console.log("Saving Participants:");
+    audition.participants.forEach(p => console.log(p))
     //the path variable must match the data posted
     if((id || audition._id) && id !== audition._id) {
       throw new BadRequestException();
@@ -25,7 +28,6 @@ export class AuditionService {
       const breakdownResult = await this.breakdownService.save(audition.breakdown._id, audition.breakdown)
       audition.breakdown = breakdownResult;
     }
-    
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
     // Find the document and update it if required or save a new one if not.  
     const result = await this.auditionModel.findByIdAndUpdate(
@@ -52,8 +54,8 @@ export class AuditionService {
     //find all auditions where the given user is a relevant participant
     const result: Audition[] = await this.auditionModel
       .find({
-        'participants.referenceType': ReferenceType.UserAccount,
-        'participants.reference': id,
+        'participants.info.type': ParticipantReferenceType.UserAccount,
+        'participants.info.ref': id,
         'participants.role': {
           $in: [
             ParticipantType.Auditioning,
@@ -69,6 +71,10 @@ export class AuditionService {
       .populate({
         path: 'breakdown',
         populate: { path: 'project' }
+      })
+      .sort({
+        deadline: -1,
+        auditionTime: -1,
       })
       .lean()
       .exec();

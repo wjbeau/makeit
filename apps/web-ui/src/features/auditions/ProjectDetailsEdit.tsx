@@ -1,4 +1,4 @@
-import { ProjectType, UnionType } from '@makeit/types';
+import { Project, ProjectType, UnionType } from '@makeit/types';
 import {
   FormControl,
   Grid,
@@ -11,7 +11,8 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
-import ActionButtons from './ActionButtons';
+import AttachmentButtons from '../attachments/AttachmentButtons';
+import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProjectDetailsEdit = () => {
+const ProjectDetailsEdit = (props: {project: Project}) => {
   const classes = useStyles();
 
   return (
@@ -90,8 +91,10 @@ const ProjectDetailsEdit = () => {
             fullWidth={true}
           />
         </Grid>
+        <Grid item>
+          <AttachmentPanel container={props.project} />
+        </Grid>
       </Grid>
-      <ActionButtons />
     </TitledPaper>
   );
 };

@@ -20,6 +20,7 @@ describe('JwtStrategy', () => {
         email: 'uid',
         firstName: 'fname',
         lastName: 'lname',
+        avatar: '',
         profiles: []
       }
       const result = await controllerUnderTest.validate(user)

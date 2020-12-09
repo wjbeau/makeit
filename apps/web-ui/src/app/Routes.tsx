@@ -1,5 +1,5 @@
 import React, { lazy } from "react";
-import { Home, Today, People, MeetingRoom } from '@material-ui/icons';
+import { Home, Today, People, MeetingRoom, AccountCircle, Assessment, PermMedia } from '@material-ui/icons';
 
 export const routeDefinitions = {
     public: {
@@ -15,6 +15,9 @@ export const routeDefinitions = {
         routes: [
             { path: "/auditions/:auditionId/edit", exact: true, main: lazy(() => import('../features/auditions/AuditionEditPage')), title: "Audition Edit", icon: undefined, requiresAuth: true, showInMenu: false },
             { path: "/auditions", exact: false, main: lazy(() => import('../features/auditions/AuditionsPage')), title: "Auditions", icon: <MeetingRoom />, requiresAuth: true, showInMenu: true },
+            { path: "/projects", exact: false, main: lazy(() => import('../features/home/HomePage')), title: "Projects", icon: <PermMedia />, requiresAuth: true, showInMenu: true },
+            { path: "/profile", exact: false, main: lazy(() => import('../features/home/HomePage')), title: "Profile", icon: <AccountCircle />, requiresAuth: true, showInMenu: true },
+            { path: "/analysis", exact: false, main: lazy(() => import('../features/home/HomePage')), title: "Analysis", icon: <Assessment />, requiresAuth: true, showInMenu: true },
         ]
     }
 }

@@ -3,8 +3,8 @@ import {
 
 
   Breakdown,
-  ParticipantType,
-  ReferenceType
+  ParticipantReferenceType,
+  ParticipantType
 } from '@makeit/types';
 import { BadRequestException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
@@ -308,8 +308,8 @@ describe('AuditionService', () => {
       when(
         mockModel.find(
           deepEqual({
-            'participants.referenceType': ReferenceType.UserAccount,
-            'participants.reference': id,
+            'participants.info.type': ParticipantReferenceType.UserAccount,
+            'participants.info.ref': id,
             'participants.role': {
               $in: [
                 ParticipantType.Auditioning,
@@ -345,8 +345,8 @@ describe('AuditionService', () => {
       when(
         mockModel.find(
           deepEqual({
-            'participants.referenceType': ReferenceType.UserAccount,
-            'participants.reference': id,
+            'participants.info.type': ParticipantReferenceType.UserAccount,
+            'participants.info.ref': id,
             'participants.role': {
               $in: [
                 ParticipantType.Auditioning,

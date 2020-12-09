@@ -11,11 +11,14 @@ export interface AuthResponse {
     user: UserAccount
 }
 
-export interface UserAccount extends BaseEntity {
-    email: string;
-    password?: string; //note this will not be populated by the server when returning account objects
+export interface PersonInfo extends BaseEntity {
     firstName: string;
     lastName: string;
-    
+    avatar: string;
+}
+
+export interface UserAccount extends PersonInfo {
+    email: string;
+    password?: string; //note this will not be populated by the server when returning account objects
     profiles: Profile[];
 }

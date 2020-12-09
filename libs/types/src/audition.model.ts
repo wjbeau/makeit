@@ -56,4 +56,5 @@ export enum AuditionStatus {
     Rejected = "rejected", //performer has rejected
     Performed = "performed", //audition has taken place (or the self tape been submitted) but no further status has been notified
     Successful = "success", //audition has been successful (i.e. led to project or callback)
+    Cancelled = "cancelled", //audition has been cancelled (either by the CD or by the actor)
 }

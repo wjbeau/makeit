@@ -33,6 +33,7 @@ describe('LocalStrategy', () => {
         email: username,
         firstName: 'fname',
         lastName: 'lname',
+        avatar: '',
         profiles: []
       }
       when(mockedService.validateUser(username, password)).thenReturn(

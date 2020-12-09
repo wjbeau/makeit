@@ -2,6 +2,7 @@ import { MenuItem } from '@material-ui/core';
 import * as lodash from "lodash"
 import React from 'react';
 
+
 export class Converter {
     private static items = {};
 
@@ -23,6 +24,31 @@ export class Converter {
     public static getLabelForEnum(data: any, value: string) {
         const label = Object.keys(data).find(k => data[k] === value)
         return label ? Converter.decamelCase(label) : "Unspecified";
+    }
+
+    public static convertAllDates(obj) {
+        return Converter.mapValuesDeep(obj, Converter.convertToDate);
+    }
+    
+    private static mapValuesDeep(obj, cb) {
+        if (lodash.isArray(obj)) {
+        return obj.map((innerObj) => Converter.mapValuesDeep(innerObj, cb));
+        } else if (lodash.isObject(obj)) {
+        return lodash.mapValues(obj, (val) => Converter.mapValuesDeep(val, cb));
+        } else {
+        return cb(obj);
+        }
+    }
+  
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private static convertToDate(value: any) {
+        if (Converter.isSerializedDate(value)) return new Date(value);
+        return value;
+    }
+    
+    private static isSerializedDate(value) {
+        const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+        return lodash.isString(value) && datePattern.test(value);
     }
 
     private static decamelCase(key: string) {

@@ -17,6 +17,7 @@ describe('AuditionController', () => {
     email: 'uid',
     firstName: 'fname',
     lastName: 'lname',
+    avatar: '',
     profiles: []
   }
 

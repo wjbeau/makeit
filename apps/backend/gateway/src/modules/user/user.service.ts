@@ -28,6 +28,7 @@ export class UserService implements OnModuleInit {
             firstName: 'Will',
             lastName: 'Beaumont',
             password: h,
+            avatar: null,
             profiles: [],
           });
         });

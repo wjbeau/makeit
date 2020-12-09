@@ -16,7 +16,9 @@ import IfNotLoading from '../layout/IfNotLoading';
 import TitledSection from '../layout/TitledSection';
 import AuditionCard from './AuditionCard';
 import { AddBoxOutlined } from '@material-ui/icons';
-import { Audition } from '@makeit/types';
+import { Audition, AuditionStatus } from '@makeit/types';
+import { now } from 'lodash';
+import { Converter } from '../../app/Converters';
 
 const PREVIEW_COUNT = 3;
 
@@ -26,14 +28,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const isFuture = (dates: Date[]) => {
+  const result = dates.find(d => d && (new Date().getTime() - d.getTime()) <= 0)
+  return result;
+}
+
 export const AuditionsPage = () => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);
-  const auditions = useSelector(selectAuditions);
+  const auditionsRaw = useSelector(selectAuditions);
+  const auditions = auditionsRaw.map(a => Converter.convertAllDates(a))
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const futureAuditions: Audition[] = auditions.slice(0, PREVIEW_COUNT); //TODO filter only future meetings and sort by date
-  const pastAuditions: Audition[] = []; //TODO filter only future meetings and sort by date desc
+  const futureAuditions: Audition[] = auditions
+    .filter(a => 
+        isFuture([a.deadline, a.auditionTime]) 
+        && (a.status === AuditionStatus.Accepted || a.status === AuditionStatus.Invited)
+    )
+    .sort((a, b) => {
+        if(a.deadline && b.deadline) return b.deadline - a.deadline;
+        if(a.deadline && !b.deadline) return -1;
+        if(!a.deadline && b.deadline) return 1;
+        return b.auditionTime - a.auditionTime;
+    })
+    .slice(0, PREVIEW_COUNT);
+  const pastAuditions: Audition[] = auditions
+    .filter(a => 
+      !isFuture([a.deadline, a.auditionTime]) 
+    )
+    .slice(0, PREVIEW_COUNT);
   const classes = useStyles();
 
   const handleAdd = () => {

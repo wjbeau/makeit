@@ -11,7 +11,8 @@ import React from 'react';
 import { Ethnicity } from '../../../../../libs/types/src/base-enums.model';
 import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
-import ActionButtons from './ActionButtons';
+import AttachmentButtons from '../attachments/AttachmentButtons';
+import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -118,8 +119,10 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
             </Grid>
           </Grid>
         </Grid>
+        <Grid item>
+          <AttachmentPanel container={props.breakdown} />
+        </Grid>
       </Grid>
-      <ActionButtons />
     </TitledPaper>
   );
 };
