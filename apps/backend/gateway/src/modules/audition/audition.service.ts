@@ -16,8 +16,8 @@ export class AuditionService {
 
   async save(id: string, audition: Audition): Promise<Audition | undefined> {
     
-    console.log("Saving Participants:");
-    audition.participants.forEach(p => console.log(p))
+    console.log("Saving audition:");
+    console.log(audition)
     //the path variable must match the data posted
     if((id || audition._id) && id !== audition._id) {
       throw new BadRequestException();

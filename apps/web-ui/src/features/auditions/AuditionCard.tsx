@@ -24,6 +24,7 @@ import { AuditionAvatar } from './AuditionAvatar';
 import AuditionCardActions from './AuditionCardActions';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 import FileAttachmentList from '../attachments/FileAttachmentList';
+import LinkAttachmentList from '../attachments/LinkAttachmentList';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -111,19 +112,6 @@ export const AuditionCard = (props: { audition: Audition }) => {
           </>
         }
       />
-      <CardActions disableSpacing>
-        <AuditionCardActions audition={audition} />
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMore />
-        </IconButton>
-      </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container>
@@ -157,18 +145,10 @@ export const AuditionCard = (props: { audition: Audition }) => {
                 </Typography>
               </Grid>
             )}
-            {audition.participants && audition.participants.length > 0 && (
-              <Grid item xs={6}>
-                <Typography variant="body2" className={classes.bold}>
-                  Participants
-                </Typography>
-                <ParticipantAttachmentList container={audition} readOnly={true} />
-              </Grid>
-            )}
             {audition.attachments && audition.attachments.length > 0 && (
               <Grid item xs={6}>
                 <Typography variant="body2" className={classes.bold}>
-                  Attachments
+                  Files
                 </Typography>
                 <FileAttachmentList container={audition} readOnly={true} />
               </Grid>
@@ -178,16 +158,33 @@ export const AuditionCard = (props: { audition: Audition }) => {
                 <Typography variant="body2" className={classes.bold}>
                   Links
                 </Typography>
-                {audition.links.map((l) => (
-                  <Link key={l.url} href={l.url} target="_blank">
-                    {l.display}
-                  </Link>
-                ))}
+                <LinkAttachmentList container={audition} readOnly={true} />
+              </Grid>
+            )}
+            {audition.participants && audition.participants.length > 0 && (
+              <Grid item xs={6}>
+                <Typography variant="body2" className={classes.bold}>
+                  Participants
+                </Typography>
+                <ParticipantAttachmentList container={audition} readOnly={true} />
               </Grid>
             )}
           </Grid>
         </CardContent>
       </Collapse>
+      <CardActions disableSpacing>
+        <AuditionCardActions audition={audition} />
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: expanded,
+          })}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMore />
+        </IconButton>
+      </CardActions>
     </Card>
   );
 };

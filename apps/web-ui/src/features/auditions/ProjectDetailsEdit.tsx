@@ -1,10 +1,5 @@
 import { Project, ProjectType, UnionType } from '@makeit/types';
-import {
-  FormControl,
-  Grid,
-  InputLabel,
-  makeStyles
-} from '@material-ui/core';
+import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
 import { KeyboardDatePicker } from 'formik-material-ui-pickers';
@@ -20,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProjectDetailsEdit = (props: {project: Project}) => {
+const ProjectDetailsEdit = (props: { project: Project }) => {
   const classes = useStyles();
 
   return (
@@ -51,7 +46,7 @@ const ProjectDetailsEdit = (props: {project: Project}) => {
                     id: 'project-type',
                   }}
                 >
-                  {Converter.enumToMenuItems("ProjectType", ProjectType)}
+                  {Converter.enumToMenuItems('ProjectType', ProjectType)}
                 </FastField>
               </FormControl>
             </Grid>
@@ -76,7 +71,7 @@ const ProjectDetailsEdit = (props: {project: Project}) => {
                   }}
                   fullWidth={true}
                 >
-                  {Converter.enumToMenuItems("UnionType", UnionType)}
+                  {Converter.enumToMenuItems('UnionType', UnionType)}
                 </FastField>
               </FormControl>
             </Grid>
@@ -91,10 +86,8 @@ const ProjectDetailsEdit = (props: {project: Project}) => {
             fullWidth={true}
           />
         </Grid>
-        <Grid item>
-          <AttachmentPanel container={props.project} />
-        </Grid>
       </Grid>
+      <AttachmentPanel container={props.project} />
     </TitledPaper>
   );
 };

@@ -14,6 +14,7 @@ import {
   PersonAdd,
 } from '@material-ui/icons';
 import React, { useState } from 'react';
+import { FieldArrayHelperContainer } from './AttachmentPanel';
 import FileAttachmentDialog from './FileAttachmentDialog';
 import LinkAttachmentDialog from './LinkAttachmentDialog';
 import ParticipantAttachmentDialog from './ParticipantAttachmentDialog';
@@ -28,9 +29,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AttachmentButtons = (props: { children?: any, container: HasAttachments|HasParticipants }) => {
+export const AttachmentButtons = (props: { children?: any, container: HasAttachments|HasParticipants, helpers: FieldArrayHelperContainer }) => {
   const classes = useStyles();
-  const {children, container} = props;
+  const {children, container, helpers} = props;
   const [open, setOpen] = useState<boolean>(false);
   const [attachType, setAttachType] = useState<string>();
 
@@ -47,6 +48,8 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
     //TODO fix this
     console.log("Attach")
     console.log(attachments)
+    console.log(helpers.fileArrayHelper)
+    attachments?.forEach(a => helpers.fileArrayHelper?.push(a))
     setOpen(false);
   }
 
@@ -54,6 +57,7 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
     //TODO fix this
     console.log("Attach")
     console.log(links)
+    links?.forEach(a => helpers.linkArrayHelper?.push(a))
     setOpen(false);
   }
 
@@ -61,6 +65,7 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
     //TODO fix this
     console.log("Attach")
     console.log(participants)
+    participants?.forEach(a => helpers.participantArrayHelper?.push(a))
     setOpen(false);
   }
 

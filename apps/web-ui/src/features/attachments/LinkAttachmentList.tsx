@@ -1,6 +1,7 @@
 import { HasAttachments, Link } from '@makeit/types';
 import { List, makeStyles } from '@material-ui/core';
 import React from 'react';
+import { FieldArrayHelperContainer } from './AttachmentPanel';
 import LinkAttachment from './LinkAttachment';
 
 const useStyles = makeStyles((theme) => ({
@@ -11,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const LinkAttachmentList = (props: { container: HasAttachments, readOnly }) => {
+export const LinkAttachmentList = (props: { container: HasAttachments, readOnly, helpers?: FieldArrayHelperContainer }) => {
   const classes = useStyles();
   
   return (

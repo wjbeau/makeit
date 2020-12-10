@@ -8,11 +8,15 @@ import {
   ListItemText,
   makeStyles
 } from '@material-ui/core';
-import { AttachFile, Delete, Image, YouTube } from '@material-ui/icons';
+import { AttachFile, Delete, Image, YouTube, PictureAsPdf } from '@material-ui/icons';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 import { AttachmentType } from '../../../../../libs/types/src/attachment.model';
 import { SERVER_URL } from '../../app/config';
+import { useAppDispatch } from '../../app/store';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { logError } from '../logging/logging.slice';
+import { downloadFile } from '../files/files.slice';
 
 const MAX_FILE_SIZE = 5000000;
 
@@ -27,17 +31,31 @@ const useStyles = makeStyles((theme) => ({
 
 export const FileAttachment = (props: {
   attachment: Attachment,
-  readOnly?: boolean
+  readOnly?: boolean,
+  onDelete?: () => void
 }) => {
   const classes = useStyles();
-  const { attachment, readOnly } = props
+  const { attachment, readOnly, onDelete } = props
+  const dispatch = useAppDispatch();
   
   const handleDelete = () => {
-    console.log("Not yet implemented");
+    if(onDelete) {
+      onDelete();
+    }
   }
 
   const showFile = () => {
-    window.open(SERVER_URL + '/files/' + attachment.reference, '_blank')
+    dispatch(downloadFile(attachment.reference))
+      .then(unwrapResult)
+      .then(blob => {
+        //TODO I guess we might want to treat different file types differently here?
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 150);
+      })
+      .catch(error => dispatch(logError(error)))
   }
 
   let icon = <AttachFile />
@@ -45,7 +63,7 @@ export const FileAttachment = (props: {
     icon = <Image />;
   }
   else if(props.attachment.mimeType === 'application/pdf') {
-    icon = <Image />;
+    icon = <PictureAsPdf />;
   }
   if(props.attachment.mimeType?.startsWith('video/')) {
     icon = <YouTube />;
@@ -55,7 +73,7 @@ export const FileAttachment = (props: {
     <ListItem button onClick={showFile}>
       <ListItemIcon>
         {icon}
-        </ListItemIcon>
+      </ListItemIcon>
       <ListItemText 
         primary={attachment.displayName ? attachment.displayName : attachment.fileName} 
         secondary={attachment.attachmentType ? Converter.getLabelForEnum(AttachmentType, attachment.attachmentType) : null} />

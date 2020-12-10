@@ -147,10 +147,8 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item>
-          <AttachmentPanel container={props.audition} />
-        </Grid>
       </Grid>
+      <AttachmentPanel container={props.audition} />
     </TitledPaper>
   );
 };

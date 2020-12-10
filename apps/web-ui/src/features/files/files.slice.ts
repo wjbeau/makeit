@@ -7,6 +7,15 @@ const initialState = {
   uploading: false,
 };
 
+export const downloadFile = createAsyncThunk(
+  'files/download',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async (fileId: string): Promise<File> => {
+    const result = await apiClient().get(SERVER_URL + '/files/' + fileId, {responseType: 'blob'});
+    return result.data;
+  }
+);
+
 export const uploadFile = createAsyncThunk(
   'files/upload',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

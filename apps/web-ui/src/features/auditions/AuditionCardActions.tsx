@@ -1,19 +1,12 @@
 import { Audition, AuditionStatus } from '@makeit/types';
+import { IconButton, Tooltip } from '@material-ui/core';
 import {
-  IconButton,
-
-
-  Tooltip
-} from '@material-ui/core';
-import {
-  Block, CheckCircle,
+  Block,
+  Cancel,
+  CheckCircle,
   Done,
-
-
-
-
-
-  PermMedia, ThumbUp
+  PermMedia,
+  ThumbUp,
 } from '@material-ui/icons';
 import React from 'react';
 import { Converter } from '../../app/Converters';
@@ -49,24 +42,50 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
     <>
       <AuditionEditButton id={audition._id} />
       {audition.status === AuditionStatus.Accepted && (
-        <Tooltip title="Mark as Done" aria-label="mark as done">
-          <IconButton
-            aria-label="mark as done"
-            onClick={() => markAsStatus(AuditionStatus.Performed)}
+        <>
+          <Tooltip title="Mark as Done" aria-label="mark as done">
+            <IconButton
+              aria-label="mark as done"
+              onClick={() => markAsStatus(AuditionStatus.Performed)}
+            >
+              <Done />
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title="Mark as Cancelled"
+            aria-label="mark as cancelled"
           >
-            <Done />
-          </IconButton>
-        </Tooltip>
+            <IconButton
+              aria-label="mark as cancelled"
+              onClick={() => markAsStatus(AuditionStatus.Cancelled)}
+            >
+              <Cancel />
+            </IconButton>
+          </Tooltip>
+        </>
       )}
       {audition.status === AuditionStatus.Invited && (
-        <Tooltip title="Mark as Accepted" aria-label="mark as accepted">
-          <IconButton
-            aria-label="mark as accepted"
-            onClick={() => markAsStatus(AuditionStatus.Accepted)}
+        <>
+          <Tooltip title="Mark as Accepted" aria-label="mark as accepted">
+            <IconButton
+              aria-label="mark as accepted"
+              onClick={() => markAsStatus(AuditionStatus.Accepted)}
+            >
+              <ThumbUp />
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title="Mark as Cancelled"
+            aria-label="mark as cancelled"
           >
-            <ThumbUp />
-          </IconButton>
-        </Tooltip>
+            <IconButton
+              aria-label="mark as cancelled"
+              onClick={() => markAsStatus(AuditionStatus.Cancelled)}
+            >
+              <Cancel />
+            </IconButton>
+          </Tooltip>
+        </>
       )}
       {audition.status === AuditionStatus.Performed && (
         <>

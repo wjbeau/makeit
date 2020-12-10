@@ -1,6 +1,7 @@
 import { HasParticipants, Participant } from '@makeit/types';
 import { List, makeStyles } from '@material-ui/core';
 import React from 'react';
+import { FieldArrayHelperContainer } from './AttachmentPanel';
 import ParticipantAttachment from './ParticipantAttachment';
 
 const useStyles = makeStyles((theme) => ({
@@ -11,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ParticipantAttachmentList = (props: { container: HasParticipants, readOnly?: boolean }) => {
+export const ParticipantAttachmentList = (props: { container: HasParticipants, readOnly?: boolean, helpers?: FieldArrayHelperContainer }) => {
   const classes = useStyles();
   return (
     <List className={classes.root} disablePadding={true}>

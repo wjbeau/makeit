@@ -1,10 +1,5 @@
 import { Breakdown, Gender } from '@makeit/types';
-import {
-    FormControl,
-    Grid,
-    InputLabel,
-    makeStyles
-} from '@material-ui/core';
+import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
 import React from 'react';
@@ -80,7 +75,7 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
                     id: 'gender',
                   }}
                 >
-                  {Converter.enumToMenuItems("Gender", Gender)}
+                  {Converter.enumToMenuItems('Gender', Gender)}
                 </FastField>
               </FormControl>
             </Grid>
@@ -113,16 +108,14 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
                   }}
                   multiple
                 >
-                  {Converter.enumToMenuItems("Ethnicity", Ethnicity)}
+                  {Converter.enumToMenuItems('Ethnicity', Ethnicity)}
                 </FastField>
               </FormControl>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item>
-          <AttachmentPanel container={props.breakdown} />
-        </Grid>
       </Grid>
+      <AttachmentPanel container={props.breakdown} />
     </TitledPaper>
   );
 };

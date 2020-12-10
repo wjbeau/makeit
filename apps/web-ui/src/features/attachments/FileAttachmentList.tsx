@@ -4,6 +4,7 @@ import { FieldArray } from 'formik';
 import React from 'react';
 import FileAttachment from './FileAttachment';
 import { HasAttachments } from '../../../../../libs/types/src/attachment.model';
+import { FieldArrayHelperContainer } from './AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,21 +14,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const FileAttachmentList = (props: { container: HasAttachments, readOnly}) => {
+export const FileAttachmentList = (props: { container: HasAttachments, readOnly, helpers?: FieldArrayHelperContainer}) => {
   const classes = useStyles();
-  const {container, readOnly} = props;
+  const {container, readOnly, helpers} = props;
   
   return (
     <List className={classes.root} disablePadding={true}>
       {readOnly && container.attachments.map((a) => (
-        <FileAttachment key={a.reference} attachment={a} />
+        <FileAttachment key={a.reference} attachment={a} readOnly={readOnly}/>
       ))}
       {!readOnly && 
         <FieldArray
-          name="attachment"
+          name="attachments"
           render={(arrayHelpers) => {
-            return container.attachments.map((a) => (
-              <FileAttachment key={a.reference} attachment={a} />
+            helpers.fileArrayHelper = arrayHelpers;
+            return container.attachments.map((a, index) => (
+              <FileAttachment key={a.reference} attachment={a} readOnly={readOnly} onDelete={() => arrayHelpers.remove(index)} />
             ))
           }} />
       }
