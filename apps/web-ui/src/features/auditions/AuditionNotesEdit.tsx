@@ -51,44 +51,50 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
               {formValues &&
                 formValues.notes &&
                 formValues.notes.map((note, index) => (
-                  <Grid item key={index}>
-                    {index > 0 && <Divider />}
-                    <Typography
-                      variant="body2"
-                      component="p"
-                      className={classes.title}
-                    >
-                      Note {index + 1}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      variant="body2"
-                      component="p"
-                      className={classes.secondaryTitle}
-                    >
-                      (on <Moment format="lll">{note.createdOn}</Moment> by{' '}
-                      {note.createdBy.firstName + ' ' + note.createdBy.lastName}
-                      )
-                    </Typography>
-                    <FastField
-                      component={TextField}
-                      name={`notes[${index}].description`}
-                      label="Description"
-                      multiline
-                      fullWidth={true}
-                    />
-                    <AttachmentPanel container={note}>
-                      <Button
-                        startIcon={<Delete />}
-                        color="primary"
-                        variant="text"
-                        className={classes.button}
-                        onClick={() => arrayHelpers.remove(index)}
+                  <>
+                    <Grid item key={index}>
+                      {index > 0 && <Divider />}
+                      <Typography
+                        variant="body2"
+                        component="p"
+                        className={classes.title}
                       >
-                        Delete Note
-                      </Button>
-                    </AttachmentPanel>
-                  </Grid>
+                        Note {index + 1}
+                      </Typography>
+                      <Typography
+                        color="textSecondary"
+                        variant="body2"
+                        component="p"
+                        className={classes.secondaryTitle}
+                      >
+                        (on <Moment format="lll">{note.createdOn}</Moment> by{' '}
+                        {note.createdBy.firstName +
+                          ' ' +
+                          note.createdBy.lastName}
+                        )
+                      </Typography>
+                      <FastField
+                        component={TextField}
+                        name={`notes[${index}].description`}
+                        label="Description"
+                        multiline
+                        fullWidth={true}
+                      />
+                    </Grid>
+                    <Grid item key={index}>
+                      <AttachmentPanel container={note}>
+                        <Button
+                          startIcon={<Delete />}
+                          color="primary"
+                          variant="text"
+                          className={classes.button}
+                          onClick={() => arrayHelpers.remove(index)}
+                        >
+                          Delete Note
+                        </Button>
+                      </AttachmentPanel>
+                    </Grid>
+                  </>
                 ))}
 
               <Grid item className={classes.addNoteContainer}>

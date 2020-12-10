@@ -1,4 +1,4 @@
-import { Attachment, HasAttachments, HasParticipants, Link, Participant } from '@makeit/types';
+import { Attachment, hasAttachments, HasAttachments, hasParticipants, HasParticipants, Link, Participant } from '@makeit/types';
 import {
   Button,
   Dialog,
@@ -27,14 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function hasParticipants(c: HasAttachments|HasParticipants) {
-    return c && 'participants' in c;
-}
-
-function hasAttachments(c: HasAttachments|HasParticipants) {
-    return c && 'attachments' in c;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AttachmentButtons = (props: { children?: any, container: HasAttachments|HasParticipants }) => {
   const classes = useStyles();
@@ -52,23 +44,23 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
   };
 
   const saveAttachments = (attachments: Attachment[]) => {
-    const attachContainer = (container as HasAttachments);
-    console.log("Attachment:")
-    console.log(attachContainer)
+    //TODO fix this
+    console.log("Attach")
     console.log(attachments)
-    attachments.forEach(a => attachContainer.attachments.push(a));
     setOpen(false);
   }
 
   const saveLinks = (links: Link[]) => {
-    const attachContainer = (container as HasAttachments);
-    links.forEach(a => attachContainer.links.push(a));
+    //TODO fix this
+    console.log("Attach")
+    console.log(links)
     setOpen(false);
   }
 
   const saveParticipants = (participants: Participant[]) => {
-    const attachContainer = (container as HasParticipants);
-    participants.forEach(a => attachContainer.participants.push(a));
+    //TODO fix this
+    console.log("Attach")
+    console.log(participants)
     setOpen(false);
   }
 

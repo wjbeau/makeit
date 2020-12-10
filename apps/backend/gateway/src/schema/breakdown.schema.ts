@@ -1,9 +1,8 @@
-import { Attachment, Breakdown, Link, Participant, Project } from '@makeit/types';
+import { Attachment, Breakdown, Link, Project } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AttachmentSchema } from './attachment.schema';
 import { LinkSchema } from './link.schema';
-import { ParticipantSchema } from './participant.schema';
 import { ProjectModel } from './project.schema';
 
 export type BreakdownDocument = BreakdownModel & mongoose.Document;
@@ -35,8 +34,6 @@ export class BreakdownModel implements Breakdown {
     attachments: Attachment[]; 
     @Prop({ type: [LinkSchema] })
     links: Link[]; 
-    @Prop({ type: [ParticipantSchema] })
-    participants: Participant[];
 }
 
 

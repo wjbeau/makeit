@@ -23,6 +23,7 @@ import { saveAudition } from './audition.slice';
 import { AuditionAvatar } from './AuditionAvatar';
 import AuditionCardActions from './AuditionCardActions';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
+import FileAttachmentList from '../attachments/FileAttachmentList';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -161,7 +162,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>
-                <ParticipantAttachmentList participants={audition.participants} readOnly={true} />
+                <ParticipantAttachmentList container={audition} readOnly={true} />
               </Grid>
             )}
             {audition.attachments && audition.attachments.length > 0 && (
@@ -169,11 +170,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
                 <Typography variant="body2" className={classes.bold}>
                   Attachments
                 </Typography>
-                {audition.attachments.map((a) => (
-                  <Link key={a.reference} href={a.reference} target="_blank">
-                    {a.displayName}
-                  </Link>
-                ))}
+                <FileAttachmentList container={audition} readOnly={true} />
               </Grid>
             )}
             {audition.links && audition.links.length > 0 && (

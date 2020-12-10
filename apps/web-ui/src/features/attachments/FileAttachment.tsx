@@ -10,6 +10,9 @@ import {
 } from '@material-ui/core';
 import { AttachFile, Delete, Image, YouTube } from '@material-ui/icons';
 import React from 'react';
+import { Converter } from '../../app/Converters';
+import { AttachmentType } from '../../../../../libs/types/src/attachment.model';
+import { SERVER_URL } from '../../app/config';
 
 const MAX_FILE_SIZE = 5000000;
 
@@ -33,6 +36,10 @@ export const FileAttachment = (props: {
     console.log("Not yet implemented");
   }
 
+  const showFile = () => {
+    window.open(SERVER_URL + '/files/' + attachment.reference, '_blank')
+  }
+
   let icon = <AttachFile />
   if(props.attachment.mimeType?.startsWith('image/')) {
     icon = <Image />;
@@ -45,11 +52,13 @@ export const FileAttachment = (props: {
   }
 
   return (
-    <ListItem button onClick={() => console.log("view file: " + attachment.displayName)}>
+    <ListItem button onClick={showFile}>
       <ListItemIcon>
         {icon}
         </ListItemIcon>
-      <ListItemText primary={attachment.displayName} />
+      <ListItemText 
+        primary={attachment.displayName ? attachment.displayName : attachment.fileName} 
+        secondary={attachment.attachmentType ? Converter.getLabelForEnum(AttachmentType, attachment.attachmentType) : null} />
       {!readOnly && <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="delete" onClick={handleDelete}> 
           <Delete />

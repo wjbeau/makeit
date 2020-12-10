@@ -32,3 +32,8 @@ export interface Link {
     display: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const hasAttachments = (c: any) => {
+    return c && 'attachments' in c;
+}
+

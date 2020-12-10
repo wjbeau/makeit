@@ -39,7 +39,6 @@ export class ModelFactory {
             ageMax: undefined,
             ethnicities: [Ethnicity.Any],
             project: this.createEmptyProject(),
-            participants: [],
             links: [],
             attachments: []
         }

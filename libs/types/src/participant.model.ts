@@ -18,6 +18,11 @@ export const toParticipantReference = (info: PersonInfo): ParticipantReference =
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const hasParticipants = (c: any) => {
+    return c && 'participants' in c;
+}
+
 export interface HasParticipants {
   participants: Participant[];
 }

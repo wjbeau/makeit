@@ -1,9 +1,8 @@
 import { HasAttachments } from './attachment.model';
 import { BaseEntity } from './base.model';
 import { Project } from './project.model';
-import { HasParticipants } from './participant.model';
 
-export interface Breakdown extends BaseEntity, HasAttachments, HasParticipants {
+export interface Breakdown extends BaseEntity, HasAttachments {
     roleName: string;
     roleDescription: string;
     roleType: string;

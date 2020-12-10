@@ -7,6 +7,7 @@ import { AuditionModule } from './audition/audition.module';
 import { BreakdownModule } from './breakdown/breakdown.module';
 import { ProjectModule } from './project/project.module';
 import { CommonServicesModule } from './common-services/common-services.module';
+import { FileModule } from './files/file.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CommonServicesModule } from './common-services/common-services.module';
     BreakdownModule,
     AuditionModule,
     ProjectModule,
+    FileModule,
     MongooseModule.forRoot('mongodb://localhost/makeit', {'useFindAndModify': false}) //TODO move this into configuration...
   ],
   controllers: [],

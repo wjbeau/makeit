@@ -1,4 +1,4 @@
-import { Link } from '@makeit/types';
+import { HasAttachments, Link } from '@makeit/types';
 import { List, makeStyles } from '@material-ui/core';
 import React from 'react';
 import LinkAttachment from './LinkAttachment';
@@ -11,12 +11,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const LinkAttachmentList = (props: { links: Link[] }) => {
+export const LinkAttachmentList = (props: { container: HasAttachments, readOnly }) => {
   const classes = useStyles();
   
   return (
     <List className={classes.root} disablePadding={true}>
-      {props.links.map((a) => (
+      {props.container.links.map((a) => (
         <LinkAttachment key={a.url} link={a} />
       ))}
     </List>

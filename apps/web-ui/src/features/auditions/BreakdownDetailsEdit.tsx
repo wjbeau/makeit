@@ -72,7 +72,7 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
           <Grid container direction="row" spacing={2}>
             <Grid item xs={3}>
               <FormControl fullWidth={true}>
-                <InputLabel htmlFor="ethnicities">Gender</InputLabel>
+                <InputLabel htmlFor="gender">Gender</InputLabel>
                 <FastField
                   component={Select}
                   name="breakdown.gender"

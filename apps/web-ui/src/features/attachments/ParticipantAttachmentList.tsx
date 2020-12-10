@@ -1,4 +1,4 @@
-import { Participant } from '@makeit/types';
+import { HasParticipants, Participant } from '@makeit/types';
 import { List, makeStyles } from '@material-ui/core';
 import React from 'react';
 import ParticipantAttachment from './ParticipantAttachment';
@@ -11,11 +11,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ParticipantAttachmentList = (props: { participants: Participant[], readOnly?: boolean }) => {
+export const ParticipantAttachmentList = (props: { container: HasParticipants, readOnly?: boolean }) => {
   const classes = useStyles();
   return (
     <List className={classes.root} disablePadding={true}>
-      {props.participants.map((a) => (
+      {props.container.participants.map((a) => (
         <ParticipantAttachment key={a.info.ref} participant={a} readOnly={props.readOnly} />
       ))}
     </List>
