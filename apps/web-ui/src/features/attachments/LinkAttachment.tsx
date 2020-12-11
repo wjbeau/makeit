@@ -20,25 +20,33 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginRight: theme.spacing(1),
   },
+  ellipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+  }
 }));
 
 export const LinkAttachment = (props: {
   link: LinkModel,
-  readOnly?: boolean
+  readOnly?: boolean,
+  onDelete?: () => void
 }) => {
   const classes = useStyles();
-  const { link, readOnly } = props
+  const { link, readOnly, onDelete } = props
   
   const handleDelete = () => {
-    console.log("Not yet implemented");
+    if(onDelete) {
+      onDelete();
+    }
   }
 
   return (
-    <ListItem button onClick={() => console.log("view file: " + link.url)}>
+    <ListItem button onClick={() => window.open(link.url, '_blank')}>
       <ListItemIcon>
         <Link />
       </ListItemIcon>
-      <ListItemText primary={link.display} secondary={link.type} />
+      <ListItemText primary={link.display} secondary={link.url}
+        classes={{ primary: classes.ellipsis, secondary: classes.ellipsis }} />
       {!readOnly && <ListItemSecondaryAction>
         <IconButton edge="end" aria-label="delete" onClick={handleDelete}> 
           <Delete />

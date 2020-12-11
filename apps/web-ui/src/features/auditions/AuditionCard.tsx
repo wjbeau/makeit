@@ -114,7 +114,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Grid container>
+          <Grid container spacing={2}>
             {audition.instructions && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
@@ -126,7 +126,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
               </Grid>
             )}
             {audition.address && audition.address.line1 && (
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Address
                 </Typography>
@@ -146,7 +146,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
               </Grid>
             )}
             {audition.attachments && audition.attachments.length > 0 && (
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Files
                 </Typography>
@@ -154,7 +154,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
               </Grid>
             )}
             {audition.links && audition.links.length > 0 && (
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Links
                 </Typography>
@@ -162,7 +162,7 @@ export const AuditionCard = (props: { audition: Audition }) => {
               </Grid>
             )}
             {audition.participants && audition.participants.length > 0 && (
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>

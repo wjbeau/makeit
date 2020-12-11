@@ -1,24 +1,24 @@
+import { Audition } from '@makeit/types';
+import { Button, Grid, makeStyles } from '@material-ui/core';
+import { AddBoxOutlined } from '@material-ui/icons';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { Converter } from '../../app/Converters';
 import { useAppDispatch } from '../../app/store';
 import { selectAuthed } from '../auth/auth.slice';
+import IfNotLoading from '../layout/IfNotLoading';
+import TitledSection from '../layout/TitledSection';
 import { logError } from '../logging/logging.slice';
 import {
   fetchAuditions,
-  selectAuditionsLoading,
-  selectAuditions,
+
+  selectAuditions, selectAuditionsLoading
 } from './audition.slice';
 import { AuditionsList } from './AuditionsList';
-import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import IfNotLoading from '../layout/IfNotLoading';
-import TitledSection from '../layout/TitledSection';
-import AuditionCard from './AuditionCard';
-import { AddBoxOutlined } from '@material-ui/icons';
-import { Audition, AuditionStatus } from '@makeit/types';
-import { now } from 'lodash';
-import { Converter } from '../../app/Converters';
+import RecentAuditions from './RecentAuditions';
+import UpcomingAuditions from './UpcomingAuditions';
 
 const PREVIEW_COUNT = 3;
 
@@ -40,34 +40,18 @@ export const AuditionsPage = () => {
   const auditions = auditionsRaw.map(a => Converter.convertAllDates(a))
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const futureAuditions: Audition[] = auditions
-    .filter(a => 
-        isFuture([a.deadline, a.auditionTime]) 
-        && (a.status === AuditionStatus.Accepted || a.status === AuditionStatus.Invited)
-    )
-    .sort((a, b) => {
-        if(a.deadline && b.deadline) return b.deadline - a.deadline;
-        if(a.deadline && !b.deadline) return -1;
-        if(!a.deadline && b.deadline) return 1;
-        return b.auditionTime - a.auditionTime;
-    })
-    .slice(0, PREVIEW_COUNT);
-  const pastAuditions: Audition[] = auditions
-    .filter(a => 
-      !isFuture([a.deadline, a.auditionTime]) 
-    )
-    .slice(0, PREVIEW_COUNT);
-  const classes = useStyles();
 
   const handleAdd = () => {
     history.push('auditions/new/edit');
   };
 
   useEffect(() => {
-    dispatch(fetchAuditions(user?.userId ?? 'notnull'))
-      .then(unwrapResult)
-      .catch((error) => dispatch(logError(error)));
-  }, [dispatch, user?.userId]);
+    if(!auditions.length && !loading) {
+      dispatch(fetchAuditions(user?.userId ?? 'notnull'))
+        .then(unwrapResult)
+        .catch((error) => dispatch(logError(error)));
+    }
+  }, [dispatch, user?.userId, auditions, loading]);
 
   return (
     <Grid container direction="column" spacing={5}>
@@ -83,46 +67,10 @@ export const AuditionsPage = () => {
       </Grid>
       <Grid container direction="row" spacing={3}>
         <Grid item xs={6}>
-          <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
-            <IfNotLoading loading={loading}>
-              <Grid container direction="column" spacing={2}>
-                {futureAuditions.length > 0 &&
-                  futureAuditions.map((m) => (
-                    <Grid item key={m._id}>
-                      <AuditionCard audition={m} />
-                    </Grid>
-                  ))}
-                {futureAuditions.length === 0 && (
-                  <Grid item className={classes.noContent}>
-                    <Typography variant="body2">
-                      No upcoming meetings to show
-                    </Typography>
-                  </Grid>
-                )}
-              </Grid>
-            </IfNotLoading>
-          </TitledSection>
+          <UpcomingAuditions preview={3} />
         </Grid>
         <Grid item xs={6}>
-          <TitledSection variant="h6" component="h2" title="Recent Auditions">
-            <IfNotLoading loading={loading}>
-              <Grid container direction="column" spacing={2}>
-                {pastAuditions.length > 0 &&
-                  pastAuditions.map((m) => (
-                    <Grid item key={m._id}>
-                      <AuditionCard audition={m} />
-                    </Grid>
-                  ))}
-                {pastAuditions.length === 0 && (
-                  <Grid item className={classes.noContent}>
-                    <Typography variant="body2">
-                      No recent meetings to show
-                    </Typography>
-                  </Grid>
-                )}
-              </Grid>
-            </IfNotLoading>
-          </TitledSection>
+          <RecentAuditions preview={3} />
         </Grid>
         <Grid item xs={12}>
           <TitledSection variant="h6" component="h2" title="Audition Log">

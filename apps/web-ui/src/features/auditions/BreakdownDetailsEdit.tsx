@@ -115,7 +115,7 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
           </Grid>
         </Grid>
       </Grid>
-      <AttachmentPanel container={props.breakdown} />
+      <AttachmentPanel container={props.breakdown} rootPath="breakdown" />
     </TitledPaper>
   );
 };

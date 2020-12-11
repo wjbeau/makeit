@@ -57,7 +57,7 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
     //TODO fix this
     console.log("Attach")
     console.log(links)
-    links?.forEach(a => helpers.linkArrayHelper?.push(a))
+    links?.forEach(l => helpers.linkArrayHelper?.push(l))
     setOpen(false);
   }
 

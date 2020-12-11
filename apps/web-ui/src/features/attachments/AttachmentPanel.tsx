@@ -32,9 +32,10 @@ export class FieldArrayHelperContainer {
 }
 
 export const AttachmentPanel = (props: {
+  container: HasAttachments | HasParticipants;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children?: any;
-  container: HasAttachments | HasParticipants;
+  rootPath?: string
 }) => {
   const classes = useStyles();
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
@@ -57,6 +58,7 @@ export const AttachmentPanel = (props: {
           <Grid item className={showFiles} xs={4}>
             <TitledSection title="Files">
               <FileAttachmentList
+                rootPath={props.rootPath}
                 container={container as HasAttachments}
                 readOnly={false}
                 helpers={helpers}
@@ -68,6 +70,7 @@ export const AttachmentPanel = (props: {
           <Grid item className={showLinks} xs={4}>
             <TitledSection title="Links">
               <LinkAttachmentList
+                rootPath={props.rootPath}
                 container={container as HasAttachments}
                 readOnly={false}
                 helpers={helpers}
@@ -77,13 +80,14 @@ export const AttachmentPanel = (props: {
         )}
         {hasParticipants(container) && (
           <Grid item className={showParticipants} xs={4}>
-          <TitledSection title="Participants">
-            <ParticipantAttachmentList
-              container={container as HasParticipants}
-              readOnly={false}
-              helpers={helpers}
-            />
-          </TitledSection>
+            <TitledSection title="Participants">
+              <ParticipantAttachmentList
+                rootPath={props.rootPath}
+                container={container as HasParticipants}
+                readOnly={false}
+                helpers={helpers}
+              />
+            </TitledSection>
           </Grid>
         )}
         <Grid item xs={12}>

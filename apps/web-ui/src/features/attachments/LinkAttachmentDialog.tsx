@@ -6,7 +6,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  makeStyles
+  Grid,
+  makeStyles,
+  TextField,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 
@@ -26,31 +28,62 @@ export const LinkAttachmentDialog = (props: {
 }) => {
   const classes = useStyles();
   const { open, onSave, onClose } = props;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [files, setFiles] = useState<any[]>([]);
+  const [description, setDescription] = useState<string>();
+  const [url, setUrl] = useState<string>();
+
+  const handleDisplayChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handleUrlChange = (e) => {
+    setUrl(e.target.value);
+  };
+
+  const handleSave = () => {
+    const link: Link = {
+      display: description,
+      url: url
+    }
+    props.onSave([link]);
+  };
+
+  const hasUrl = () => {
+    return url && url.length > 0
+  }
 
   return (
-    <Dialog
-        fullWidth={true}
-        maxWidth="sm"
-        open={open}
-        onClose={onClose}
-      >
-        <DialogTitle>Add Link</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            TODO
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} color="primary">
-            Add
-          </Button>
-          <Button onClick={onClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog fullWidth={true} maxWidth="sm" open={open} onClose={onClose}>
+      <DialogTitle>Add Link</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Enter the link details.</DialogContentText>
+        <Grid container spacing={2} direction="column">
+          <Grid>
+            <TextField
+              name="displayName"
+              label="Description"
+              fullWidth={true}
+              onChange={handleDisplayChange}
+            />
+          </Grid>
+          <Grid>
+            <TextField
+              name="url"
+              label="URL"
+              fullWidth={true}
+              onChange={handleUrlChange}
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleSave} color="primary" disabled={!hasUrl()} >
+          Add
+        </Button>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
   Grid,
   InputLabel,
   makeStyles,
@@ -78,21 +79,35 @@ export const FileAttachmentDialog = (props: {
         </DialogContentText>
         <Grid container spacing={2}>
           <Grid item xs={8}>
-            <TextField name="displayName" label="Description" fullWidth={true} onChange={handleDisplayChange}/>
+            <TextField
+              name="displayName"
+              label="Description"
+              fullWidth={true}
+              onChange={handleDisplayChange}
+            />
           </Grid>
           <Grid item xs={4}>
-            <InputLabel htmlFor="attachmentType">Type</InputLabel>
-            <Select name="attachmentType" fullWidth={true} id="attachmentType" onChange={handleTypeChange}>
-              {Converter.enumToMenuItems('AttachmentType', AttachmentType)}
-            </Select>
+            <FormControl fullWidth={true}>
+              <InputLabel id="attachment-type-label">Type</InputLabel>
+              <Select
+                name="attachmentType"
+                fullWidth={true}
+                id="attachmentType"
+                labelId="attachment-type-label"
+                onChange={handleTypeChange}
+              >
+                {Converter.enumToMenuItems('AttachmentType', AttachmentType)}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <DropzoneArea 
+            <DropzoneArea
               filesLimit={1}
-              showAlerts ={false}
+              showAlerts={false}
               showPreviews={false}
               onChange={handleFilesChange}
-              onDelete={() => setFile(null)} />
+              onDelete={() => setFile(null)}
+            />
           </Grid>
         </Grid>
       </DialogContent>

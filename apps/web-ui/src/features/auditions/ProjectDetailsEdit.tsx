@@ -87,7 +87,7 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
           />
         </Grid>
       </Grid>
-      <AttachmentPanel container={props.project} />
+      <AttachmentPanel container={props.project} rootPath="breakdown.project" />
     </TitledPaper>
   );
 };

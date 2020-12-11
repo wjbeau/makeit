@@ -7,8 +7,6 @@ export type LinkDocument = LinkModel & mongoose.Document;
 @Schema()
 export class LinkModel implements Link {
     @Prop({required: true})
-    type: string;
-    @Prop({required: true})
     url: string;
     @Prop()
     display: string

@@ -4,7 +4,7 @@ import {
   ModelFactory,
   ParticipantReferenceType,
   ParticipantType,
-  toParticipantReference
+  toParticipantReference,
 } from '@makeit/types';
 import {
   Breadcrumbs,
@@ -45,6 +45,16 @@ const useStyles = makeStyles((theme) => ({
   addNoteContainer: {
     marginTop: theme.spacing(3),
   },
+  unsaved: {
+    color: theme.palette.grey[400],
+    marginLeft: theme.spacing(1),
+  },
+  floatButtons: {
+    float: 'right',
+  },
+  paddingLeft: {
+    marginLeft: theme.spacing(1)
+  }
 }));
 
 const AuditionEditPage = () => {
@@ -70,7 +80,7 @@ const AuditionEditPage = () => {
     ) {
       values.participants.push({
         role: ParticipantType.Auditioning,
-        info: toParticipantReference(currentUser)
+        info: toParticipantReference(currentUser),
       });
     }
     dispatch(saveAudition(values))
@@ -98,8 +108,8 @@ const AuditionEditPage = () => {
       roleName: yup.string().required('Required'),
       project: yup.object({
         name: yup.string().required('Required'),
-      })
-    })
+      }),
+    }),
   });
 
   useEffect(() => {
@@ -113,9 +123,13 @@ const AuditionEditPage = () => {
       {loading && <Loading />}
       {!loading && (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Formik initialValues={formValues} onSubmit={handleSave} 
-              enableReinitialize={true} validationSchema={validationSchema}>
-            {({ values, submitForm, isSubmitting }) => (
+          <Formik
+            initialValues={formValues}
+            onSubmit={handleSave}
+            enableReinitialize={true}
+            validationSchema={validationSchema}
+          >
+            {({ dirty, values, submitForm, isSubmitting }) => (
               <Form>
                 <Grid container direction="column" spacing={3}>
                   <Grid item>
@@ -131,12 +145,44 @@ const AuditionEditPage = () => {
                     </Breadcrumbs>
                   </Grid>
                   <Grid item>
-                    <Typography variant="h4" component="h1">
+                    <Typography variant="h4" component="h1" display="inline">
                       {title}
                     </Typography>
+                    {dirty && (
+                      <Typography
+                        variant="h5"
+                        component="p"
+                        className={classes.unsaved}
+                        display="inline"
+                      >
+                        (Unsaved)
+                      </Typography>
+                    )}
+                    {dirty && (
+                      <div className={classes.floatButtons}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<SaveAltOutlined />}
+                          disabled={isSubmitting}
+                          onClick={submitForm}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="default"
+                          onClick={handleCancel}
+                          startIcon={<CancelOutlined />}
+                          className={classes.paddingLeft}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
                   </Grid>
                   <Grid item>
-                    <AuditionDetailsEdit audition={values}/>
+                    <AuditionDetailsEdit audition={values} />
                   </Grid>
                   <Grid item>
                     <Grid container direction="row" spacing={3}>
@@ -144,7 +190,9 @@ const AuditionEditPage = () => {
                         <BreakdownDetailsEdit breakdown={values.breakdown} />
                       </Grid>
                       <Grid item xs={6}>
-                        <ProjectDetailsEdit project={values.breakdown.project}/>
+                        <ProjectDetailsEdit
+                          project={values.breakdown.project}
+                        />
                       </Grid>
                     </Grid>
                   </Grid>

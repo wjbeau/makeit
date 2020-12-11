@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginRight: theme.spacing(1),
   },
+  ellipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+  }
 }));
 
 export const FileAttachment = (props: {
@@ -75,6 +79,7 @@ export const FileAttachment = (props: {
         {icon}
       </ListItemIcon>
       <ListItemText 
+        classes={{ primary: classes.ellipsis, secondary: classes.ellipsis }} 
         primary={attachment.displayName ? attachment.displayName : attachment.fileName} 
         secondary={attachment.attachmentType ? Converter.getLabelForEnum(AttachmentType, attachment.attachmentType) : null} />
       {!readOnly && <ListItemSecondaryAction>

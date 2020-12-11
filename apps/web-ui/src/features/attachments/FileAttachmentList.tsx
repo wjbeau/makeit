@@ -14,9 +14,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const FileAttachmentList = (props: { container: HasAttachments, readOnly, helpers?: FieldArrayHelperContainer}) => {
+export const FileAttachmentList = (props: { container: HasAttachments, readOnly, helpers?: FieldArrayHelperContainer, rootPath?: string}) => {
   const classes = useStyles();
-  const {container, readOnly, helpers} = props;
+  const {container, readOnly, helpers, rootPath} = props;
+
+  const path = rootPath && rootPath.length ? rootPath + ".attachments" : "attachments"
   
   return (
     <List className={classes.root} disablePadding={true}>
@@ -25,7 +27,7 @@ export const FileAttachmentList = (props: { container: HasAttachments, readOnly,
       ))}
       {!readOnly && 
         <FieldArray
-          name="attachments"
+          name={path}
           render={(arrayHelpers) => {
             helpers.fileArrayHelper = arrayHelpers;
             return container.attachments.map((a, index) => (

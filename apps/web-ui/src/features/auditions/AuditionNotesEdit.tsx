@@ -82,7 +82,7 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
                       />
                     </Grid>
                     <Grid item key={index}>
-                      <AttachmentPanel container={note}>
+                      <AttachmentPanel container={note} rootPath={`notes[${index}]`} >
                         <Button
                           startIcon={<Delete />}
                           color="primary"

@@ -1,5 +1,15 @@
 import { Participant, ParticipantType, PersonInfo } from '@makeit/types';
-import { Avatar, Chip, IconButton, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import {
+  Avatar,
+  Chip,
+  IconButton,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import * as _ from 'lodash';
 import React from 'react';
@@ -16,12 +26,16 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     fontSize: '0.85rem',
-    lineHeight: '0.9'
+    lineHeight: '0.9',
   },
   role: {
     fontSize: '0.65rem',
-    lineHeight: '1.1'
-  }
+    lineHeight: '1.1',
+  },
+  ellipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  },
 }));
 
 const getInitials = (person: PersonInfo) => {
@@ -32,18 +46,17 @@ const getInitials = (person: PersonInfo) => {
 export const ParticipantAttachment = (props: {
   participant: Participant;
   readOnly?: boolean;
+  onDelete?: () => void;
 }) => {
   const classes = useStyles();
   const user = useSelector(selectAuthed);
-  const { participant, readOnly } = props;
+  const { participant, readOnly, onDelete } = props;
 
-  const handleDelete =
-    !readOnly && user._id === participant.info.ref
-      ? () => {
-          console.log('Not yet implemented');
-        }
-      : undefined;
-  const deleteIcon = !readOnly ? <Delete /> : undefined;
+  const handleDelete = () => {
+    if(onDelete) {
+      onDelete();
+    }
+  }
   const avatar = participant.info.avatar ? (
     <Avatar src={participant.info.avatar} className={classes.small}></Avatar>
   ) : (
@@ -51,16 +64,23 @@ export const ParticipantAttachment = (props: {
   );
 
   return (
-    <ListItem button onClick={() => console.log("clicked: " + participant.info.ref)}>
-      <ListItemAvatar>
-        {avatar}
-      </ListItemAvatar>
-      <ListItemText primary={participant.info.firstName + ' ' + participant.info.lastName} secondary={Converter.getLabelForEnum(ParticipantType, participant.role)} />
-      {!readOnly && <ListItemSecondaryAction>
-        <IconButton edge="end" aria-label="delete">
-          <Delete />
-        </IconButton>
-      </ListItemSecondaryAction>}
+    <ListItem
+      button
+      onClick={() => console.log('clicked: ' + participant.info.ref)}
+    >
+      <ListItemAvatar>{avatar}</ListItemAvatar>
+      <ListItemText
+        primary={participant.info.firstName + ' ' + participant.info.lastName}
+        secondary={Converter.getLabelForEnum(ParticipantType, participant.role)}
+        classes={{ primary: classes.ellipsis, secondary: classes.ellipsis }}
+      />
+      {!readOnly && (
+        <ListItemSecondaryAction>
+          <IconButton edge="end" aria-label="delete" onClick={handleDelete}>
+            <Delete />
+          </IconButton>
+        </ListItemSecondaryAction>
+      )}
     </ListItem>
   );
 };

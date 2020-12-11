@@ -1,5 +1,6 @@
 import { HasParticipants, Participant } from '@makeit/types';
 import { List, makeStyles } from '@material-ui/core';
+import { FieldArray } from 'formik';
 import React from 'react';
 import { FieldArrayHelperContainer } from './AttachmentPanel';
 import ParticipantAttachment from './ParticipantAttachment';
@@ -12,13 +13,46 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ParticipantAttachmentList = (props: { container: HasParticipants, readOnly?: boolean, helpers?: FieldArrayHelperContainer }) => {
+export const ParticipantAttachmentList = (props: {
+  container: HasParticipants;
+  readOnly?: boolean;
+  helpers?: FieldArrayHelperContainer;
+  rootPath?: string;
+}) => {
   const classes = useStyles();
+
+  const { readOnly, rootPath, helpers, container } = props;
+
+  const path =
+    rootPath && rootPath.length
+      ? rootPath + '.participants'
+      : 'participants';
+      
   return (
     <List className={classes.root} disablePadding={true}>
-      {props.container.participants.map((a) => (
-        <ParticipantAttachment key={a.info.ref} participant={a} readOnly={props.readOnly} />
+      {readOnly && container.participants.map((a) => (
+        <ParticipantAttachment
+          key={a.info.ref}
+          participant={a}
+          readOnly={readOnly}
+        />
       ))}
+      {!readOnly && (
+        <FieldArray
+          name={path}
+          render={(arrayHelpers) => {
+            helpers.participantArrayHelper = arrayHelpers;
+            return container.participants.map((a, index) => (
+              <ParticipantAttachment
+                key={a.info.ref}
+                participant={a}
+                readOnly={readOnly}
+                onDelete={() => arrayHelpers.remove(index)}
+              />
+            ));
+          }}
+        />
+      )}
     </List>
   );
 };
