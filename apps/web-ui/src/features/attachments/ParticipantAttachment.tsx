@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.caption.fontSize,
     marginLeft: '-1px',
   },
+  ellipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  },
   name: {
     fontSize: '0.85rem',
     lineHeight: '0.9',
@@ -31,10 +35,6 @@ const useStyles = makeStyles((theme) => ({
   role: {
     fontSize: '0.65rem',
     lineHeight: '1.1',
-  },
-  ellipsis: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
   },
 }));
 

@@ -5,6 +5,7 @@ import loggingReducer from '../features/logging/logging.slice';
 import auditionsReducer from '../features/auditions/audition.slice';
 import breakdownsReducer from '../features/breakdowns/breakdowns.slice';
 import filesReducer from '../features/files/files.slice';
+import contactsReducer from '../features/contacts/contact.slice';
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +13,8 @@ export const store = configureStore({
     logging: loggingReducer,
     auditions: auditionsReducer,
     breakdowns: breakdownsReducer,
-    files: filesReducer
+    files: filesReducer,
+    contacts: contactsReducer
   },
 });
 

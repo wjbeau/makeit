@@ -7,7 +7,8 @@ import IfNotLoading from '../layout/IfNotLoading';
 import TitledSection from '../layout/TitledSection';
 import {
   fetchAuditions,
-  selectAuditions, selectAuditionsLoading
+  selectAuditions,
+  selectAuditionsLoading,
 } from './audition.slice';
 import AuditionCard from './AuditionCard';
 import { useAppDispatch } from '../../app/store';
@@ -23,30 +24,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const isFuture = (dates: Date[]) => {
-  const result = dates.find(d => d && (new Date().getTime() - d.getTime()) <= 0)
+  const result = dates.find(
+    (d) => d && new Date().getTime() - d.getTime() <= 0
+  );
   return result;
-}
+};
 
-export const RecentAuditions = (props: { preview: number}) => {
+export const RecentAuditions = (props: { preview: number }) => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);
   const auditionsRaw = useSelector(selectAuditions);
-  const auditions = auditionsRaw.map(a => Converter.convertAllDates(a))
+  const auditions = auditionsRaw.map((a) => Converter.convertAllDates(a));
   const pastAuditions: Audition[] = auditions
-    .filter(a => 
-      !isFuture([a.deadline, a.auditionTime]) 
-    )
+    .filter((a) => !isFuture([a.deadline, a.auditionTime]))
     .slice(0, props.preview);
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if(!auditions.length && !loading) {
+    if (!auditions.length && !loading) {
       dispatch(fetchAuditions(user?.userId ?? 'notnull'))
         .then(unwrapResult)
         .catch((error) => dispatch(logError(error)));
     }
-  }, [dispatch, user?.userId, auditions, loading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <TitledSection variant="h6" component="h2" title="Recent Auditions">
@@ -60,7 +62,7 @@ export const RecentAuditions = (props: { preview: number}) => {
             ))}
           {pastAuditions.length === 0 && (
             <Grid item className={classes.noContent}>
-              <NothingToShow message='No recent auditions...' />
+              <NothingToShow message="No recent auditions..." />
             </Grid>
           )}
         </Grid>

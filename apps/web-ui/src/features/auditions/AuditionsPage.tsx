@@ -13,8 +13,8 @@ import TitledSection from '../layout/TitledSection';
 import { logError } from '../logging/logging.slice';
 import {
   fetchAuditions,
-
-  selectAuditions, selectAuditionsLoading
+  selectAuditions,
+  selectAuditionsLoading,
 } from './audition.slice';
 import { AuditionsList } from './AuditionsList';
 import RecentAuditions from './RecentAuditions';
@@ -29,15 +29,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const isFuture = (dates: Date[]) => {
-  const result = dates.find(d => d && (new Date().getTime() - d.getTime()) <= 0)
+  const result = dates.find(
+    (d) => d && new Date().getTime() - d.getTime() <= 0
+  );
   return result;
-}
+};
 
 export const AuditionsPage = () => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);
   const auditionsRaw = useSelector(selectAuditions);
-  const auditions = auditionsRaw.map(a => Converter.convertAllDates(a))
+  const auditions = auditionsRaw.map((a) => Converter.convertAllDates(a));
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -46,12 +48,13 @@ export const AuditionsPage = () => {
   };
 
   useEffect(() => {
-    if(!auditions.length && !loading) {
+    if (!auditions.length && !loading) {
       dispatch(fetchAuditions(user?.userId ?? 'notnull'))
         .then(unwrapResult)
         .catch((error) => dispatch(logError(error)));
     }
-  }, [dispatch, user?.userId, auditions, loading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Grid container direction="column" spacing={5}>
