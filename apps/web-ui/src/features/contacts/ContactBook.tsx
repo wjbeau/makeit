@@ -33,6 +33,8 @@ import {
 import * as _ from 'lodash';
 import NothingToShow from '../layout/NothingToShow';
 import { Paper } from '@material-ui/core';
+import { Converter } from '../../app/Converters';
+import ContactsDetails from './ContactDetails';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -92,12 +94,22 @@ export const ContactBook = () => {
 
   const categories = {};
 
-  const matchesSearch = (contact: Contact) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const matchesSearch = (contact: any) => {
     if (search && search.length) {
       return (
-        _.values(contact).filter((v) => v.toLowerCase().indexOf(search) >= 0)
-          .length > 0
-      );
+        _.values(contact).filter((v) => {
+          if(_.isString(v)) {
+            return v.toLowerCase().indexOf(search) >= 0
+          }
+          if(_.isArray(v)) {
+            return v.findIndex(v2 => matchesSearch(v2)) >= 0
+          }
+          else {
+            return matchesSearch(v)
+          }
+        }
+      )).length > 0;
     } else {
       return true;
     }
@@ -145,11 +157,6 @@ export const ContactBook = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getInitials = (person: PersonInfo) => {
-    const words = _.words(person.firstName + '' + person.lastName);
-    return words.map((w) => _.capitalize(w).charAt(0)).join('');
-  };
 
   return (
     <Grid container spacing={2}>
@@ -218,7 +225,7 @@ export const ContactBook = () => {
                       <Avatar src={c.avatar} className={classes.small}></Avatar>
                     ) : (
                       <Avatar className={classes.small}>
-                        {getInitials(c)}
+                        {Converter.getInitials(c)}
                       </Avatar>
                     );
                     return (
@@ -252,7 +259,7 @@ export const ContactBook = () => {
         <Paper className={classes.paper}>
           {contacts.map((c) => (
             <TabPanel value={contact} index={c} key={c._id}>
-              Contact {c.firstName} {c.lastName}
+              <ContactsDetails contact={c} />
             </TabPanel>
           ))}
           <TabPanel value={createNew} index={true}>

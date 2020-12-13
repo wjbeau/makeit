@@ -1572,6 +1572,16 @@
     prop-types "^15.7.2"
     react-is "^16.8.0 || ^17.0.0"
 
+"@mdi/js@^5.8.55":
+  version "5.8.55"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-5.8.55.tgz#630bc5fafd8b1d2f6e63489a9ab170177559e41b"
+  integrity sha512-2bvln56SW6V/nSDC/0/NTu1bMF/CgSyZox8mcWbAPWElBN3UYIrukKDUckEER8ifr8X2YJl1RLKQqi7T7qLzmg==
+
+"@mdi/react@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@mdi/react/-/react-1.4.0.tgz#7f6bad1bd8801226d0e5bad91659b215ce68a93f"
+  integrity sha512-OUH9RhfDJPhybQL3owwrSDIXz2yVKXg5lYeOZjyRCiT9wqywNK0FeYyDByOwNIZnnIQoQYmuSrMv+pOX0Uqkmw==
+
 "@nestjs/common@^7.0.0":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-7.5.5.tgz#9c8bfcbe32ef7768d87cb458084271f7e38cc32e"

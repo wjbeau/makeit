@@ -1,8 +1,9 @@
-import { Contact } from '@makeit/types';
+import { Contact, ContactLinkType, TelecomType } from '@makeit/types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { apiClient } from '../../app/api-client';
 import { RootState } from '../../app/store';
 import { ContactsState } from './contact.state';
+import { AddressType } from '../../../../../libs/types/src/contact.model';
 
 const initialState: ContactsState = {
   contacts: [],
@@ -18,7 +19,69 @@ export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async (u
         firstName: 'Bob',
         lastName: 'Dylan',
         description: 'The bard',
-        jobTitle: 'Creative Director'
+        jobTitle: 'Creative Director',
+        company: 'Netflix',
+        telecoms: [
+          { 
+            details: "bob@dylan.com",
+            type: TelecomType.PersonalEmail
+          },
+          { 
+            details: "+1 (310) 920-5027",
+            type: TelecomType.HomePhone
+          },
+          { 
+            details: "bobswork@dylan.com",
+            type: TelecomType.WorkEmail
+          }
+        ],
+        links: [
+          {
+            url: 'http://www.wjbeaumont.org',
+            type: ContactLinkType.PersonalWebsite
+          },
+          {
+            url: 'http://www.wjbeaumont.org',
+            type: ContactLinkType.Facebook
+          },
+          {
+            url: 'http://www.wjbeaumont.org',
+            type: ContactLinkType.Pintrest
+          },
+          {
+            url: 'http://www.wjbeaumont.org',
+            type: ContactLinkType.IMDb
+          },
+          {
+            url: 'http://www.wjbeaumont.org',
+            type: ContactLinkType.BusinessWebsite
+          },
+        ],
+        addresses: [
+          {
+            type: AddressType.Personal,
+            address: {
+              line1: '1615 Plumas Ave',
+              line2: null,
+              city: 'Seaside',
+              state: 'CA',
+              zip: '93955'
+            },
+            mailingAddress: true
+          },
+          {
+            type: AddressType.Business,
+            address: {
+              line1: '3860 College Ave',
+              line2: 'Apt 4',
+              city: 'Culver city',
+              state: 'CA',
+              zip: '90232'
+            },
+            mailingAddress: false
+          },
+        ],
+        note: 'We met at a mixer for unemployed actors.  Likes whiskey.'
       },
       {
         _id: '2',

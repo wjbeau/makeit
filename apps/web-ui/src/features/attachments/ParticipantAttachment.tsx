@@ -38,11 +38,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const getInitials = (person: PersonInfo) => {
-  const words = _.words(person.firstName + '' + person.lastName);
-  return words.map((w) => _.capitalize(w).charAt(0)).join('');
-};
-
 export const ParticipantAttachment = (props: {
   participant: Participant;
   readOnly?: boolean;
@@ -60,7 +55,7 @@ export const ParticipantAttachment = (props: {
   const avatar = participant.info.avatar ? (
     <Avatar src={participant.info.avatar} className={classes.small}></Avatar>
   ) : (
-    <Avatar className={classes.small}>{getInitials(participant.info)}</Avatar>
+    <Avatar className={classes.small}>{Converter.getInitials(participant.info)}</Avatar>
   );
 
   return (

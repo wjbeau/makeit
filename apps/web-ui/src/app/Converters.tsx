@@ -1,6 +1,7 @@
 import { MenuItem } from '@material-ui/core';
 import * as lodash from "lodash"
 import React from 'react';
+import { PersonInfo } from '@makeit/types';
 
 
 export class Converter {
@@ -52,6 +53,14 @@ export class Converter {
     }
 
     private static decamelCase(key: string) {
+        if(key === "IMDb") {
+            return key;
+        }
         return lodash.startCase(key);
+    }
+
+    public static getInitials(person: PersonInfo) {
+      const words = lodash.words(person.firstName + '' + person.lastName);
+      return words.map((w) => lodash.capitalize(w).charAt(0)).join('');
     }
 }
