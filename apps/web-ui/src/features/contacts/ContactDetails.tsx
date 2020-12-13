@@ -2,11 +2,9 @@ import React from 'react';
 import { Contact, ContactUtils, ContactLinkType, AddressType, TelecomType } from '@makeit/types';
 import {
   Avatar,
-  Button,
   Grid,
   IconButton,
   makeStyles,
-  SvgIcon,
   Tooltip,
   Typography,
   Link,
@@ -23,6 +21,7 @@ import {
   Pinterest,
   Twitter,
   YouTube,
+  Link as LinkIcon
 } from '@material-ui/icons';
 import TitledSection from '../layout/TitledSection';
 import TextWithAction from '../controls/TextWithAction';
@@ -50,10 +49,6 @@ const useStyles = makeStyles((theme) => ({
   },
   address: {
       minWidth: 200
-  },
-  socials: {
-      marginTop: '2rem',
-      textAlign: 'right'
   }
 }));
 
@@ -141,20 +136,6 @@ export const ContactsDetails = (props: { contact: Contact }) => {
                 <Email />
                 </IconButton>
             </div>
-            {socials?.length > 0 && (
-              <div className={classes.socials}>
-                {socials.map((s) => (
-                  <Tooltip
-                    title={Converter.getLabelForEnum(ContactLinkType, s.type)}
-                    key={s.type}
-                  >
-                    <IconButton onClick={() => window.open(s.url, '_blank')}>
-                      {iconForSocial(s.type)}
-                    </IconButton>
-                  </Tooltip>
-                ))}
-              </div>
-            )}
           </Grid>
         </Grid>
       </Grid>
@@ -163,7 +144,7 @@ export const ContactsDetails = (props: { contact: Contact }) => {
           <TitledSection title="Contacts">
             {contact.telecoms?.length > 0 && (
               <div>
-                {contact.telecoms.map((s) => {
+                {contact.telecoms.map((s, index) => {
                   let url = s.details;
                   let icon = <PermContactCalendar />;
                   if (ContactUtils.isPhone(s.type)) {
@@ -178,6 +159,7 @@ export const ContactsDetails = (props: { contact: Contact }) => {
                       icon={icon}
                       label={Converter.getLabelForEnum(TelecomType, s.type)}
                       href={url}
+                      key={index}
                     >
                       <Link href={url} target="_blank">
                         {s.details}
@@ -193,18 +175,22 @@ export const ContactsDetails = (props: { contact: Contact }) => {
       {contact.links?.length > 0 && (
         <Grid item xs={12} sm={6}>
           <TitledSection title="Links">
-            {contact.links?.filter((l) => !ContactUtils.isSocialMedia(l.type))
-              .length > 0 && (
+            {contact.links?.length > 0 && (
               <div>
-                {contact.links.map((s) => {
+                {contact.links.map((s, index) => {
+                    let icon = <LinkIcon />;
+                    if(ContactUtils.isSocialMedia(s.type)) {
+                        icon = iconForSocial(s.type)
+                    }
                     return (
                       <TextWithAction
-                        icon={<Link />}
+                        icon={icon}
                         label={Converter.getLabelForEnum(
                           ContactLinkType,
                           s.type
                         )}
                         href={s.url}
+                        key={index}
                       >
                         <Link href={s.url} target="_blank">
                           {s.url}
@@ -221,8 +207,8 @@ export const ContactsDetails = (props: { contact: Contact }) => {
         <Grid item xs={12} sm={6}>
           <TitledSection title="Addresses">
             <Grid container spacing={3}>
-              {contact.addresses.map((addr) => (
-                <Grid item className={classes.address}>
+              {contact.addresses.map((addr, index) => (
+                <Grid item className={classes.address} key={index}>
                   <Typography variant="body1"  display='block'>
                     {Converter.getLabelForEnum(AddressType, addr.type)}
                   </Typography>
