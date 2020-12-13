@@ -3,6 +3,7 @@ import { Audition, AuditionType, AuditionStatus } from './audition.model';
 import { Breakdown } from './breakdown.model';
 import { Project, ProjectType, UnionType } from './project.model';
 import { Gender, Ethnicity } from './base-enums.model';
+import { Contact } from './contact.model';
 
 
 export class ModelFactory {
@@ -66,6 +67,20 @@ export class ModelFactory {
             participants: [],
             links: [],
             attachments: []
+        }
+    }
+    public static createEmptyContact():Contact {
+        return {
+            addresses: [],
+            telecoms: [],
+            links: [],
+            company: undefined,
+            jobTitle: undefined,
+            note: undefined,
+            description: undefined,
+            firstName: undefined,
+            lastName: undefined,
+            avatar: undefined
         }
     }
 }

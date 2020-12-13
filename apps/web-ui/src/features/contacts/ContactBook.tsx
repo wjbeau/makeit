@@ -1,4 +1,4 @@
-import { PersonInfo, Contact } from '@makeit/types';
+import { ModelFactory, Contact } from '@makeit/types';
 import {
   Accordion,
   AccordionDetails,
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
 export const ContactBook = () => {
   const [active, setActive] = useState<string>('');
   const [contact, setContact] = useState<Contact>();
-  const [createNew, setCreateNew] = useState<boolean>();
+  const [editContact, setEditContact] = useState<Contact>();
   const [search, setSearch] = useState<string>('');
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectContactsLoading);
@@ -144,8 +144,9 @@ export const ContactBook = () => {
     selectFirst();
   };
   const handleAddContact = () => {
-    setActive(null);
-    setCreateNew(true);
+    const contact = ModelFactory.createEmptyContact();
+    setActive(contact);
+    setEditContact(contact);
   };
 
   useEffect(() => {
@@ -257,14 +258,14 @@ export const ContactBook = () => {
       </Grid>
       <Grid item xs={9} className={classes.contentArea}>
         <Paper className={classes.paper}>
-          {contacts.map((c) => (
+          {!editContact && contacts.map((c) => (
             <TabPanel value={contact} index={c} key={c._id}>
               <ContactsDetails contact={c} />
             </TabPanel>
           ))}
-          <TabPanel value={createNew} index={true}>
-            New Contact
-          </TabPanel>
+          {editContact && 
+            <ContactsDetails contact={editContact} />
+          }
         </Paper>
       </Grid>
     </Grid>
