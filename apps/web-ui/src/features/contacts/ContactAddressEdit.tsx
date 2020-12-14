@@ -1,18 +1,14 @@
 import { AddressType, ContactAddress } from '@makeit/types';
 import {
-  Checkbox,
   FormControl,
   Grid,
   IconButton,
-  InputLabel,
   makeStyles,
-  Select,
-  TextField,
   Tooltip,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { FastField } from 'formik';
-import { CheckboxWithLabel } from 'formik-material-ui';
+import { CheckboxWithLabel, Select, TextField } from 'formik-material-ui';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 
@@ -125,7 +121,6 @@ export const ContactAddressEdit = (props: {
           name={prefix + '.mailingAddress'}
           type="checkbox"
           Label={{ label: 'Mailing Address' }}
-          fullWidth={true}
         />
       </Grid>
     </Grid>

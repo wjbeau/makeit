@@ -103,12 +103,12 @@ export const ContactDetails = (props: {
   const emails = contact.telecoms?.filter((t) => ContactUtils.isEmail(t.type));
 
   const invokeContact = (link: string) => {
-      //window.location.href = link;
+    window.location.href = link;
   };
 
   const handleCall = (event) => {
     if (phones.length > 1) {
-      setCallAnchor(event.target);
+      setCallAnchor(event.currentTarget);
     } else {
       invokeContact('tel:' + phones[0].details);
     }
@@ -120,7 +120,7 @@ export const ContactDetails = (props: {
 
   const handleEmail = (event) => {
     if (emails.length > 1) {
-      setEmailAnchor(event.target);
+      setEmailAnchor(event.currentTarget);
     } else {
       invokeContact('mailto:' + emails[0].details);
     }
@@ -184,8 +184,10 @@ export const ContactDetails = (props: {
                 </IconButton>
               )}
               {phones.length > 0 && (
-                <IconButton onClick={handleCall}>
-                  <Call />
+                <>
+                  <IconButton onClick={handleCall}>
+                    <Call />
+                  </IconButton>
                   {phones.length > 1 && (
                     <Menu
                       id="call-menu"
@@ -205,11 +207,13 @@ export const ContactDetails = (props: {
                       ))}
                     </Menu>
                   )}
-                </IconButton>
+                </>
               )}
               {emails.length > 0 && (
-                <IconButton onClick={handleEmail}>
-                  <Email />
+                <>
+                  <IconButton onClick={handleEmail}>
+                    <Email />
+                  </IconButton>
                   {emails.length > 1 && (
                     <Menu
                       id="email-menu"
@@ -229,7 +233,7 @@ export const ContactDetails = (props: {
                       ))}
                     </Menu>
                   )}
-                </IconButton>
+                </>
               )}
             </div>
           </Grid>

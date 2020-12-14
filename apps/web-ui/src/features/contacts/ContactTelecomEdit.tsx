@@ -1,14 +1,11 @@
-import { ContactUtils, Telecom, TelecomType } from '@makeit/types';
+import { Telecom, TelecomType } from '@makeit/types';
 import {
   FormControl,
   Grid,
-  InputLabel,
   makeStyles,
-  Select,
-  TextField,
 } from '@material-ui/core';
-import { Call, Email, PermContactCalendar } from '@material-ui/icons';
 import { FastField } from 'formik';
+import { Select, TextField } from 'formik-material-ui';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 

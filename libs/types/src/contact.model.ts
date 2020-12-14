@@ -2,13 +2,14 @@ import { Address } from './address.model';
 import { PersonInfo } from './user.model';
 
 export interface Contact extends PersonInfo {
-  addresses?: ContactAddress[];
+  addresses: ContactAddress[];
   telecoms: Telecom[];
   links: ContactLink[];
   company: string;
   jobTitle: string;
   note: string;
   description: string;
+  ownerId: any;
 }
 
 export interface ContactAddress {

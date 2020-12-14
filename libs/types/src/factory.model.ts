@@ -80,7 +80,8 @@ export class ModelFactory {
             description: undefined,
             firstName: undefined,
             lastName: undefined,
-            avatar: undefined
+            avatar: undefined,
+            ownerId: undefined
         }
     }
 }
