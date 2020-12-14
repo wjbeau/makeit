@@ -34,7 +34,8 @@ import * as _ from 'lodash';
 import NothingToShow from '../layout/NothingToShow';
 import { Paper } from '@material-ui/core';
 import { Converter } from '../../app/Converters';
-import ContactsDetails from './ContactDetails';
+import ContactDetails from './ContactDetails';
+import ContactEdit from './ContactEdit';
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -74,11 +75,11 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    height: '100%'
+    height: '100%',
   },
   accordionItem: {
-    padding: theme.spacing(0)
-  }
+    padding: theme.spacing(0),
+  },
 }));
 
 export const ContactBook = () => {
@@ -86,44 +87,12 @@ export const ContactBook = () => {
   const [contact, setContact] = useState<Contact>();
   const [editContact, setEditContact] = useState<Contact>();
   const [search, setSearch] = useState<string>('');
+  const [categories, setCategories] = useState<any>({});
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectContactsLoading);
   const contacts = useSelector(selectContacts);
   const classes = useStyles();
   const dispatch = useAppDispatch();
-
-  const categories = {};
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const matchesSearch = (contact: any) => {
-    if (search && search.length) {
-      return (
-        _.values(contact).filter((v) => {
-          if(_.isString(v)) {
-            return v.toLowerCase().indexOf(search) >= 0
-          }
-          if(_.isArray(v)) {
-            return v.findIndex(v2 => matchesSearch(v2)) >= 0
-          }
-          else {
-            return matchesSearch(v)
-          }
-        }
-      )).length > 0;
-    } else {
-      return true;
-    }
-  };
-
-  contacts
-    .filter((c) => matchesSearch(c))
-    .forEach((c) => {
-      const letter = c.lastName.charAt(0).toUpperCase();
-      if (!categories[letter]) {
-        categories[letter] = [];
-      }
-      categories[letter].push(c);
-    });
 
   const selectFirst = () => {
     const keys = Object.keys(categories);
@@ -145,15 +114,58 @@ export const ContactBook = () => {
   };
   const handleAddContact = () => {
     const contact = ModelFactory.createEmptyContact();
-    setActive(contact);
+    handleEditContact(contact);
+  };
+  const handleEditContact = (contact: Contact) => {
+    setActive('');
+    setContact(null);
     setEditContact(contact);
   };
 
+  const handleEditCancel= () => {
+    setEditContact(null);
+    selectFirst();
+  };
+
+  useEffect(() => {
+    const newCats = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const matchesSearch = (contact: any) => {
+      if (search && search.length) {
+        return (
+          _.values(contact).filter((v) => {
+            if (_.isString(v)) {
+              return v.toLowerCase().indexOf(search) >= 0;
+            }
+            if (_.isArray(v)) {
+              return v.findIndex((v2) => matchesSearch(v2)) >= 0;
+            } else {
+              return matchesSearch(v);
+            }
+          }).length > 0
+        );
+      } else {
+        return true;
+      }
+    };
+    
+    contacts
+      .filter((c) => matchesSearch(c))
+      .forEach((c) => {
+        const letter = c.lastName.charAt(0).toUpperCase();
+        if (!newCats[letter]) {
+          newCats[letter] = [];
+        }
+        newCats[letter].push(c);
+      });
+      setCategories(newCats)
+  }, [contacts])
+
   useEffect(() => {
     if (!contacts.length && !loading) {
-      dispatch(fetchContacts(user?.userId ?? 'notnull'))
+      dispatch(fetchContacts(user?._id ?? 'notnull'))
         .then(unwrapResult)
-        .then(selectFirst())
+        .then(data => selectFirst())
         .catch((error) => dispatch(logError(error)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,7 +177,7 @@ export const ContactBook = () => {
         <Typography variant="h4" component="h1" display="inline">
           Contacts
         </Typography>
-        <div className={classes.actions}>
+        {!editContact && <div className={classes.actions}>
           <TextField
             className={classes.searchbox}
             size="small"
@@ -202,7 +214,7 @@ export const ContactBook = () => {
           >
             New Contact
           </Button>
-        </div>
+        </div>}
       </Grid>
       <Grid item xs={3}>
         <IfNotLoading loading={loading}>
@@ -232,7 +244,10 @@ export const ContactBook = () => {
                     return (
                       <ListItem
                         key={c._id}
-                        onClick={() => setContact(c)}
+                        onClick={() => {
+                          setContact(c);
+                          setEditContact(null);
+                        }}
                         button
                       >
                         <ListItemAvatar>{avatar}</ListItemAvatar>
@@ -258,14 +273,13 @@ export const ContactBook = () => {
       </Grid>
       <Grid item xs={9} className={classes.contentArea}>
         <Paper className={classes.paper}>
-          {!editContact && contacts.map((c) => (
-            <TabPanel value={contact} index={c} key={c._id}>
-              <ContactsDetails contact={c} />
-            </TabPanel>
-          ))}
-          {editContact && 
-            <ContactsDetails contact={editContact} />
-          }
+          {!editContact &&
+            contacts.map((c) => (
+              <TabPanel value={contact} index={c} key={c._id}>
+                <ContactDetails contact={c} onEdit={handleEditContact}/>
+              </TabPanel>
+            ))}
+          {editContact && <ContactEdit contact={editContact} onCancel={handleEditCancel} />}
         </Paper>
       </Grid>
     </Grid>

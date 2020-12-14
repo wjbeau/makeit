@@ -1,9 +1,8 @@
-import { Contact, ContactLinkType, TelecomType } from '@makeit/types';
+import { Contact, ContactLinkType, TelecomType, AddressType } from '@makeit/types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { apiClient } from '../../app/api-client';
 import { RootState } from '../../app/store';
 import { ContactsState } from './contact.state';
-import { AddressType } from '../../../../../libs/types/src/contact.model';
 
 const initialState: ContactsState = {
   contacts: [],

@@ -1,9 +1,8 @@
-import { Breakdown, Gender } from '@makeit/types';
+import { Breakdown, Gender, Ethnicity } from '@makeit/types';
 import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
 import React from 'react';
-import { Ethnicity } from '../../../../../libs/types/src/base-enums.model';
 import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
 import AttachmentButtons from '../attachments/AttachmentButtons';

@@ -2,7 +2,7 @@ import { Address } from './address.model';
 import { PersonInfo } from './user.model';
 
 export interface Contact extends PersonInfo {
-  addresses?: ContectAddress[];
+  addresses?: ContactAddress[];
   telecoms: Telecom[];
   links: ContactLink[];
   company: string;
@@ -11,18 +11,18 @@ export interface Contact extends PersonInfo {
   description: string;
 }
 
-export interface ContectAddress extends PersonInfo {
+export interface ContactAddress {
   address: Address;
   type: AddressType;
   mailingAddress: boolean;
 }
 
-export interface Telecom extends PersonInfo {
+export interface Telecom {
   details: string;
   type: TelecomType;
 }
 
-export interface ContactLink extends PersonInfo {
+export interface ContactLink {
   url: string;
   type: ContactLinkType;
 }

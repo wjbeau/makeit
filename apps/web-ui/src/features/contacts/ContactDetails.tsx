@@ -1,5 +1,12 @@
-import React from 'react';
-import { Contact, ContactUtils, ContactLinkType, AddressType, TelecomType } from '@makeit/types';
+import React, { useState } from 'react';
+import {
+  Contact,
+  ContactUtils,
+  ContactLinkType,
+  AddressType,
+  TelecomType,
+  Telecom,
+} from '@makeit/types';
 import {
   Avatar,
   Grid,
@@ -8,6 +15,8 @@ import {
   Tooltip,
   Typography,
   Link,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import { Converter } from '../../app/Converters';
 import {
@@ -21,13 +30,15 @@ import {
   Pinterest,
   Twitter,
   YouTube,
-  Link as LinkIcon
+  Link as LinkIcon,
 } from '@material-ui/icons';
 import TitledSection from '../layout/TitledSection';
 import TextWithAction from '../controls/TextWithAction';
 import { mdiVimeo as Vimeo } from '@mdi/js';
 import ImdbIcon from '../controls/icons/ImdbIcon';
 import AddressDisplay from '../controls/AddressDisplay';
+import { contactSaved } from './contact.slice';
+import { invoke } from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -48,8 +59,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 0,
   },
   address: {
-      minWidth: 200
-  }
+    minWidth: 200,
+  },
+  menuIcon: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 const iconForSocial = (val: ContactLinkType) => {
@@ -73,12 +87,50 @@ const iconForSocial = (val: ContactLinkType) => {
   }
 };
 
-export const ContactsDetails = (props: { contact: Contact }) => {
-  const { contact } = props;
+export const ContactDetails = (props: {
+  contact: Contact;
+  onEdit?: (contact: Contact) => void;
+}) => {
+  const { contact, onEdit } = props;
   const classes = useStyles();
   const socials = contact.links?.filter((l) =>
     ContactUtils.isSocialMedia(l.type)
   );
+  const [callAnchor, setCallAnchor] = useState(null);
+  const [emailAnchor, setEmailAnchor] = useState(null);
+
+  const phones = contact.telecoms?.filter((t) => ContactUtils.isPhone(t.type));
+  const emails = contact.telecoms?.filter((t) => ContactUtils.isEmail(t.type));
+
+  const invokeContact = (link: string) => {
+      //window.location.href = link;
+  };
+
+  const handleCall = (event) => {
+    if (phones.length > 1) {
+      setCallAnchor(event.target);
+    } else {
+      invokeContact('tel:' + phones[0].details);
+    }
+  };
+  const handleCallClick = (tel: Telecom) => {
+    setCallAnchor(null);
+    invokeContact('tel:' + tel.details);
+  };
+
+  const handleEmail = (event) => {
+    if (emails.length > 1) {
+      setEmailAnchor(event.target);
+    } else {
+      invokeContact('mailto:' + emails[0].details);
+    }
+  };
+
+  const handleEmailClick = (tel: Telecom) => {
+    setEmailAnchor(null);
+    invokeContact('mailto:' + tel.details);
+  };
+
   return (
     <Grid container spacing={3} direction="row">
       <Grid item xs={12}>
@@ -126,15 +178,59 @@ export const ContactsDetails = (props: { contact: Contact }) => {
           </Grid>
           <Grid item className={classes.headingActions}>
             <div>
-                <IconButton>
-                <Edit />
+              {onEdit && (
+                <IconButton onClick={() => onEdit(contact)}>
+                  <Edit />
                 </IconButton>
-                <IconButton>
-                <Call />
+              )}
+              {phones.length > 0 && (
+                <IconButton onClick={handleCall}>
+                  <Call />
+                  {phones.length > 1 && (
+                    <Menu
+                      id="call-menu"
+                      anchorEl={callAnchor}
+                      keepMounted
+                      open={callAnchor !== null}
+                      onClose={() => setCallAnchor(null)}
+                    >
+                      {phones.map((e) => (
+                        <MenuItem
+                          onClick={() => handleCallClick(e)}
+                          key={e.details}
+                        >
+                          <Call className={classes.menuIcon} />{' '}
+                          {Converter.getLabelForEnum(TelecomType, e.type)}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  )}
                 </IconButton>
-                <IconButton>
-                <Email />
+              )}
+              {emails.length > 0 && (
+                <IconButton onClick={handleEmail}>
+                  <Email />
+                  {emails.length > 1 && (
+                    <Menu
+                      id="email-menu"
+                      anchorEl={emailAnchor}
+                      keepMounted
+                      open={emailAnchor !== null}
+                      onClose={() => setEmailAnchor(null)}
+                    >
+                      {emails.map((e) => (
+                        <MenuItem
+                          onClick={() => handleEmailClick(e)}
+                          key={e.details}
+                        >
+                          <Email className={classes.menuIcon} />{' '}
+                          {Converter.getLabelForEnum(TelecomType, e.type)}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  )}
                 </IconButton>
+              )}
             </div>
           </Grid>
         </Grid>
@@ -178,26 +274,23 @@ export const ContactsDetails = (props: { contact: Contact }) => {
             {contact.links?.length > 0 && (
               <div>
                 {contact.links.map((s, index) => {
-                    let icon = <LinkIcon />;
-                    if(ContactUtils.isSocialMedia(s.type)) {
-                        icon = iconForSocial(s.type)
-                    }
-                    return (
-                      <TextWithAction
-                        icon={icon}
-                        label={Converter.getLabelForEnum(
-                          ContactLinkType,
-                          s.type
-                        )}
-                        href={s.url}
-                        key={index}
-                      >
-                        <Link href={s.url} target="_blank">
-                          {s.url}
-                        </Link>
-                      </TextWithAction>
-                    );
-                  })}
+                  let icon = <LinkIcon />;
+                  if (ContactUtils.isSocialMedia(s.type)) {
+                    icon = iconForSocial(s.type);
+                  }
+                  return (
+                    <TextWithAction
+                      icon={icon}
+                      label={Converter.getLabelForEnum(ContactLinkType, s.type)}
+                      href={s.url}
+                      key={index}
+                    >
+                      <Link href={s.url} target="_blank">
+                        {s.url}
+                      </Link>
+                    </TextWithAction>
+                  );
+                })}
               </div>
             )}
           </TitledSection>
@@ -209,10 +302,10 @@ export const ContactsDetails = (props: { contact: Contact }) => {
             <Grid container spacing={3}>
               {contact.addresses.map((addr, index) => (
                 <Grid item className={classes.address} key={index}>
-                  <Typography variant="body1"  display='block'>
+                  <Typography variant="body1" display="block">
                     {Converter.getLabelForEnum(AddressType, addr.type)}
                   </Typography>
-                  <AddressDisplay variant='body2' address={addr.address} />
+                  <AddressDisplay variant="body2" address={addr.address} />
                 </Grid>
               ))}
             </Grid>
@@ -230,4 +323,4 @@ export const ContactsDetails = (props: { contact: Contact }) => {
   );
 };
 
-export default ContactsDetails;
+export default ContactDetails;

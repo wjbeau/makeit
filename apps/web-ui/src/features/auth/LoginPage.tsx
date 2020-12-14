@@ -12,7 +12,7 @@ import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
 import { logError } from '../logging/logging.slice';
@@ -42,12 +42,18 @@ export const LoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   const handleLogin = (data: AuthRequest) => {
     dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then((auth) => {
-        history.push('/');
+        if(location.state['from']) {
+          history.push(location.state['from'])
+        }
+        else {
+          history.push('/');
+        }
       })
       .catch((error) =>
         dispatch(
