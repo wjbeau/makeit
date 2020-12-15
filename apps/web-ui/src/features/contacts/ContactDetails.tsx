@@ -87,6 +87,18 @@ const iconForSocial = (val: ContactLinkType) => {
   }
 };
 
+const toSafeUrl = (url: string) => {
+    if(!url) {
+        return null;
+    }
+    if(!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://")) {
+        return 'http://' + url;
+    }
+    else {
+        return url;
+    }
+}
+
 export const ContactDetails = (props: {
   contact: Contact;
   onEdit?: (contact: Contact) => void;
@@ -289,7 +301,7 @@ export const ContactDetails = (props: {
                       href={s.url}
                       key={index}
                     >
-                      <Link href={s.url} target="_blank">
+                      <Link href={toSafeUrl(s.url)} target="_blank">
                         {s.url}
                       </Link>
                     </TextWithAction>

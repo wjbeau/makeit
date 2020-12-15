@@ -6,13 +6,13 @@ export type AddressDocument = AddressModel & mongoose.Document;
 
 @Schema()
 export class AddressModel implements Address {
-    @Prop({required: true})
+    @Prop()
     line1: string;
-    @Prop({required: true})
+    @Prop()
     line2: string;
     @Prop()
     line3: string;
-    @Prop({required: true})
+    @Prop()
     city: string;
     @Prop()
     state: string;

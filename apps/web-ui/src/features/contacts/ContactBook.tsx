@@ -152,7 +152,7 @@ export const ContactBook = () => {
     contacts
       .filter((c) => matchesSearch(c))
       .forEach((c) => {
-        const letter = c.lastName.charAt(0).toUpperCase();
+        const letter = c.lastName?.charAt(0).toUpperCase();
         if (!newCats[letter]) {
           newCats[letter] = [];
         }

@@ -104,14 +104,18 @@ export const ContactEdit = (props: {
     setAvatarDialogOpen(false);
   }
 
-  const handleSave = (values) => {
+  const handleSave = (values, { setSubmitting }) => {
     dispatch(saveContact(values))
       .then(unwrapResult)
       .then((d) => {
-        logSuccess({ message: 'Saved successfully.' });
+        dispatch(logSuccess({ message: 'Saved successfully.' }));
         onCancel();
       })
-      .catch((error) => logError(error));
+      .catch((error) => {
+        console.log('dingdong')
+        dispatch(logError(error));
+        setSubmitting(false);
+      });
   };
 
   const handleContactAdd = (arrayHelpers) => {
@@ -137,6 +141,26 @@ export const ContactEdit = (props: {
   const validationSchema = yup.object().shape({
     firstName: yup.string().required('Required'),
     lastName: yup.string().required('Required'),
+    telecoms: yup.array(
+      yup.object().shape({
+        type: yup.string().required('Required'),
+        details: yup.string().required('Required')
+      })
+    ),
+    links: yup.array(
+      yup.object().shape({
+        type: yup.string().required('Required'),
+        url: yup.string().matches(
+          /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+          'Please enter a valid URL'
+        )
+      })
+    ),
+    addresses: yup.array(
+      yup.object().shape({
+        type: yup.string().required('Required')
+      })
+    )
   });
 
   const handleAvatarClick = () => {
