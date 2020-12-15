@@ -5,13 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
 import { ContactDocument, ContactModel } from '../../schema/contact.schema';
+import { FileService } from '../files/file.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class ContactService {
   constructor(
     @Inject(REQUEST) private readonly request: Request,
     @InjectModel(ContactModel.name)
-    private contactModel: Model<ContactDocument>
+    private contactModel: Model<ContactDocument>,
+    private fileService: FileService,
   ) {}
 
   async save(id: string, contact: Contact): Promise<Contact | undefined> {

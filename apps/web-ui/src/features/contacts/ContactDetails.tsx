@@ -39,6 +39,7 @@ import ImdbIcon from '../controls/icons/ImdbIcon';
 import AddressDisplay from '../controls/AddressDisplay';
 import { contactSaved } from './contact.slice';
 import { invoke } from 'lodash';
+import { SERVER_URL } from '../../app/config';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -99,6 +100,17 @@ const toSafeUrl = (url: string) => {
     }
 }
 
+const remotify = (url: string) => {
+    if(url && url.startsWith('data:')) {
+        return url;
+    }
+    else if(url) {
+        return SERVER_URL + '/files/' + url 
+    }
+    
+    return null;
+}
+
 export const ContactDetails = (props: {
   contact: Contact;
   onEdit?: (contact: Contact) => void;
@@ -148,7 +160,7 @@ export const ContactDetails = (props: {
       <Grid item xs={12}>
         <Grid container spacing={1} direction="row">
           <Grid item className={classes.headingAvatar}>
-            <Avatar src={contact.avatar} className={classes.mainAvatar}>
+            <Avatar src={remotify(contact.avatar)} className={classes.mainAvatar}>
               {Converter.getInitials(contact)}
             </Avatar>
           </Grid>

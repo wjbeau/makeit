@@ -30,7 +30,7 @@ export class FileController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './attachments',
+        destination: process.env.BACKEND_FILE_UPLOADS,
         filename: (req, file, cb) => {
           const randomName = Array(32)
             .fill(null)
