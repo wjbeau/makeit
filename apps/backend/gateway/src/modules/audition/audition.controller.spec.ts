@@ -1,17 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { instance, mock, reset, when, anything, strictEqual } from 'ts-mockito';
+import { Audition } from '@makeit/types';
+import { BadRequestException } from '@nestjs/common';
+import { instance, mock, reset, strictEqual, when } from 'ts-mockito';
+import { AuditionModel } from '../../schema/audition.schema';
 import { AuditionController } from './audition.controller';
 import { AuditionService } from './audition.service';
-import { JwtStrategy } from '../auth/jwt.strategy';
-import { AuditionModel } from '../../schema/audition.schema';
-import { Audition, UserAccount } from '@makeit/types';
-import { BadRequestException } from '@nestjs/common';
 
 describe('AuditionController', () => {
   let controllerUnderTest: AuditionController;
 
   const mockedService = mock(AuditionService);
-  const mockedGuard = mock(JwtStrategy);
   const user = {
     _id: 'someid',
     email: 'uid',
@@ -22,22 +19,13 @@ describe('AuditionController', () => {
   }
 
   beforeEach(async () => {
-    when(mockedGuard.validate(anything())).thenReturn(new Promise<UserAccount>((resolve) => { resolve(user) }));
+    const mockedServiceInstance = instance(mockedService);
 
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [AuditionController],
-      providers: [
-        { provide: AuditionService, useValue: instance(mockedService) },
-        { provide: JwtStrategy, useValue: instance(mockedGuard) },
-      ],
-    }).compile();
-
-    controllerUnderTest = app.get<AuditionController>(AuditionController);
+    controllerUnderTest = new AuditionController(mockedServiceInstance)
   });
 
   afterEach(() => {
     reset(mockedService);
-    reset(mockedGuard);
   });
 
   describe('getAuditions', () => {
@@ -50,6 +38,7 @@ describe('AuditionController', () => {
       when(mockedService.findAllForUser(strictEqual(user._id))).thenReturn(
         new Promise<Audition[]>((resolve) => { resolve([aud, aud2]) }),
       );
+      expect(controllerUnderTest).toBeDefined();
       const result = await controllerUnderTest.getAuditions(req)
       expect(result).toBeDefined();
       expect(result.length).toEqual(2)

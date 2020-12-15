@@ -1,3 +1,4 @@
+export * from './base.model'
 export * from './address.model'
 export * from './attachment.model'
 export * from './breakdown.model'

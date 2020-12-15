@@ -10,7 +10,7 @@ export class AddressModel implements Address {
     line1: string;
     @Prop({required: true})
     line2: string;
-    @Prop({required: true})
+    @Prop()
     line3: string;
     @Prop({required: true})
     city: string;

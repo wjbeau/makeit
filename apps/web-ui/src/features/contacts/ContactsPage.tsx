@@ -3,9 +3,7 @@ import ContactBook from './ContactBook';
 
 export const ContactsPage = () => {
   return (
-    <>
-      <ContactBook />
-    </>
+    <ContactBook />
   );
 }
 

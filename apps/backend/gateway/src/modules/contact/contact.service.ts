@@ -1,13 +1,15 @@
 import { Contact } from '@makeit/types';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
+import { Request } from 'express';
 import { Model } from 'mongoose';
 import { ContactDocument, ContactModel } from '../../schema/contact.schema';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ContactService {
   constructor(
+    @Inject(REQUEST) private readonly request: Request,
     @InjectModel(ContactModel.name)
     private contactModel: Model<ContactDocument>
   ) {}
@@ -17,15 +19,26 @@ export class ContactService {
     if((id || contact._id) && id !== contact._id) {
       throw new BadRequestException();
     }
-    
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
     // Find the document and update it if required or save a new one if not.  
-    const result = await this.contactModel.findByIdAndUpdate(
-            { _id: contact._id || mongoose.Types.ObjectId() }, 
-            contact, 
-            options
-        )
-        .exec();
+    const result = await this.contactModel
+      .findOne({ _id: contact._id })
+        .then((dbRes) => {
+            if(dbRes) { 
+              const prevOwner = dbRes.owner;
+              dbRes.set(contact);
+              dbRes.set({owner: prevOwner})
+              return dbRes.save();
+            }
+            else {
+              const user = this.request.user;
+              contact.owner = user['_id'];
+              return this.contactModel.create(contact)
+            }
+        })
+        .catch(error => {
+          throw new BadRequestException(error, 'Database update failed.')
+        })
 
     return result;
   }
@@ -40,7 +53,7 @@ export class ContactService {
     //find all contacts where a given user is the owner
     const result: Contact[] = await this.contactModel
       .find({
-        'ownerId': id,
+        'owner': id,
       })
       .sort({
         lastName: 1,
@@ -48,6 +61,9 @@ export class ContactService {
       })
       .lean()
       .exec();
+      
+    console.log("Found results: ")
+    console.log(result)
     return result;
   }
 }

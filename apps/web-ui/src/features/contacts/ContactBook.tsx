@@ -87,7 +87,7 @@ export const ContactBook = () => {
   const [contact, setContact] = useState<Contact>();
   const [editContact, setEditContact] = useState<Contact>();
   const [search, setSearch] = useState<string>('');
-  const [categories, setCategories] = useState<any>({});
+  const [categories, setCategories] = useState({});
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectContactsLoading);
   const contacts = useSelector(selectContacts);
@@ -159,7 +159,7 @@ export const ContactBook = () => {
         newCats[letter].push(c);
       });
       setCategories(newCats)
-  }, [contacts])
+  }, [contacts, search])
 
   useEffect(() => {
     if (!contacts.length && !loading) {

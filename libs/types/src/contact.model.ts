@@ -1,5 +1,6 @@
 import { Address } from './address.model';
-import { PersonInfo } from './user.model';
+import { PersonInfo, UserAccount } from './user.model';
+import { BaseEntity } from './base.model';
 
 export interface Contact extends PersonInfo {
   addresses: ContactAddress[];
@@ -9,7 +10,7 @@ export interface Contact extends PersonInfo {
   jobTitle: string;
   note: string;
   description: string;
-  ownerId: any;
+  owner: UserAccount|BaseEntity;
 }
 
 export interface ContactAddress {

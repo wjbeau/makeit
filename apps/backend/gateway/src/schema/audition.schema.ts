@@ -65,7 +65,7 @@ export class AuditionModel implements Audition {
     reminderTime: Date;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: AuditionModel.name })
-    followUpTo: Audition;
+    followUpTo?: Audition;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: BreakdownModel.name })
     breakdown: Breakdown;

@@ -9,9 +9,11 @@ import { ProjectModule } from './project/project.module';
 import { CommonServicesModule } from './common-services/common-services.module';
 import { FileModule } from './files/file.module';
 import { ContactModule } from './contact/contact.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     CommonServicesModule,
     AuthModule, 
     UserModule, 
@@ -21,7 +23,7 @@ import { ContactModule } from './contact/contact.module';
     ProjectModule,
     FileModule,
     ContactModule,
-    MongooseModule.forRoot('mongodb://localhost/makeit', {'useFindAndModify': false}) //TODO move this into configuration...
+    MongooseModule.forRoot(`mongodb://localhost/makeit`, {'useFindAndModify': false}) //TODO externalize this config
   ],
   controllers: [],
   providers: [],

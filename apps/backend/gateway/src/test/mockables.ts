@@ -12,6 +12,10 @@ export class MockableDocumentQuery {
     public populate(spec: any) {
         return null;
     }
+
+    public sort(spec: any) {
+        return null;
+    }
 }
 
 export class MockableModel {
@@ -24,6 +28,28 @@ export class MockableModel {
     }
 
     public findByIdAndUpdate(id: any, data: any, options: any) {
+        return null;
+    }
+
+    public create(spec: any): any {
+        return null;
+    }
+}
+
+export class MockableDocument {
+    public set(spec: any): any {
+        return null;
+    }
+
+    public save(): any {
+        return null;
+    }
+
+    public populate(spec: any) {
+        return null;
+    }
+
+    public toObject() {
         return null;
     }
 }

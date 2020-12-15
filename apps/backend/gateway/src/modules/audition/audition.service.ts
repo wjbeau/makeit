@@ -1,52 +1,63 @@
-import { Audition, ParticipantType, ParticipantReferenceType } from '@makeit/types';
+import {
+  Audition,
+  ParticipantType,
+  ParticipantReferenceType,
+} from '@makeit/types';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as mongoose from 'mongoose';
 import { AuditionDocument, AuditionModel } from '../../schema/Audition.schema';
 import { BreakdownService } from '../breakdown/breakdown.service';
 
 @Injectable()
 export class AuditionService {
   constructor(
-    private breakdownService: BreakdownService, 
+    private breakdownService: BreakdownService,
     @InjectModel(AuditionModel.name)
     private auditionModel: Model<AuditionDocument>
   ) {}
 
   async save(id: string, audition: Audition): Promise<Audition | undefined> {
-    
-    console.log("Saving audition:");
-    console.log(audition)
     //the path variable must match the data posted
-    if((id || audition._id) && id !== audition._id) {
+    if ((id || audition._id) && id !== audition._id) {
       throw new BadRequestException();
     }
-    
+
     //if necessary save the project first
-    if(audition.breakdown) {
-      const breakdownResult = await this.breakdownService.save(audition.breakdown._id, audition.breakdown)
+    if (audition.breakdown) {
+      const breakdownResult = await this.breakdownService.save(
+        audition.breakdown._id,
+        audition.breakdown
+      );
       audition.breakdown = breakdownResult;
     }
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    // Find the document and update it if required or save a new one if not.  
-    const result = await this.auditionModel.findByIdAndUpdate(
-            { _id: audition._id || mongoose.Types.ObjectId() }, 
-            audition, 
-            options
-        )
-        .populate({
-          path: 'breakdown',
-          populate: { path: 'project' }
-        })
-        .exec();
 
-    return result;
+    // Find the document and update it if required or save a new one if not.
+    const result = await this.auditionModel
+      .findOne({ _id: audition._id })
+      .then((dbRes) => {
+        if (dbRes) {
+          dbRes.set(audition);
+          return dbRes.save();
+        } else {
+          return this.auditionModel.create(audition);
+        }
+      })
+      .catch((error) => {
+        throw new BadRequestException(error, 'Database update failed.');
+      });
+
+    result.populate({
+      path: 'breakdown',
+      populate: { path: 'project' },
+    });
+
+    return result.toObject();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async findById(id: any): Promise<Audition | undefined> {
-    return await this.auditionModel.findOne({_id: id}).lean().exec();
+    return await this.auditionModel.findOne({ _id: id }).lean().exec();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,7 +81,7 @@ export class AuditionService {
       })
       .populate({
         path: 'breakdown',
-        populate: { path: 'project' }
+        populate: { path: 'project' },
       })
       .sort({
         deadline: -1,

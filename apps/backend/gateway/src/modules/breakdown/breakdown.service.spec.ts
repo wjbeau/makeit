@@ -1,9 +1,7 @@
-import { Breakdown } from '@makeit/types';
+import { Breakdown, ModelFactory } from '@makeit/types';
 import { BadRequestException } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Model } from 'mongoose';
 import {
-  anything,
   deepEqual,
   instance,
   mock,
@@ -11,40 +9,32 @@ import {
   verify,
   when
 } from 'ts-mockito';
-import { BreakdownModel } from '../../schema/breakdown.schema';
-import { ProjectModel } from '../../schema/project.schema';
-import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
+import { BreakdownDocument } from '../../schema/breakdown.schema';
+import { ProjectModelDocument } from '../../schema/project.schema';
+import { MockableDocument, MockableDocumentQuery, MockableModel } from '../../test/mockables';
 import { BreakdownService } from './breakdown.service';
-import { ModelFactory } from '../../../../../../libs/types/src/factory.model';
 
 describe('BreakdownService', () => {
   let classUnderTest: BreakdownService;
 
-  const mockModel = mock(MockableModel);
+  const mockBreakdownModel = mock(MockableModel);
   const mockProjectModel = mock(MockableModel);
+  const mockBreakdownDocument = mock(MockableDocument);
+  const mockProjectDocument = mock(MockableDocument);
   const mockQuery = mock(MockableDocumentQuery);
   const mockQuery2 = mock(MockableDocumentQuery);
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BreakdownService,
-        {
-          provide: getModelToken(BreakdownModel.name),
-          useValue: instance(mockModel),
-        },
-        {
-          provide: getModelToken(ProjectModel.name),
-          useValue: instance(mockProjectModel),
-        },
-      ],
-    }).compile();
-
-    classUnderTest = module.get<BreakdownService>(BreakdownService);
+    classUnderTest = new BreakdownService(
+      instance(mockBreakdownModel) as Model<BreakdownDocument>,
+      instance(mockProjectModel) as Model<ProjectModelDocument>);
   });
 
   afterEach(async () => {
-    reset(mockModel);
+    reset(mockBreakdownModel);
+    reset(mockProjectModel);
+    reset(mockBreakdownDocument);
+    reset(mockProjectDocument);
     reset(mockQuery);
     reset(mockQuery2);
   });
@@ -55,28 +45,17 @@ describe('BreakdownService', () => {
       breakdown._id = 'bd';
       breakdown.project = null;
 
-      when(mockQuery.exec()).thenReturn(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Promise<any>((resolve) => {
-          resolve(breakdown);
-        })
-      );
+      when(mockBreakdownDocument.save()).thenReturn(instance(mockBreakdownDocument));
+      when(mockBreakdownDocument.toObject()).thenReturn(breakdown);
+
       when(
-        mockModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown._id}),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
-      ).thenReturn(instance(mockQuery));
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
+      ).thenReturn(new Promise(resolve => resolve(instance(mockBreakdownDocument))));
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.save(breakdown._id, breakdown);
       verify(
-        mockModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown._id}),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
       expect(result).toEqual(breakdown);
     });
@@ -86,49 +65,22 @@ describe('BreakdownService', () => {
       breakdown._id = 'bd';
       breakdown.project._id = 'someproject'
 
-      when(mockQuery2.exec()).thenReturn(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Promise<any>((resolve) => {
-          resolve(breakdown.project);
-        })
-      );
+      when(mockBreakdownDocument.save()).thenReturn(instance(mockBreakdownDocument));
+      when(mockBreakdownDocument.toObject()).thenReturn(breakdown);
       when(
-        mockProjectModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown.project._id}),
-          deepEqual(breakdown.project),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
-      ).thenReturn(instance(mockQuery2));
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
+      ).thenReturn(new Promise(resolve => resolve(instance(mockBreakdownDocument))));
 
-      when(mockQuery.exec()).thenReturn(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Promise<any>((resolve) => {
-          resolve(breakdown);
-        })
-      );
+      when(mockProjectDocument.save()).thenReturn(instance(mockProjectDocument));
+      when(mockProjectDocument.toObject()).thenReturn(breakdown.project);
       when(
-        mockModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown._id}),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
-      ).thenReturn(instance(mockQuery));
+        mockProjectModel.findOne(deepEqual({_id: breakdown.project._id}))
+      ).thenReturn(new Promise(resolve => resolve(instance(mockProjectDocument))));
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.save(breakdown._id, breakdown);
       verify(
-        mockModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown._id}),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
-      ).once();
-      verify(
-        mockProjectModel.findByIdAndUpdate(
-          deepEqual({_id: breakdown.project._id}),
-          deepEqual(breakdown.project),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
       expect(result).toEqual(breakdown);
     });
@@ -138,30 +90,19 @@ describe('BreakdownService', () => {
       breakdown._id = null;
       breakdown.project = null;
 
-      when(mockQuery.lean()).thenReturn(instance(mockQuery));
-      when(mockQuery.exec()).thenReturn(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Promise<any>((resolve) => {
-          resolve(breakdown);
-        })
-      );
+      when(mockBreakdownModel.create(deepEqual(breakdown))).thenReturn(instance(mockBreakdownDocument));
+      when(mockBreakdownDocument.toObject()).thenReturn(breakdown);
       when(
-        mockModel.findByIdAndUpdate(
-          anything(),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
-      ).thenReturn(instance(mockQuery));
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
+      ).thenReturn(new Promise(resolve => resolve(null)));
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.save(breakdown._id, breakdown);
       verify(
-        mockModel.findByIdAndUpdate(
-          anything(),
-          deepEqual(breakdown),
-          deepEqual({ upsert: true, new: true, setDefaultsOnInsert: true })
-        )
+        mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
+      verify(mockBreakdownModel.create(deepEqual(breakdown))).once();
+      verify(mockBreakdownDocument.save()).never();
       expect(result).toEqual(breakdown);
     });
 
