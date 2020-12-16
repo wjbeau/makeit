@@ -11,100 +11,6 @@ const initialState: ContactsState = {
 
 export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async (userId: string, thunkAPI) => {
   const result = await apiClient().get('/contacts');
-  // const result = {
-  //   data: [
-  //     {
-  //       _id: '1',
-  //       firstName: 'Bob',
-  //       lastName: 'Dylan',
-  //       description: 'The bard',
-  //       jobTitle: 'Creative Director',
-  //       company: 'Netflix',
-  //       telecoms: [
-  //         { 
-  //           details: "bob@dylan.com",
-  //           type: TelecomType.PersonalEmail
-  //         },
-  //         { 
-  //           details: "+1 (310) 920-5027",
-  //           type: TelecomType.HomePhone
-  //         },
-  //         { 
-  //           details: "bobswork@dylan.com",
-  //           type: TelecomType.WorkEmail
-  //         }
-  //       ],
-  //       links: [
-  //         {
-  //           url: 'http://www.wjbeaumont.org',
-  //           type: ContactLinkType.PersonalWebsite
-  //         },
-  //         {
-  //           url: 'http://www.wjbeaumont.org',
-  //           type: ContactLinkType.Facebook
-  //         },
-  //         {
-  //           url: 'http://www.wjbeaumont.org',
-  //           type: ContactLinkType.Pintrest
-  //         },
-  //         {
-  //           url: 'http://www.wjbeaumont.org',
-  //           type: ContactLinkType.IMDb
-  //         },
-  //         {
-  //           url: 'http://www.wjbeaumont.org',
-  //           type: ContactLinkType.BusinessWebsite
-  //         },
-  //       ],
-  //       addresses: [
-  //         {
-  //           type: AddressType.Personal,
-  //           address: {
-  //             line1: '1615 Plumas Ave',
-  //             line2: undefined,
-  //             city: 'Seaside',
-  //             state: 'CA',
-  //             zip: '93955'
-  //           },
-  //           mailingAddress: true
-  //         },
-  //         {
-  //           type: AddressType.Business,
-  //           address: {
-  //             line1: '3860 College Ave',
-  //             line2: 'Apt 4',
-  //             city: 'Culver city',
-  //             state: 'CA',
-  //             zip: '90232'
-  //           },
-  //           mailingAddress: false
-  //         },
-  //       ],
-  //       note: 'We met at a mixer for unemployed actors.  Likes whiskey.'
-  //     },
-  //     {
-  //       _id: '2',
-  //       firstName: 'Neil Patrick',
-  //       lastName: 'Harris',
-  //       description: 'Dr. Doogie Houser',
-  //       jobTitle: 'Actor / Producer / Writer'
-  //     },
-  //     {
-  //       _id: '3',
-  //       firstName: 'Bob',
-  //       lastName: 'Marley',
-  //       description: 'The singer',
-  //       jobTitle: 'Creative Director'
-  //     },
-  //     {
-  //       _id: '4',
-  //       firstName: 'Billy',
-  //       lastName: 'Mongoose',
-  //       description: 'Met at acting',
-  //       jobTitle: 'Head of Engineering'
-  //     },
-  //   ]
-  // }
   thunkAPI.dispatch(receiveContacts(result.data))
 })
 
@@ -117,10 +23,12 @@ export const saveContact = createAsyncThunk('contacts/saveContact', async (conta
   if(contact._id) {
     const result = await apiClient().put('/contacts/' + contact._id, contact);
     thunkAPI.dispatch(contactSaved(result.data))
+    return result.data;
   }
   else {
     const result = await apiClient().post('/contacts', contact);
     thunkAPI.dispatch(contactSaved(result.data))
+    return result.data;
   }
 })
 

@@ -92,8 +92,9 @@ const iconForSocial = (val: ContactLinkType) => {
 export const ContactEdit = (props: {
   contact: Contact;
   onCancel: () => void;
+  onSave: (contact: Contact) => void;
 }) => {
-  const { contact, onCancel } = props;
+  const { contact, onCancel, onSave } = props;
   const classes = useStyles();
   const [formValues, setFormValues] = useState<Contact>(contact);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState<boolean>(false);
@@ -109,10 +110,9 @@ export const ContactEdit = (props: {
       .then(unwrapResult)
       .then((d) => {
         dispatch(logSuccess({ message: 'Saved successfully.' }));
-        onCancel();
+        onSave(d);
       })
       .catch((error) => {
-        console.log('dingdong')
         dispatch(logError(error));
         setSubmitting(false);
       });

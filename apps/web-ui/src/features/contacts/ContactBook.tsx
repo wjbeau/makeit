@@ -83,89 +83,97 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ContactBook = () => {
-  const [active, setActive] = useState<string>('');
+  const [activeLetter, setActiveLetter] = useState<string>('');
   const [contact, setContact] = useState<Contact>();
   const [editContact, setEditContact] = useState<Contact>();
   const [search, setSearch] = useState<string>('');
-  const [categories, setCategories] = useState({});
+  const [letters, setLetters] = useState([]);
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectContactsLoading);
   const contacts = useSelector(selectContacts);
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  const selectFirst = () => {
-    const keys = Object.keys(categories);
-    if (keys.length) {
-      setActive(keys[0]);
-      setContact(categories[keys[0]][0]);
+  const contactsForLetter = (letter: string) => {
+    return contacts
+      .filter(c => c.lastName.toUpperCase().startsWith(letter))
+      .filter(c => matchesSearch(c))
+      .sort((a,b) => a.lastName.localCompare(b.lastName));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const matchesSearch = (contact: any) => {
+    if (search && search.length) {
+      return (
+        _.values(contact).filter((v) => {
+          if (_.isString(v)) {
+            return v.toLowerCase().indexOf(search) >= 0;
+          }
+          if (_.isArray(v)) {
+            return v.findIndex((v2) => matchesSearch(v2)) >= 0;
+          } else {
+            return matchesSearch(v);
+          }
+        }).length > 0
+      );
     } else {
-      setActive('');
+      return true;
     }
   };
 
   const handleChange = (panel) => (event, newExpanded) => {
-    setActive(panel);
+    setActiveLetter(panel);
   };
 
   const handleSearchChange = (event) => {
     setSearch(event?.target?.value.toLowerCase());
-    selectFirst();
+    setContact(null);
   };
   const handleAddContact = () => {
     const contact = ModelFactory.createEmptyContact();
     handleEditContact(contact);
   };
   const handleEditContact = (contact: Contact) => {
-    setActive('');
-    setContact(null);
     setEditContact(contact);
   };
-
-  const handleEditCancel= () => {
+  const handleEditSave = (contact: Contact) => {
     setEditContact(null);
-    selectFirst();
+    setContact(contact);
+  };
+
+  const handleEditCancel = () => {
+    setEditContact(null);
+    setContact(contact);
   };
 
   useEffect(() => {
-    const newCats = {}
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const matchesSearch = (contact: any) => {
-      if (search && search.length) {
-        return (
-          _.values(contact).filter((v) => {
-            if (_.isString(v)) {
-              return v.toLowerCase().indexOf(search) >= 0;
-            }
-            if (_.isArray(v)) {
-              return v.findIndex((v2) => matchesSearch(v2)) >= 0;
-            } else {
-              return matchesSearch(v);
-            }
-          }).length > 0
-        );
-      } else {
-        return true;
-      }
-    };
-    
-    contacts
+    let newLetters = contacts
       .filter((c) => matchesSearch(c))
-      .forEach((c) => {
-        const letter = c.lastName?.charAt(0).toUpperCase();
-        if (!newCats[letter]) {
-          newCats[letter] = [];
-        }
-        newCats[letter].push(c);
-      });
-      setCategories(newCats)
-  }, [contacts, search])
+      .map(c => c.lastName?.charAt(0).toUpperCase())
+      .sort((a,b) => a.localeCompare(b))
+    
+    newLetters = _.uniq(newLetters);
+    setLetters(newLetters);
+    setContact(null)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts, search]);
 
   useEffect(() => {
-    if (!contacts.length && !loading) {
+    let newCtx = contact;
+    if(newCtx === null && contacts.length) {
+      newCtx = contacts
+        .filter((c) => matchesSearch(c))
+        .sort((a,b) => a.lastName.localeCompare(b.lastName))[0]
+    }
+    setActiveLetter(newCtx?.lastName.charAt(0).toUpperCase())
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contact]);
+
+  useEffect(() => {
+    if (!loading) {
       dispatch(fetchContacts(user?._id ?? 'notnull'))
         .then(unwrapResult)
-        .then(data => selectFirst())
+        .then((data) => setContact(null))
         .catch((error) => dispatch(logError(error)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,63 +185,64 @@ export const ContactBook = () => {
         <Typography variant="h4" component="h1" display="inline">
           Contacts
         </Typography>
-        {!editContact && <div className={classes.actions}>
-          <TextField
-            className={classes.searchbox}
-            size="small"
-            id="search-field"
-            value={search}
-            variant="outlined"
-            label="Search"
-            onChange={handleSearchChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {search?.length <= 0 && <Search />}
-                  {search?.length > 0 && (
-                    <IconButton
-                      aria-label="search"
-                      onClick={() => {
-                        setSearch('');
-                        selectFirst();
-                      }}
-                      edge="end"
-                    >
-                      <Clear />
-                    </IconButton>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<PersonAdd />}
-            onClick={handleAddContact}
-          >
-            New Contact
-          </Button>
-        </div>}
+        {!editContact && (
+          <div className={classes.actions}>
+            <TextField
+              className={classes.searchbox}
+              size="small"
+              id="search-field"
+              value={search}
+              variant="outlined"
+              label="Search"
+              onChange={handleSearchChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {search?.length <= 0 && <Search />}
+                    {search?.length > 0 && (
+                      <IconButton
+                        aria-label="search"
+                        onClick={() => {
+                          setSearch('');
+                        }}
+                        edge="end"
+                      >
+                        <Clear />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<PersonAdd />}
+              onClick={handleAddContact}
+            >
+              New Contact
+            </Button>
+          </div>
+        )}
       </Grid>
       <Grid item xs={3}>
         <IfNotLoading loading={loading}>
-          {Object.keys(categories).map((item, index) => (
+          {letters.map((letter, index) => (
             <Accordion
-              expanded={active === item}
-              onChange={handleChange(item)}
-              key={item}
+              expanded={activeLetter === letter}
+              onChange={handleChange(letter)}
+              key={letter}
             >
               <AccordionSummary
                 expandIcon={<ExpandMore />}
-                aria-controls={`${item}-content`}
-                id={`${item}-header`}
+                aria-controls={`${letter}-content`}
+                id={`${letter}-header`}
               >
-                <Typography className={classes.heading}>{item}</Typography>
+                <Typography className={classes.heading}>{letter}</Typography>
               </AccordionSummary>
               <AccordionDetails className={classes.accordionItem}>
                 <List className={classes.contactList} disablePadding={true}>
-                  {categories[item].map((c, index2) => {
+                  {contactsForLetter(letter).map((c, index2) => {
                     const avatar = c.avatar ? (
                       <Avatar src={c.avatar} className={classes.small}></Avatar>
                     ) : (
@@ -266,7 +275,7 @@ export const ContactBook = () => {
               </AccordionDetails>
             </Accordion>
           ))}
-          {Object.keys(categories).length === 0 && (
+          {letters.length === 0 && (
             <NothingToShow message="No matching contacts" />
           )}
         </IfNotLoading>
@@ -276,10 +285,12 @@ export const ContactBook = () => {
           {!editContact &&
             contacts.map((c) => (
               <TabPanel value={contact} index={c} key={c._id}>
-                <ContactDetails contact={c} onEdit={handleEditContact}/>
+                <ContactDetails contact={c} onEdit={handleEditContact} />
               </TabPanel>
             ))}
-          {editContact && <ContactEdit contact={editContact} onCancel={handleEditCancel} />}
+          {editContact && (
+            <ContactEdit contact={editContact} onCancel={handleEditCancel} onSave={handleEditSave} />
+          )}
         </Paper>
       </Grid>
     </Grid>
