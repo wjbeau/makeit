@@ -64,8 +64,6 @@ export class ContactService {
       .lean()
       .exec();
       
-    console.log("Found results: ")
-    console.log(result)
     return result;
   }
 }
