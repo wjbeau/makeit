@@ -1,9 +1,12 @@
-import React from 'react';
-import { doLogout } from "../auth/auth.slice";
-import { useAppDispatch } from '../../app/store';
-import { AppBar, Toolbar, Typography, Button, SvgIcon } from "@material-ui/core"
+import { AppBar, Avatar, IconButton, SvgIcon, Toolbar, Typography } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
+import { AccountCircle, ChatBubble, Notifications } from '@material-ui/icons';
+import React, { useState } from 'react';
+import { useAppDispatch } from '../../app/store';
+import { doLogout, selectAuthed } from '../auth/auth.slice';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
+import AccountMenu from "../profile/AccountMenu";
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,9 +26,14 @@ const useStyles = makeStyles((theme) => ({
 export function Header() {
     const dispatch = useAppDispatch()
     const classes = useStyles()
+    const [accountMenuOpen, setAccountMenuOpen] = useState<boolean>(false)
+    const [accountAnchor, setAccountAnchor] = useState()
+    const user = useSelector(selectAuthed)
 
-    const handleLogout = () => {
-        dispatch(doLogout());
+
+    const handleProfileClick = (evt) => {
+        setAccountAnchor(evt.currentTarget);
+        setAccountMenuOpen(true);
     };
 
     return (
@@ -36,7 +44,17 @@ export function Header() {
                         Make It!
                     </Typography>
                     <IfAuthenticated>
-                        <Button color="inherit" onClick={handleLogout}>Log out</Button>
+                        <IconButton color="inherit">
+                            <ChatBubble />
+                        </IconButton>
+                        <IconButton color="inherit">
+                            <Notifications />
+                        </IconButton>
+                        <IconButton color="inherit" onClick={handleProfileClick}>
+                            {!user?.avatar && <AccountCircle />}
+                            {user?.avatar && <Avatar src={user.avatar} />}
+                        </IconButton>
+                        <AccountMenu open={accountMenuOpen} onClose={() => setAccountMenuOpen(false)} anchor={accountAnchor} />
                     </IfAuthenticated>
                 </Toolbar>
             </AppBar>
