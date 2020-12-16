@@ -6,6 +6,7 @@ import auditionsReducer from '../features/auditions/audition.slice';
 import breakdownsReducer from '../features/breakdowns/breakdowns.slice';
 import filesReducer from '../features/files/files.slice';
 import contactsReducer from '../features/contacts/contact.slice';
+import projectsReducer from '../features/projects/project.slice';
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +15,8 @@ export const store = configureStore({
     auditions: auditionsReducer,
     breakdowns: breakdownsReducer,
     files: filesReducer,
-    contacts: contactsReducer
+    contacts: contactsReducer,
+    projects: projectsReducer
   },
 });
 
