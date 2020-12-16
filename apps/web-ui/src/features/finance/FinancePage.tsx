@@ -2,11 +2,11 @@ import { Grid } from '@material-ui/core';
 import React from 'react';
 import TitledSection from '../layout/TitledSection';
 
-export const CalendarPage = () => {
+export const FinancePage = () => {
   return (
     <Grid container direction="column" spacing={5}>
       <Grid item>
-        <TitledSection title="Calendar">
+        <TitledSection title="Finance">
           Content TODO
         </TitledSection>
       </Grid>
@@ -14,4 +14,4 @@ export const CalendarPage = () => {
   );
 }
 
-export default CalendarPage;
+export default FinancePage;
