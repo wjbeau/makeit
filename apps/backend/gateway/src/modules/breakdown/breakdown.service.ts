@@ -4,20 +4,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
   BreakdownDocument,
-  BreakdownModel,
+  BreakdownModel
 } from '../../schema/breakdown.schema';
-import {
-  ProjectModel,
-  ProjectModelDocument,
-} from '../../schema/project.schema';
+import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class BreakdownService {
   constructor(
+    private projectService: ProjectService,
     @InjectModel(BreakdownModel.name)
-    private breakdownModel: Model<BreakdownDocument>,
-    @InjectModel(ProjectModel.name)
-    private projectModel: Model<ProjectModelDocument>
+    private breakdownModel: Model<BreakdownDocument>
   ) {}
 
   async save(id: string, breakdown: Breakdown): Promise<Breakdown | undefined> {
@@ -28,22 +24,13 @@ export class BreakdownService {
 
     //if necessary save the project first
     if (breakdown.project) {
-      const projectResult = await this.projectModel
-          .findOne({ _id: breakdown.project._id })
-          .then((dbRes) => {
-            if (dbRes) {
-              dbRes.set(breakdown.project);
-              return dbRes.save();
-            } else {
-              return this.projectModel.create(breakdown.project);
-            }
-          })
-          .catch((error) => {
-            throw new BadRequestException(error, 'Database update failed.');
-          });
+      const projectResult = await this.projectService.save(
+        breakdown.project._id,
+        breakdown.project
+      );
       breakdown.project = projectResult;
     }
-
+    
     // Find the document and update it if required or save a new one if not.
     const result = await this.breakdownModel
       .findOne({ _id: breakdown._id })

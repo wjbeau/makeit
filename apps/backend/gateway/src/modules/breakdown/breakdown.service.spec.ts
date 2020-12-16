@@ -6,37 +6,34 @@ import {
   instance,
   mock,
   reset,
+  strictEqual,
   verify,
   when
 } from 'ts-mockito';
 import { BreakdownDocument } from '../../schema/breakdown.schema';
-import { ProjectModelDocument } from '../../schema/project.schema';
 import { MockableDocument, MockableDocumentQuery, MockableModel } from '../../test/mockables';
+import { ProjectService } from '../project/project.service';
 import { BreakdownService } from './breakdown.service';
 
 describe('BreakdownService', () => {
   let classUnderTest: BreakdownService;
 
   const mockBreakdownModel = mock(MockableModel);
-  const mockProjectModel = mock(MockableModel);
   const mockBreakdownDocument = mock(MockableDocument);
-  const mockProjectDocument = mock(MockableDocument);
   const mockQuery = mock(MockableDocumentQuery);
-  const mockQuery2 = mock(MockableDocumentQuery);
+  const mockProjectService = mock(ProjectService);
 
   beforeEach(async () => {
     classUnderTest = new BreakdownService(
-      instance(mockBreakdownModel) as Model<BreakdownDocument>,
-      instance(mockProjectModel) as Model<ProjectModelDocument>);
+      instance(mockProjectService),
+      instance(mockBreakdownModel) as Model<BreakdownDocument>)
   });
 
   afterEach(async () => {
     reset(mockBreakdownModel);
-    reset(mockProjectModel);
     reset(mockBreakdownDocument);
-    reset(mockProjectDocument);
     reset(mockQuery);
-    reset(mockQuery2);
+    reset(mockProjectService);
   });
 
   describe('save', () => {
@@ -71,11 +68,8 @@ describe('BreakdownService', () => {
         mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).thenReturn(new Promise(resolve => resolve(instance(mockBreakdownDocument))));
 
-      when(mockProjectDocument.save()).thenReturn(instance(mockProjectDocument));
-      when(mockProjectDocument.toObject()).thenReturn(breakdown.project);
-      when(
-        mockProjectModel.findOne(deepEqual({_id: breakdown.project._id}))
-      ).thenReturn(new Promise(resolve => resolve(instance(mockProjectDocument))));
+      when(mockProjectService.save(strictEqual(breakdown.project._id), deepEqual(breakdown.project)))
+        .thenResolve(breakdown.project);
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.save(breakdown._id, breakdown);
