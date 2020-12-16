@@ -98,7 +98,7 @@ export const ContactBook = () => {
     return contacts
       .filter(c => c.lastName.toUpperCase().startsWith(letter))
       .filter(c => matchesSearch(c))
-      .sort((a,b) => a.lastName.localCompare(b.lastName));
+      .sort((a,b) => a.lastName.localeCompare(b.lastName));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
