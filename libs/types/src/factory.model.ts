@@ -1,7 +1,7 @@
 import { Address } from './address.model';
 import { Audition, AuditionType, AuditionStatus } from './audition.model';
 import { Breakdown } from './breakdown.model';
-import { Project, ProjectType, UnionType } from './project.model';
+import { Project, ProjectStatus, ProjectType, UnionType } from './project.model';
 import { Gender, Ethnicity } from './base-enums.model';
 import { Contact } from './contact.model';
 
@@ -66,7 +66,9 @@ export class ModelFactory {
             startDate: null,
             participants: [],
             links: [],
-            attachments: []
+            attachments: [],
+            status: ProjectStatus.Provisional,
+            calls: []
         }
     }
     public static createEmptyContact():Contact {
