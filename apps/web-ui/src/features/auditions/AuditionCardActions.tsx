@@ -19,7 +19,7 @@ import AuditionEditButton from './AuditionEditButton';
 export const AuditionCardActions = (props: { audition: Audition }) => {
   const { audition } = props;
   const dispatch = useAppDispatch();
-  
+
   const markAsStatus = (newStatus: AuditionStatus) => {
     const oldStatus = audition.status;
     audition.status = newStatus;
@@ -130,7 +130,7 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
           </Tooltip>
         </>
       )}
-      {audition.status === AuditionStatus.Successful && (
+      {audition.status === AuditionStatus.Successful && audition.breakdown?.project?.status === ProjectStatus.Provisional &&  (
         <Tooltip title="Convert to Project" aria-label="convert to project">
           <IconButton
             aria-label="convert to project"

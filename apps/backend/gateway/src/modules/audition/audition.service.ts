@@ -57,10 +57,10 @@ export class AuditionService {
         throw new BadRequestException(error, 'Database update failed.');
       });
 
-    result.populate({
+    await result.populate({
       path: 'breakdown',
       populate: { path: 'project' },
-    });
+    }).execPopulate();
 
     return result.toObject();
   }

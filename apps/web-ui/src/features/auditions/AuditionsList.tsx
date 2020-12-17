@@ -1,10 +1,10 @@
-import { AuditionType } from '@makeit/types';
+import { AuditionType, Audition } from '@makeit/types';
 import * as moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React from 'react';
 import { Converter } from '../../app/Converters';
-import AuditionEditButton from './AuditionEditButton';
 import { makeStyles } from '@material-ui/core';
+import AuditionCardActions from './AuditionCardActions';
 
 const useStyles = makeStyles((theme) => ({
   padding: {
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const columns = [
+const columns = (auditions: Audition[]) => [
   {
     name: 'breakdown.roleName',
     label: 'Role',
@@ -68,7 +68,7 @@ const columns = [
       print: false,
       searchable: false,
       customBodyRender: (value, tableMeta, updateValue) => {
-        return <AuditionEditButton id={value} />
+        return <AuditionCardActions audition={auditions.find(a => a._id === value)} />
       },
     },
   },
@@ -89,7 +89,7 @@ export const AuditionsList = (props) => {
       <MUIDataTable
         title="Auditions"
         data={auditions}
-        columns={columns}
+        columns={columns(auditions)}
         options={options}
       />
     </div>
