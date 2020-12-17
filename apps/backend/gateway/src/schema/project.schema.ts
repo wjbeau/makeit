@@ -5,6 +5,8 @@ import { AddressSchema } from './address.schema';
 import { AttachmentSchema } from './attachment.schema';
 import { LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
+import { PermissionSchema } from './permission.schema';
+import { Permission } from '../../../../../libs/types/src/permission.model';
 
 
 
@@ -21,6 +23,9 @@ export class ProjectCallModel implements ProjectCall {
     attachments: Attachment[]; 
     @Prop({ type: [LinkSchema] })
     links: Link[]; 
+
+    @Prop({ type: [PermissionSchema] })
+    permissions: Permission[];
 }
 
 export const ProjectCallSchema = SchemaFactory.createForClass(ProjectCallModel);
@@ -52,6 +57,9 @@ export class ProjectModel implements Project {
 
     @Prop({ type: [ProjectCallSchema] })
     calls: ProjectCall[];
+
+    @Prop({ type: [PermissionSchema] })
+    permissions: Permission[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(ProjectModel);

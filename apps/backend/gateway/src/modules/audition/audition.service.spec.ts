@@ -1,8 +1,7 @@
 import {
   Audition,
   ModelFactory,
-  ParticipantReferenceType,
-  ParticipantType
+  PermissionRole,
 } from '@makeit/types';
 import { BadRequestException } from '@nestjs/common';
 import { Model } from 'mongoose';
@@ -15,12 +14,16 @@ import {
   strictEqual,
   verify,
   when,
-
 } from 'ts-mockito';
 import { AuditionDocument } from '../../schema/Audition.schema';
-import { MockableDocument, MockableDocumentQuery, MockableModel } from '../../test/mockables';
+import {
+  MockableDocument,
+  MockableDocumentQuery,
+  MockableModel,
+} from '../../test/mockables';
 import { BreakdownService } from '../breakdown/breakdown.service';
 import { AuditionService } from './Audition.service';
+import { permissionsSpec } from '../../schema/permission.schema';
 
 describe('AuditionService', () => {
   let classUnderTest: AuditionService;
@@ -31,7 +34,10 @@ describe('AuditionService', () => {
   const mockBreakdownService = mock(BreakdownService);
 
   beforeEach(async () => {
-    classUnderTest = new AuditionService(instance(mockBreakdownService), instance(mockModel) as Model<AuditionDocument>)
+    classUnderTest = new AuditionService(
+      instance(mockBreakdownService),
+      instance(mockModel) as Model<AuditionDocument>
+    );
   });
 
   afterEach(async () => {
@@ -50,50 +56,67 @@ describe('AuditionService', () => {
       when(mockDocument.save()).thenReturn(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
-      when(
-        mockModel.findOne(deepEqual({_id: audition._id}))
-      ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
+      when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
+        new Promise((resolve) => resolve(instance(mockDocument)))
+      );
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition, 'userid');
+      const result = await classUnderTest.save(
+        audition._id,
+        audition,
+        'userid'
+      );
       verify(mockDocument.set(anything())).once();
       verify(mockDocument.save()).once();
+      verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
-        mockModel.findOne(deepEqual({_id: audition._id}))
+        mockDocument.populate(
+          deepEqual({
+            path: 'breakdown',
+            populate: { path: 'project' },
+          })
+        )
       ).once();
-      verify(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).once();
       expect(result).toEqual(audition);
     });
 
     it('should return valid Audition when properly updated with a breakdown', async () => {
       const audition: Audition = ModelFactory.createEmptyAudition();
-      audition.breakdown._id = 'breakdownid'
+      audition.breakdown._id = 'breakdownid';
       audition._id = 'auditionid';
 
-      when(mockBreakdownService.save(strictEqual('breakdownid'), deepEqual(audition.breakdown)))
-        .thenResolve(audition.breakdown);
+      when(
+        mockBreakdownService.save(
+          strictEqual('breakdownid'),
+          deepEqual(audition.breakdown),
+          strictEqual('userid')
+        )
+      ).thenResolve(audition.breakdown);
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
-      when(
-        mockModel.findOne(deepEqual({_id: audition._id}))
-      ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
+      when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
+        new Promise((resolve) => resolve(instance(mockDocument)))
+      );
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition, 'userid');
+      const result = await classUnderTest.save(
+        audition._id,
+        audition,
+        'userid'
+      );
       verify(mockDocument.set(anything())).once();
       verify(mockDocument.save()).once();
+      verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
-        mockModel.findOne(deepEqual({_id: audition._id}))
+        mockDocument.populate(
+          deepEqual({
+            path: 'breakdown',
+            populate: { path: 'project' },
+          })
+        )
       ).once();
-      verify(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).once();
       expect(result).toEqual(audition);
     });
 
@@ -104,25 +127,31 @@ describe('AuditionService', () => {
 
       when(mockDocument.toObject()).thenReturn(audition);
 
-      when(
-        mockModel.findOne(deepEqual({_id: audition._id}))
-      ).thenReturn(new Promise(resolve => resolve(null)));
+      when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
+        new Promise((resolve) => resolve(null))
+      );
 
-      when(
-        mockModel.create(deepEqual(audition))
-      ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
+      when(mockModel.create(deepEqual(audition))).thenReturn(
+        new Promise((resolve) => resolve(instance(mockDocument)))
+      );
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition, 'userid');
+      const result = await classUnderTest.save(
+        audition._id,
+        audition,
+        'userid'
+      );
       verify(mockDocument.set(anything())).never();
       verify(mockModel.create(deepEqual(audition))).once();
+      verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
-        mockModel.findOne(deepEqual({_id: audition._id}))
+        mockDocument.populate(
+          deepEqual({
+            path: 'breakdown',
+            populate: { path: 'project' },
+          })
+        )
       ).once();
-      verify(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).once();
       expect(result).toEqual(audition);
     });
 
@@ -174,15 +203,12 @@ describe('AuditionService', () => {
 
       when(mockDocument.toObject()).thenReturn(audition);
 
-      when(
-        mockModel.findOne(deepEqual({_id: audition._id}))
-      ).thenReturn(new Promise(resolve => resolve(null)));
+      when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
+        new Promise((resolve) => resolve(null))
+      );
 
-
-      const err = new Error('mock error')
-      when(
-        mockModel.create(deepEqual(audition))
-      ).thenThrow(err);
+      const err = new Error('mock error');
+      when(mockModel.create(deepEqual(audition))).thenThrow(err);
       expect(classUnderTest).toBeDefined();
       try {
         await classUnderTest.save(audition._id, audition, 'userid');
@@ -260,7 +286,9 @@ describe('AuditionService', () => {
 
       when(mockQuery.lean()).thenReturn(instance(mockQuery));
       when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
-      when(mockQuery.sort(deepEqual({deadline: -1, auditionTime: -1}))).thenReturn(instance(mockQuery));
+      when(
+        mockQuery.sort(deepEqual({ deadline: -1, auditionTime: -1 }))
+      ).thenReturn(instance(mockQuery));
       when(mockQuery.exec()).thenReturn(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new Promise<any>((resolve) => {
@@ -269,21 +297,13 @@ describe('AuditionService', () => {
       );
       when(
         mockModel.find(
-          deepEqual({
-            'participants.info.type': ParticipantReferenceType.UserAccount,
-            'participants.info.ref': id,
-            'participants.role': {
-              $in: [
-                ParticipantType.Auditioning,
-                ParticipantType.Cast,
-                ParticipantType.AgentManager,
-                ParticipantType.CastingAssociate,
-                ParticipantType.CastingDirector,
-                ParticipantType.Producer,
-                ParticipantType.Director,
-              ],
-            },
-          })
+          deepEqual(
+            permissionsSpec(id, null, [
+              PermissionRole.Admin,
+              PermissionRole.Editor,
+              PermissionRole.Viewer,
+            ])
+          )
         )
       ).thenReturn(instance(mockQuery));
 
@@ -307,24 +327,18 @@ describe('AuditionService', () => {
       );
       when(
         mockModel.find(
-          deepEqual({
-            'participants.info.type': ParticipantReferenceType.UserAccount,
-            'participants.info.ref': id,
-            'participants.role': {
-              $in: [
-                ParticipantType.Auditioning,
-                ParticipantType.Cast,
-                ParticipantType.AgentManager,
-                ParticipantType.CastingAssociate,
-                ParticipantType.CastingDirector,
-                ParticipantType.Producer,
-                ParticipantType.Director,
-              ],
-            },
-          })
+          deepEqual(
+            permissionsSpec(id, null, [
+              PermissionRole.Admin,
+              PermissionRole.Editor,
+              PermissionRole.Viewer,
+            ])
+          )
         )
       ).thenReturn(instance(mockQuery));
-      when(mockQuery.sort(deepEqual({deadline: -1, auditionTime: -1}))).thenReturn(instance(mockQuery));
+      when(
+        mockQuery.sort(deepEqual({ deadline: -1, auditionTime: -1 }))
+      ).thenReturn(instance(mockQuery));
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.findAllForUser(id);

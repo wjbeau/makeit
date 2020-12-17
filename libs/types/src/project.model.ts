@@ -2,8 +2,9 @@ import { HasAttachments } from './attachment.model';
 import { BaseEntity } from './base.model';
 import { HasParticipants } from './participant.model';
 import { Address } from './address.model';
+import { HasPermissions } from './permission.model';
 
-export interface Project extends BaseEntity, HasAttachments, HasParticipants {
+export interface Project extends BaseEntity, HasAttachments, HasParticipants, HasPermissions {
     name: string;
     projectType: ProjectType; 
     description: string;
@@ -14,7 +15,7 @@ export interface Project extends BaseEntity, HasAttachments, HasParticipants {
     calls: ProjectCall[];
 }
 
-export interface ProjectCall extends BaseEntity, HasAttachments {
+export interface ProjectCall extends BaseEntity, HasAttachments, HasPermissions {
     callTime: Date;
     location: Address;
     notes: string;

@@ -50,7 +50,7 @@ describe('BreakdownService', () => {
       ).thenReturn(new Promise(resolve => resolve(instance(mockBreakdownDocument))));
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(breakdown._id, breakdown);
+      const result = await classUnderTest.save(breakdown._id, breakdown, 'userid');
       verify(
         mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
@@ -68,11 +68,11 @@ describe('BreakdownService', () => {
         mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).thenReturn(new Promise(resolve => resolve(instance(mockBreakdownDocument))));
 
-      when(mockProjectService.save(strictEqual(breakdown.project._id), deepEqual(breakdown.project)))
+      when(mockProjectService.save(strictEqual(breakdown.project._id), deepEqual(breakdown.project), strictEqual('userid')))
         .thenResolve(breakdown.project);
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(breakdown._id, breakdown);
+      const result = await classUnderTest.save(breakdown._id, breakdown, 'userid');
       verify(
         mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
@@ -91,7 +91,7 @@ describe('BreakdownService', () => {
       ).thenReturn(new Promise(resolve => resolve(null)));
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(breakdown._id, breakdown);
+      const result = await classUnderTest.save(breakdown._id, breakdown, 'userid');
       verify(
         mockBreakdownModel.findOne(deepEqual({_id: breakdown._id}))
       ).once();
@@ -106,7 +106,7 @@ describe('BreakdownService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('differentid', breakdown);
+        await classUnderTest.save('differentid', breakdown, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -119,7 +119,7 @@ describe('BreakdownService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(null, breakdown);
+        await classUnderTest.save(null, breakdown, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -132,7 +132,7 @@ describe('BreakdownService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('some_id', breakdown);
+        await classUnderTest.save('some_id', breakdown, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();

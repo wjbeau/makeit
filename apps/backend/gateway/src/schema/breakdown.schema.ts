@@ -4,6 +4,8 @@ import * as mongoose from 'mongoose';
 import { AttachmentSchema } from './attachment.schema';
 import { LinkSchema } from './link.schema';
 import { ProjectModel } from './project.schema';
+import { PermissionSchema } from './permission.schema';
+import { Permission } from '../../../../../libs/types/src/permission.model';
 
 export type BreakdownDocument = BreakdownModel & mongoose.Document;
 
@@ -34,6 +36,9 @@ export class BreakdownModel implements Breakdown {
     attachments: Attachment[]; 
     @Prop({ type: [LinkSchema] })
     links: Link[]; 
+
+    @Prop({ type: [PermissionSchema] })
+    permissions: Permission[];
 }
 
 

@@ -6,7 +6,9 @@ import { AttachmentSchema, AttachmentModel } from './attachment.schema';
 import { BreakdownModel } from './breakdown.schema';
 import { LinkModel, LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
+import { PermissionSchema } from './permission.schema';
 import { UserAccountModel } from './user.schema';
+import { Permission } from '../../../../../libs/types/src/permission.model';
 
 export type AuditionNoteDocument = AuditionNoteModel & mongoose.Document;
 
@@ -22,6 +24,9 @@ export class AuditionNoteModel implements AuditionNote {
     links: Link[];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: AttachmentModel.name }] })
     attachments: Attachment[];
+
+    @Prop({ type: [PermissionSchema] })
+    permissions: Permission[];
 }
 
 export const AuditionNoteSchema = SchemaFactory.createForClass(AuditionNoteModel);
@@ -58,6 +63,9 @@ export class AuditionModel implements Audition {
 
     @Prop({ type: [AuditionNoteSchema] })
     notes: AuditionNote[];
+
+    @Prop({ type: [PermissionSchema] })
+    permissions: Permission[];
 
     @Prop()
     reminderNote: string;

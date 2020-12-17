@@ -3,10 +3,11 @@ import { HasAttachments } from './attachment.model';
 import { BaseEntity } from './base.model';
 import { Breakdown } from './breakdown.model';
 import { HasParticipants } from './participant.model';
+import { HasPermissions } from './permission.model';
 import { UserAccount } from './user.model';
 
 
-export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
+export interface Audition extends BaseEntity, HasAttachments, HasParticipants, HasPermissions {
     breakdown: Breakdown;
     
     instructions: string;
@@ -26,7 +27,7 @@ export interface Audition extends BaseEntity, HasAttachments, HasParticipants {
     notes: AuditionNote[];
 }
 
-export interface AuditionNote extends HasAttachments {
+export interface AuditionNote extends HasAttachments, HasPermissions {
     description: string;
     createdBy: UserAccount;
     createdOn: Date;

@@ -1,4 +1,4 @@
-import { Audition, AuditionStatus, ProjectStatus } from '@makeit/types';
+import { Project, ProjectStatus } from '@makeit/types';
 import { Grid, makeStyles, Typography } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { useEffect } from 'react';
@@ -30,7 +30,7 @@ export const ActiveProjects = () => {
   const loading = useSelector(selectProjectsLoading);
   const projectsRaw = useSelector(selectProjects);
   const projects = projectsRaw.map((a) => Converter.convertAllDates(a));
-  const activeProjects: Audition[] = projects
+  const activeProjects: Project[] = projects
     .filter((a) => a.status === ProjectStatus.Active)
     .sort((a, b) => {
       if (a.startDate && b.startDate) return b.startDate - a.startDate;

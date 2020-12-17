@@ -2,11 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Project, ProjectStatus } from '../../../../../../libs/types/src/project.model';
-import { ParticipantReferenceType, ParticipantType } from '../../../../../../libs/types/src/participant.model';
+import { ensureAdminPermission, permissionsSpec } from '../../schema/permission.schema';
 import {
   ProjectModel,
   ProjectModelDocument
 } from '../../schema/project.schema';
+import { PermissionRole, PermissionType } from '@makeit/types';
+import { Permission } from '../../../../../../libs/types/src/permission.model';
 
 @Injectable()
 export class ProjectService {
@@ -15,12 +17,16 @@ export class ProjectService {
     private projectModel: Model<ProjectModelDocument>
   ) {}
 
-  async save(id: string, project: Project): Promise<Project | undefined> {
+  async save(id: string, project: Project, userid): Promise<Project | undefined> {
     //the path variable must match the data posted
     if ((id || project._id) && id !== project._id) {
       throw new BadRequestException();
     }
 
+    if(!id) {
+      ensureAdminPermission(project, userid);
+      project.calls.forEach(c => ensureAdminPermission(c, userid));
+    }
 
     // Find the document and update it if required or save a new one if not.
     const result = await this.projectModel
@@ -50,25 +56,17 @@ export class ProjectService {
     //find all Projects where the given user is a relevant participant
     const result: Project[] = await this.projectModel
       .find({
-        $or: [
-          {'status': ProjectStatus.Active},
-          {'status': ProjectStatus.Completed},
-          {'status': ProjectStatus.Cancelled},
+        $and: [
+          {
+            $or: [
+              {'status': ProjectStatus.Active},
+              {'status': ProjectStatus.Completed},
+              {'status': ProjectStatus.Cancelled},
+            ]
+          },
+          permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
         ]
-      //   'participants.info.type': ParticipantReferenceType.UserAccount,
-      //   'participants.info.ref': id,
-      //   'participants.role': {
-      //     $in: [
-      //       ParticipantType.Auditioning,
-      //       ParticipantType.Cast,
-      //       ParticipantType.AgentManager,
-      //       ParticipantType.CastingAssociate,
-      //       ParticipantType.CastingDirector,
-      //       ParticipantType.Producer,
-      //       ParticipantType.Director,
-      //     ],
-      //   }, TODO replace this with a permissions model
-       }) 
+      }) 
       .lean()
       .exec();
     return result;

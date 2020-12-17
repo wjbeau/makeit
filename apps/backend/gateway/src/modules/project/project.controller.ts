@@ -21,13 +21,13 @@ export class ProjectController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async updateProject(@Param() params, @Body() body:Project) {
-    return this.projectService.save(params.id, body)
+  async updateProject(@Param() params, @Body() body:Project, @Request() req) {
+    return this.projectService.save(params.id, body, req.user._id)
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createProject(@Body() body:Project) {
-    return this.projectService.save(null, body)
+  async createProject(@Body() body:Project, @Request() req) {
+    return this.projectService.save(null, body, req.user._id)
   }
 }

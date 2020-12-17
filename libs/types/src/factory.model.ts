@@ -24,7 +24,8 @@ export class ModelFactory {
             notes: [],
             participants: [],
             links: [],
-            attachments: []
+            attachments: [],
+            permissions: []
         }
     }
 
@@ -41,7 +42,8 @@ export class ModelFactory {
             ethnicities: [Ethnicity.Any],
             project: this.createEmptyProject(),
             links: [],
-            attachments: []
+            attachments: [],
+            permissions: []
         }
     }
 
@@ -68,7 +70,8 @@ export class ModelFactory {
             links: [],
             attachments: [],
             status: ProjectStatus.Provisional,
-            calls: []
+            calls: [],
+            permissions: []
         }
     }
     public static createEmptyContact():Contact {

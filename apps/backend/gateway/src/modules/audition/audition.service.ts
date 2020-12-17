@@ -10,6 +10,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditionDocument, AuditionModel } from '../../schema/Audition.schema';
 import { BreakdownService } from '../breakdown/breakdown.service';
+import { PermissionRole } from '../../../../../../libs/types/src/permission.model';
+import { permissionsSpec, ensureAdminPermission } from '../../schema/permission.schema';
 
 @Injectable()
 export class AuditionService {
@@ -25,11 +27,17 @@ export class AuditionService {
       throw new BadRequestException();
     }
 
+    if(!id) {
+      ensureAdminPermission(audition, userid);
+      audition.notes?.forEach(n => ensureAdminPermission(n, userid))
+    }
+
     //if necessary save the project first
     if (audition.breakdown) {
       const breakdownResult = await this.breakdownService.save(
         audition.breakdown._id,
-        audition.breakdown
+        audition.breakdown,
+        userid
       );
       audition.breakdown = breakdownResult;
     }
@@ -66,21 +74,9 @@ export class AuditionService {
   async findAllForUser(id: any): Promise<Audition[] | undefined> {
     //find all auditions where the given user is a relevant participant
     const result: Audition[] = await this.auditionModel
-      .find({
-        // 'participants.info.type': ParticipantReferenceType.UserAccount,
-        // 'participants.info.ref': id,
-        // 'participants.role': {
-        //   $in: [
-        //     ParticipantType.Auditioning,
-        //     ParticipantType.Cast,
-        //     ParticipantType.AgentManager,
-        //     ParticipantType.CastingAssociate,
-        //     ParticipantType.CastingDirector,
-        //     ParticipantType.Producer,
-        //     ParticipantType.Director,
-        //   ],
-        // }, TODO replace with a permissions model
-      })
+      .find(
+        permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
+      )
       .populate({
         path: 'breakdown',
         populate: { path: 'project' },

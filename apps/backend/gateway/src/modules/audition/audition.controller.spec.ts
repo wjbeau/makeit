@@ -67,11 +67,12 @@ describe('AuditionController', () => {
       const params = { id: 'someid' }
       const aud = new AuditionModel();
       aud['_id'] = params.id;
+      const req = {user: user}
 
-      when(mockedService.save(strictEqual(params.id), strictEqual(aud))).thenReturn(
+      when(mockedService.save(strictEqual(params.id), strictEqual(aud), strictEqual(user._id))).thenReturn(
         new Promise<Audition>((resolve) => { resolve(aud) }),
       );
-      const result = await controllerUnderTest.updateAudition(params, aud)
+      const result = await controllerUnderTest.updateAudition(params, aud, req)
       expect(result).toBeDefined();
       expect(result).toEqual(aud);
     });
@@ -80,11 +81,12 @@ describe('AuditionController', () => {
       const aud = new AuditionModel();
       aud['_id'] = params.id;
       const error = new BadRequestException('Nonono');
+      const req = {user: user}
 
-      when(mockedService.save(strictEqual(params.id), strictEqual(aud))).thenThrow(error);
+      when(mockedService.save(strictEqual(params.id), strictEqual(aud), strictEqual(user._id))).thenThrow(error);
 
       try {
-        await controllerUnderTest.updateAudition(params, aud)
+        await controllerUnderTest.updateAudition(params, aud, req)
         fail();
       } catch (e) {
         expect(e).toEqual(error); 
@@ -94,22 +96,24 @@ describe('AuditionController', () => {
     describe('createAudition', () => {
       it('should save when all is valid', async () => {
         const aud = new AuditionModel();
+        const req = {user: user}
   
-        when(mockedService.save(strictEqual(null), strictEqual(aud))).thenReturn(
+        when(mockedService.save(strictEqual(null), strictEqual(aud), strictEqual(user._id))).thenReturn(
           new Promise<Audition>((resolve) => { resolve(aud) }),
         );
-        const result = await controllerUnderTest.createAudition(aud)
+        const result = await controllerUnderTest.createAudition(aud, req)
         expect(result).toBeDefined();
         expect(result).toEqual(aud);
       });
       it('should fail when an error is thrown', async () => {
         const aud = new AuditionModel();
         const error = new BadRequestException('Nonono');
+        const req = {user: user}
   
-        when(mockedService.save(strictEqual(null), strictEqual(aud))).thenThrow(error);
+        when(mockedService.save(strictEqual(null), strictEqual(aud), strictEqual(user._id))).thenThrow(error);
   
         try {
-          await controllerUnderTest.createAudition(aud)
+          await controllerUnderTest.createAudition(aud, req)
           fail();
         } catch (e) {
           expect(e).toEqual(error); 
