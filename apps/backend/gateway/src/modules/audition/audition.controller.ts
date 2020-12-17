@@ -21,13 +21,13 @@ export class AuditionController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async updateAudition(@Param() params, @Body() body:Audition) {
-    return this.auditionService.save(params.id, body)
+  async updateAudition(@Param() params, @Body() body:Audition, @Request() req) {
+    return this.auditionService.save(params.id, body, req.user._id)
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createAudition(@Body() body:Audition) {
-    return this.auditionService.save(null, body)
+  async createAudition(@Body() body:Audition, @Request() req) {
+    return this.auditionService.save(null, body, req.user._id)
   }
 }

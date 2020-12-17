@@ -30,7 +30,7 @@ export const LinkAttachmentList = (props: { container: HasAttachments, readOnly,
           render={(arrayHelpers) => {
             helpers.linkArrayHelper = arrayHelpers;
             return container.links.map((a, index) => (
-              <LinkAttachment key={a.url} link={a} readOnly={readOnly} onDelete={() => arrayHelpers.remove(index)} />
+              <LinkAttachment key={index} link={a} readOnly={readOnly} onDelete={() => arrayHelpers.remove(index)} />
             ))
           }} />
       }

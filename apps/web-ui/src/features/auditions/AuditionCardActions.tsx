@@ -1,4 +1,4 @@
-import { Audition, AuditionStatus } from '@makeit/types';
+import { Audition, AuditionStatus, ProjectStatus } from '@makeit/types';
 import { IconButton, Tooltip } from '@material-ui/core';
 import {
   Block,
@@ -12,13 +12,14 @@ import React from 'react';
 import { Converter } from '../../app/Converters';
 import { useAppDispatch } from '../../app/store';
 import { logError, logSuccess } from '../logging/logging.slice';
+import { saveProject } from '../projects/project.slice';
 import { saveAudition } from './audition.slice';
 import AuditionEditButton from './AuditionEditButton';
 
 export const AuditionCardActions = (props: { audition: Audition }) => {
   const { audition } = props;
   const dispatch = useAppDispatch();
-
+  
   const markAsStatus = (newStatus: AuditionStatus) => {
     const oldStatus = audition.status;
     audition.status = newStatus;
@@ -34,6 +35,25 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
       })
       .catch((e) => {
         audition.status = oldStatus;
+        dispatch(logError(e));
+      });
+  };
+
+  const activateProject = () => {
+    const oldStatus = audition.breakdown.project.status;
+    audition.breakdown.project.status = ProjectStatus.Active;
+
+    dispatch(saveProject(audition.breakdown.project))
+      .then((p) => {
+        dispatch(
+          logSuccess({
+            message:
+              'Project saved.'
+          })
+        );
+      })
+      .catch((e) => {
+        audition.breakdown.project.status = oldStatus;
         dispatch(logError(e));
       });
   };
@@ -114,7 +134,7 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
         <Tooltip title="Convert to Project" aria-label="convert to project">
           <IconButton
             aria-label="convert to project"
-            onClick={() => console.log('Not yet implemented')}
+            onClick={activateProject}
           >
             <PermMedia />
           </IconButton>

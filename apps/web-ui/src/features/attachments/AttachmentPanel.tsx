@@ -40,7 +40,6 @@ export const AttachmentPanel = (props: {
   const classes = useStyles();
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
   const { container } = props;
-  console.log(container);
   const showFiles =
     (container as HasAttachments).attachments?.length > 0
       ? null

@@ -2,12 +2,13 @@ import { Grid } from '@material-ui/core';
 import React from 'react';
 import RecentAuditions from '../auditions/RecentAuditions';
 import UpcomingAuditions from '../auditions/UpcomingAuditions';
+import ActiveProjects from '../projects/ActiveProjects';
 
 export const HomePage = () => {
   return (
     <Grid container direction="row" spacing={5}>
       <Grid item xs={8}>
-        Put main content here...
+        <ActiveProjects />
       </Grid>
       <Grid item xs={4}>
         <Grid container direction="column" spacing={3}>

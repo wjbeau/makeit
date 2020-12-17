@@ -55,7 +55,7 @@ describe('AuditionService', () => {
       ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition);
+      const result = await classUnderTest.save(audition._id, audition, 'userid');
       verify(mockDocument.set(anything())).once();
       verify(mockDocument.save()).once();
       verify(
@@ -84,7 +84,7 @@ describe('AuditionService', () => {
       ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition);
+      const result = await classUnderTest.save(audition._id, audition, 'userid');
       verify(mockDocument.set(anything())).once();
       verify(mockDocument.save()).once();
       verify(
@@ -113,7 +113,7 @@ describe('AuditionService', () => {
       ).thenReturn(new Promise(resolve => resolve(instance(mockDocument))));
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(audition._id, audition);
+      const result = await classUnderTest.save(audition._id, audition, 'userid');
       verify(mockDocument.set(anything())).never();
       verify(mockModel.create(deepEqual(audition))).once();
       verify(
@@ -133,7 +133,7 @@ describe('AuditionService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('differentid', audition);
+        await classUnderTest.save('differentid', audition, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -147,7 +147,7 @@ describe('AuditionService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(null, audition);
+        await classUnderTest.save(null, audition, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -160,7 +160,7 @@ describe('AuditionService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('some_id', audition);
+        await classUnderTest.save('some_id', audition, 'userid');
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -185,7 +185,7 @@ describe('AuditionService', () => {
       ).thenThrow(err);
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(audition._id, audition);
+        await classUnderTest.save(audition._id, audition, 'userid');
         fail();
       } catch (e) {
         expect(e).toEqual(err);

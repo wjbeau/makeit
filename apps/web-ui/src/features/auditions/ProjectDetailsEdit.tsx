@@ -1,4 +1,4 @@
-import { Project, ProjectType, UnionType } from '@makeit/types';
+import { Project, ProjectStatus, ProjectType, UnionType } from '@makeit/types';
 import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
@@ -27,12 +27,31 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
     >
       <Grid container direction="column" spacing={2}>
         <Grid item>
-          <FastField
-            component={TextField}
-            name="breakdown.project.name"
-            label="Project Name"
-            fullWidth={true}
-          />
+          <Grid container direction="row" spacing={2}>
+            <Grid item xs={8}>
+              <FastField
+                component={TextField}
+                name="breakdown.project.name"
+                label="Project Name"
+                fullWidth={true}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="union-status">Status</InputLabel>
+                <FastField
+                  component={Select}
+                  name="breakdown.project.status"
+                  inputProps={{
+                    id: 'project-status',
+                  }}
+                  fullWidth={true}
+                >
+                  {Converter.enumToMenuItems('ProjectStatus', ProjectStatus)}
+                </FastField>
+              </FormControl>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item>
           <Grid container direction="row" spacing={2}>

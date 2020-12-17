@@ -1,5 +1,6 @@
-import { Audition, AuditionStatus, AuditionType } from '@makeit/types';
+import { Project, ProjectType } from '@makeit/types';
 import {
+  Avatar,
   Card,
   CardActions,
   CardContent,
@@ -7,24 +8,17 @@ import {
   Collapse,
   Grid,
   IconButton,
-  Link,
   makeStyles,
-  Typography,
+  Typography
 } from '@material-ui/core';
-import { Done, Edit, ExpandMore, MoreVert } from '@material-ui/icons';
+import { ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
-import { useHistory } from 'react-router-dom';
 import { Converter } from '../../app/Converters';
-import { useAppDispatch } from '../../app/store';
-import { logError, logSuccess } from '../logging/logging.slice';
-import { saveAudition } from './audition.slice';
-import { AuditionAvatar } from './AuditionAvatar';
-import AuditionCardActions from './AuditionCardActions';
-import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 import FileAttachmentList from '../attachments/FileAttachmentList';
 import LinkAttachmentList from '../attachments/LinkAttachmentList';
+import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -44,120 +38,92 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const AuditionCard = (props: { audition: Audition }) => {
-  const { audition } = props;
+export const ProjectCard = (props: { project: Project }) => {
+  const { project } = props;
   const classes = useStyles();
-  const history = useHistory();
   const [expanded, setExpanded] = React.useState(false);
-  const dispatch = useAppDispatch();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const buildTitle = () => {
-    let result = '';
-
-    if (audition?.breakdown?.roleName) {
-      result += audition?.breakdown?.roleName;
-    }
-    if (audition?.breakdown?.project?.name) {
-      if (result.length) {
-        result += ' / ';
-      }
-      result += audition?.breakdown?.project?.name;
-    }
-
-    if (!result.length) {
-      result = Converter.getLabelForEnum(AuditionType, audition.type);
-    }
-
-    return result;
-  };
-
   return (
     <Card className={classes.root}>
       <CardHeader
-        avatar={<AuditionAvatar audition={audition} />}
+        avatar={<Avatar>P</Avatar>}
         action={
           <IconButton aria-label="settings">
             <MoreVert />
           </IconButton>
         }
-        title={buildTitle()}
+        title={project.name}
         subheader={
           <>
-            {audition.auditionTime && (
-              <Moment interval={0} format="LLL">
-                {audition.auditionTime}
-              </Moment>
+            {project.projectType &&
+              Converter.getLabelForEnum(ProjectType, project.projectType)}
+            {project.startDate && (
+              <span>
+                <span>Starts on:</span>
+                <Moment interval={0} format="LLL">
+                  {project.startDate}
+                </Moment>
+              </span>
             )}
-            {!audition.auditionTime && 'No date set'}
           </>
         }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container spacing={2}>
-            {audition.instructions && (
+            {project.description && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
-                  Instructions
+                  Description
                 </Typography>
                 <Typography variant="body2">
-                  {audition?.instructions}
+                  {project.description}
                 </Typography>
               </Grid>
             )}
-            {audition.address && audition.address.line1 && (
+            {project.calls?.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
-                  Address
+                  Call Times
                 </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line1}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line2}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line3}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.city}
-                  {', ' + audition?.address?.state} {audition?.address?.zip}
-                </Typography>
+                List here...
               </Grid>
             )}
-            {audition.attachments && audition.attachments.length > 0 && (
+            {project.attachments && project.attachments.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Files
                 </Typography>
-                <FileAttachmentList container={audition} readOnly={true} />
+                <FileAttachmentList container={project} readOnly={true} />
               </Grid>
             )}
-            {audition.links && audition.links.length > 0 && (
+            {project.links && project.links.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Links
                 </Typography>
-                <LinkAttachmentList container={audition} readOnly={true} />
+                <LinkAttachmentList container={project} readOnly={true} />
               </Grid>
             )}
-            {audition.participants && audition.participants.length > 0 && (
+            {project.participants && project.participants.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>
-                <ParticipantAttachmentList container={audition} readOnly={true} />
+                <ParticipantAttachmentList
+                  container={project}
+                  readOnly={true}
+                />
               </Grid>
             )}
           </Grid>
         </CardContent>
       </Collapse>
       <CardActions disableSpacing>
-        <AuditionCardActions audition={audition} />
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
@@ -173,4 +139,4 @@ export const AuditionCard = (props: { audition: Audition }) => {
   );
 };
 
-export default AuditionCard;
+export default ProjectCard;

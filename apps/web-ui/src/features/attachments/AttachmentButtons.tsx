@@ -45,26 +45,16 @@ export const AttachmentButtons = (props: { children?: any, container: HasAttachm
   };
 
   const saveAttachments = (attachments: Attachment[]) => {
-    //TODO fix this
-    console.log("Attach")
-    console.log(attachments)
-    console.log(helpers.fileArrayHelper)
     attachments?.forEach(a => helpers.fileArrayHelper?.push(a))
     setOpen(false);
   }
 
   const saveLinks = (links: Link[]) => {
-    //TODO fix this
-    console.log("Attach")
-    console.log(links)
     links?.forEach(l => helpers.linkArrayHelper?.push(l))
     setOpen(false);
   }
 
   const saveParticipants = (participants: Participant[]) => {
-    //TODO fix this
-    console.log("Attach")
-    console.log(participants)
     participants?.forEach(a => helpers.participantArrayHelper?.push(a))
     setOpen(false);
   }

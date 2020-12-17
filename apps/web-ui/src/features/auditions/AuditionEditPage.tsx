@@ -4,7 +4,6 @@ import {
   ModelFactory,
   ParticipantReferenceType,
   ParticipantType,
-  toParticipantReference,
 } from '@makeit/types';
 import {
   Breadcrumbs,
@@ -65,24 +64,10 @@ const AuditionEditPage = () => {
   );
   const loading = useSelector(selectAuditionsLoading);
   const auditions = useSelector(selectAuditions);
-  const currentUser = useSelector(selectAuthed);
   const history = useHistory();
   const dispatch = useAppDispatch();
 
   const handleSave = (values) => {
-    if (
-      !values.participants.find(
-        (p) =>
-          p.role === ParticipantType.Auditioning &&
-          p.info.ref === currentUser._id &&
-          p.info.type === ParticipantReferenceType.UserAccount
-      )
-    ) {
-      values.participants.push({
-        role: ParticipantType.Auditioning,
-        info: toParticipantReference(currentUser),
-      });
-    }
     dispatch(saveAudition(values))
       .then(unwrapResult)
       .then((p) => {

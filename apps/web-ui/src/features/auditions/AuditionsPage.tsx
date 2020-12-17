@@ -20,21 +20,6 @@ import { AuditionsList } from './AuditionsList';
 import RecentAuditions from './RecentAuditions';
 import UpcomingAuditions from './UpcomingAuditions';
 
-const PREVIEW_COUNT = 3;
-
-const useStyles = makeStyles((theme) => ({
-  noContent: {
-    justifyContent: 'center',
-  },
-}));
-
-const isFuture = (dates: Date[]) => {
-  const result = dates.find(
-    (d) => d && new Date().getTime() - d.getTime() <= 0
-  );
-  return result;
-};
-
 export const AuditionsPage = () => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);

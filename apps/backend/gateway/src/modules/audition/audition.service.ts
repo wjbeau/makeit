@@ -2,6 +2,8 @@ import {
   Audition,
   ParticipantType,
   ParticipantReferenceType,
+  UserAccount,
+  toParticipantReference
 } from '@makeit/types';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,7 +19,7 @@ export class AuditionService {
     private auditionModel: Model<AuditionDocument>
   ) {}
 
-  async save(id: string, audition: Audition): Promise<Audition | undefined> {
+  async save(id: string, audition: Audition, userid: any): Promise<Audition | undefined> {
     //the path variable must match the data posted
     if ((id || audition._id) && id !== audition._id) {
       throw new BadRequestException();
@@ -65,19 +67,19 @@ export class AuditionService {
     //find all auditions where the given user is a relevant participant
     const result: Audition[] = await this.auditionModel
       .find({
-        'participants.info.type': ParticipantReferenceType.UserAccount,
-        'participants.info.ref': id,
-        'participants.role': {
-          $in: [
-            ParticipantType.Auditioning,
-            ParticipantType.Cast,
-            ParticipantType.AgentManager,
-            ParticipantType.CastingAssociate,
-            ParticipantType.CastingDirector,
-            ParticipantType.Producer,
-            ParticipantType.Director,
-          ],
-        },
+        // 'participants.info.type': ParticipantReferenceType.UserAccount,
+        // 'participants.info.ref': id,
+        // 'participants.role': {
+        //   $in: [
+        //     ParticipantType.Auditioning,
+        //     ParticipantType.Cast,
+        //     ParticipantType.AgentManager,
+        //     ParticipantType.CastingAssociate,
+        //     ParticipantType.CastingDirector,
+        //     ParticipantType.Producer,
+        //     ParticipantType.Director,
+        //   ],
+        // }, TODO replace with a permissions model
       })
       .populate({
         path: 'breakdown',

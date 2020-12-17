@@ -44,7 +44,7 @@ export const ParticipantAttachmentList = (props: {
             helpers.participantArrayHelper = arrayHelpers;
             return container.participants.map((a, index) => (
               <ParticipantAttachment
-                key={a.info.ref}
+                key={index}
                 participant={a}
                 readOnly={readOnly}
                 onDelete={() => arrayHelpers.remove(index)}

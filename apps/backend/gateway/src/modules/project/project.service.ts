@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Project } from '../../../../../../libs/types/src/project.model';
+import { Project, ProjectStatus } from '../../../../../../libs/types/src/project.model';
 import { ParticipantReferenceType, ParticipantType } from '../../../../../../libs/types/src/participant.model';
 import {
   ProjectModel,
@@ -20,6 +20,8 @@ export class ProjectService {
     if ((id || project._id) && id !== project._id) {
       throw new BadRequestException();
     }
+
+
     // Find the document and update it if required or save a new one if not.
     const result = await this.projectModel
       .findOne({ _id: project._id })
@@ -48,20 +50,25 @@ export class ProjectService {
     //find all Projects where the given user is a relevant participant
     const result: Project[] = await this.projectModel
       .find({
-        'participants.info.type': ParticipantReferenceType.UserAccount,
-        'participants.info.ref': id,
-        'participants.role': {
-          $in: [
-            ParticipantType.Auditioning,
-            ParticipantType.Cast,
-            ParticipantType.AgentManager,
-            ParticipantType.CastingAssociate,
-            ParticipantType.CastingDirector,
-            ParticipantType.Producer,
-            ParticipantType.Director,
-          ],
-        },
-      })
+        $or: [
+          {'status': ProjectStatus.Active},
+          {'status': ProjectStatus.Completed},
+          {'status': ProjectStatus.Cancelled},
+        ]
+      //   'participants.info.type': ParticipantReferenceType.UserAccount,
+      //   'participants.info.ref': id,
+      //   'participants.role': {
+      //     $in: [
+      //       ParticipantType.Auditioning,
+      //       ParticipantType.Cast,
+      //       ParticipantType.AgentManager,
+      //       ParticipantType.CastingAssociate,
+      //       ParticipantType.CastingDirector,
+      //       ParticipantType.Producer,
+      //       ParticipantType.Director,
+      //     ],
+      //   }, TODO replace this with a permissions model
+       }) 
       .lean()
       .exec();
     return result;

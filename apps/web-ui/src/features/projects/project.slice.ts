@@ -22,12 +22,12 @@ export const fetchProject = createAsyncThunk('projects/fetchProject', async (Pro
 export const saveProject = createAsyncThunk('projects/saveProject', async (Project: Project, thunkAPI) => {
   if(Project._id) {
     const result = await apiClient().put('/projects/' + Project._id, Project);
-    thunkAPI.dispatch(ProjectSaved(result.data))
+    thunkAPI.dispatch(projectSaved(result.data))
     return result.data;
   }
   else {
     const result = await apiClient().post('/projects', Project);
-    thunkAPI.dispatch(ProjectSaved(result.data))
+    thunkAPI.dispatch(projectSaved(result.data))
     return result.data;
   }
 })
@@ -50,7 +50,7 @@ export const projectsSlice = createSlice({
         state.projects.splice(idx, 1, action.payload)
       }
     },
-    ProjectSaved: (state, action) => {
+    projectSaved: (state, action) => {
       state.loading = false;
       const idx = state.projects.findIndex(a => a._id === action.payload._id)
       if(idx < 0) {
@@ -85,7 +85,7 @@ export const projectsSlice = createSlice({
   }
 });
 
-export const { receiveProject, receiveProjects, ProjectSaved } = projectsSlice.actions;
+export const { receiveProject, receiveProjects, projectSaved } = projectsSlice.actions;
 
 export const selectProjects = (state: RootState) => state.projects.projects;
 export const selectProjectsLoading = (state: RootState) => state.projects.loading;

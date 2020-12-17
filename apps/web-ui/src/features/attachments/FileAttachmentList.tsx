@@ -31,7 +31,7 @@ export const FileAttachmentList = (props: { container: HasAttachments, readOnly,
           render={(arrayHelpers) => {
             helpers.fileArrayHelper = arrayHelpers;
             return container.attachments.map((a, index) => (
-              <FileAttachment key={a.reference} attachment={a} readOnly={readOnly} onDelete={() => arrayHelpers.remove(index)} />
+              <FileAttachment key={index} attachment={a} readOnly={readOnly} onDelete={() => arrayHelpers.remove(index)} />
             ))
           }} />
       }
