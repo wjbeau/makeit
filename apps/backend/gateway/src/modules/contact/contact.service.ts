@@ -45,9 +45,21 @@ export class ContactService {
     return result;
   }
 
+  async delete(id: string, userId): Promise<boolean> {
+    const result = await this.contactModel.remove({
+      _id: id,
+      owner: userId
+    })
+
+    return (result.deletedCount > 0);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findById(id: any): Promise<Contact | undefined> {
-    return await this.contactModel.findOne({_id: id}).lean().exec();
+  async findById(id: any, userId: any): Promise<Contact | undefined> {
+    return await this.contactModel.findOne({
+      _id: id,
+      owner: userId
+    }).lean().exec();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

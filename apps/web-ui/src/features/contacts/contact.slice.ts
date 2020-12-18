@@ -32,6 +32,17 @@ export const saveContact = createAsyncThunk('contacts/saveContact', async (conta
   }
 })
 
+export const deleteContact = createAsyncThunk('contacts/deleteContact', async (contact: Contact, thunkAPI) => {
+  const result = await apiClient().delete('/contacts/' + contact._id);
+  console.log('Result: ')
+  console.log(result.data)
+  if(result.data) {
+    thunkAPI.dispatch(contactDeleted(contact))
+  }
+  return result.data;
+})
+
+
 export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
@@ -59,6 +70,13 @@ export const contactsSlice = createSlice({
       else {
         state.contacts.splice(idx, 1, action.payload)
       }
+    },
+    contactDeleted: (state, action) => {
+      state.loading = false;
+      const idx = state.contacts.findIndex(a => a._id === action.payload._id)
+      if(idx >=  0) {
+        state.contacts.splice(idx, 1)
+      }
     }
   },
   extraReducers: builder => {
@@ -85,7 +103,7 @@ export const contactsSlice = createSlice({
   }
 });
 
-export const { receiveContact, receiveContacts, contactSaved } = contactsSlice.actions;
+export const { receiveContact, receiveContacts, contactSaved, contactDeleted } = contactsSlice.actions;
 
 export const selectContacts = (state: RootState) => state.contacts.contacts;
 export const selectContactsLoading = (state: RootState) => state.contacts.loading;

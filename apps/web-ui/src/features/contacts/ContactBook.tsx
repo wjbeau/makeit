@@ -146,6 +146,11 @@ export const ContactBook = () => {
     setContact(contact);
   };
 
+  const handleDeleteContact = () => {
+    setEditContact(null);
+    setContact(null);
+  }
+
   useEffect(() => {
     let newLetters = contacts
       .filter((c) => matchesSearch(c))
@@ -285,7 +290,7 @@ export const ContactBook = () => {
           {!editContact &&
             contacts.map((c) => (
               <TabPanel value={contact} index={c} key={c._id}>
-                <ContactDetails contact={c} onEdit={handleEditContact} />
+                <ContactDetails contact={c} onEdit={handleEditContact} onDelete={handleDeleteContact}/>
               </TabPanel>
             ))}
           {editContact && (

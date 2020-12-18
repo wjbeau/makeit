@@ -1,42 +1,34 @@
 import {
-    AddressType, Contact,
-
-    ContactLinkType, ContactUtils,
-
-
-
-    Telecom, TelecomType
+  AddressType,
+  Contact,
+  ContactLinkType,
+  ContactUtils,
+  Telecom,
+  TelecomType,
 } from '@makeit/types';
 import {
-    Avatar,
-    Grid,
-    IconButton,
-
-
-
-    Link, makeStyles,
-
-
-
-    Menu,
-    MenuItem, Typography
+  Avatar,
+  Grid,
+  IconButton,
+  Link,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Typography,
 } from '@material-ui/core';
 import {
-    Call,
-    Edit,
-    Email,
-    Facebook,
-    Instagram,
-
-
-
-
-
-    Link as LinkIcon, LinkedIn,
-    PermContactCalendar,
-    Pinterest,
-    Twitter,
-    YouTube
+  Call,
+  Delete,
+  Edit,
+  Email,
+  Facebook,
+  Instagram,
+  Link as LinkIcon,
+  LinkedIn,
+  PermContactCalendar,
+  Pinterest,
+  Twitter,
+  YouTube,
 } from '@material-ui/icons';
 import { mdiVimeo as Vimeo } from '@mdi/js';
 import React, { useState } from 'react';
@@ -46,6 +38,11 @@ import AddressDisplay from '../controls/AddressDisplay';
 import ImdbIcon from '../controls/icons/ImdbIcon';
 import TextWithAction from '../controls/TextWithAction';
 import TitledSection from '../layout/TitledSection';
+import { useAppDispatch } from '../../app/store';
+import { deleteContact } from './contact.slice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { logError } from '../logging/logging.slice';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -71,6 +68,12 @@ const useStyles = makeStyles((theme) => ({
   menuIcon: {
     marginRight: theme.spacing(2),
   },
+  delete: {
+    color: theme.palette.error.dark
+  },
+  deleteMenu: {
+    marginTop: theme.spacing(4)
+  }
 }));
 
 const iconForSocial = (val: ContactLinkType) => {
@@ -95,45 +98,65 @@ const iconForSocial = (val: ContactLinkType) => {
 };
 
 const toSafeUrl = (url: string) => {
-    if(!url) {
-        return null;
-    }
-    if(!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://")) {
-        return 'http://' + url;
-    }
-    else {
-        return url;
-    }
-}
-
-const remotify = (url: string) =>{
-    if(url && url.startsWith('data:')) {
-        return url;
-    }
-    else if(url) {
-        return SERVER_URL + '/files/' + url 
-    }
-    
+  if (!url) {
     return null;
-}
+  }
+  if (
+    !url.toLowerCase().startsWith('http://') &&
+    !url.toLowerCase().startsWith('https://')
+  ) {
+    return 'http://' + url;
+  } else {
+    return url;
+  }
+};
+
+const remotify = (url: string) => {
+  if (url && url.startsWith('data:')) {
+    return url;
+  } else if (url) {
+    return SERVER_URL + '/files/' + url;
+  }
+
+  return null;
+};
 
 export const ContactDetails = (props: {
   contact: Contact;
   onEdit?: (contact: Contact) => void;
+  onDelete?: (contact: Contact) => void;
 }) => {
-  const { contact, onEdit } = props;
+  const { contact, onEdit, onDelete } = props;
   const classes = useStyles();
   const socials = contact.links?.filter((l) =>
     ContactUtils.isSocialMedia(l.type)
   );
   const [callAnchor, setCallAnchor] = useState(null);
   const [emailAnchor, setEmailAnchor] = useState(null);
+  const [deleteAnchor, setDeleteAnchor] = useState(null);
+  const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const phones = contact.telecoms?.filter((t) => ContactUtils.isPhone(t.type));
   const emails = contact.telecoms?.filter((t) => ContactUtils.isEmail(t.type));
 
   const invokeContact = (link: string) => {
     window.location.href = link;
+  };
+
+  const handleShowDelete = (evt) => {
+    setDeleteAnchor(evt.currentTarget);
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteContact(contact))
+      .then(unwrapResult)
+      .then((d) => {
+        onDelete(contact);
+      })
+      .catch((err) => {
+        dispatch(logError(err));
+      });
   };
 
   const handleCall = (event) => {
@@ -166,7 +189,10 @@ export const ContactDetails = (props: {
       <Grid item xs={12}>
         <Grid container spacing={1} direction="row">
           <Grid item className={classes.headingAvatar}>
-            <Avatar src={remotify(contact.avatar)} className={classes.mainAvatar}>
+            <Avatar
+              src={remotify(contact.avatar)}
+              className={classes.mainAvatar}
+            >
               {Converter.getInitials(contact)}
             </Avatar>
           </Grid>
@@ -263,6 +289,24 @@ export const ContactDetails = (props: {
                       ))}
                     </Menu>
                   )}
+                </>
+              )}
+              {onDelete && (
+                <>
+                  <IconButton onClick={handleShowDelete}>
+                    <Delete />
+                  </IconButton>
+                  <Menu
+                    anchorEl={deleteAnchor}
+                    keepMounted
+                    open={!!deleteAnchor}
+                    onClose={() => setDeleteAnchor(null)}
+                    className={classes.deleteMenu}
+                  >
+                    <MenuItem onClick={handleDelete} className={classes.delete}>
+                      <Delete className={classes.menuIcon} /> Delete
+                    </MenuItem>
+                  </Menu>
                 </>
               )}
             </div>
