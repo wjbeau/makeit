@@ -21,8 +21,8 @@ export const LinkAttachmentList = (props: { container: HasAttachments, readOnly,
   
   return (
     <List className={classes.root} disablePadding={true}>
-      {readOnly && container.links.map((a) => (
-        <LinkAttachment key={a.url} link={a} readOnly={readOnly}/>
+      {readOnly && container.links.map((a, index) => (
+        <LinkAttachment key={index} link={a} readOnly={readOnly}/>
       ))}
       {!readOnly && 
         <FieldArray

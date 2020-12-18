@@ -1,45 +1,51 @@
-import React, { useState } from 'react';
 import {
-  Contact,
-  ContactUtils,
-  ContactLinkType,
-  AddressType,
-  TelecomType,
-  Telecom,
+    AddressType, Contact,
+
+    ContactLinkType, ContactUtils,
+
+
+
+    Telecom, TelecomType
 } from '@makeit/types';
 import {
-  Avatar,
-  Grid,
-  IconButton,
-  makeStyles,
-  Tooltip,
-  Typography,
-  Link,
-  Menu,
-  MenuItem,
+    Avatar,
+    Grid,
+    IconButton,
+
+
+
+    Link, makeStyles,
+
+
+
+    Menu,
+    MenuItem, Typography
 } from '@material-ui/core';
-import { Converter } from '../../app/Converters';
 import {
-  Call,
-  Edit,
-  Email,
-  Facebook,
-  Instagram,
-  LinkedIn,
-  PermContactCalendar,
-  Pinterest,
-  Twitter,
-  YouTube,
-  Link as LinkIcon,
+    Call,
+    Edit,
+    Email,
+    Facebook,
+    Instagram,
+
+
+
+
+
+    Link as LinkIcon, LinkedIn,
+    PermContactCalendar,
+    Pinterest,
+    Twitter,
+    YouTube
 } from '@material-ui/icons';
-import TitledSection from '../layout/TitledSection';
-import TextWithAction from '../controls/TextWithAction';
 import { mdiVimeo as Vimeo } from '@mdi/js';
-import ImdbIcon from '../controls/icons/ImdbIcon';
-import AddressDisplay from '../controls/AddressDisplay';
-import { contactSaved } from './contact.slice';
-import { invoke } from 'lodash';
+import React, { useState } from 'react';
 import { SERVER_URL } from '../../app/config';
+import { Converter } from '../../app/Converters';
+import AddressDisplay from '../controls/AddressDisplay';
+import ImdbIcon from '../controls/icons/ImdbIcon';
+import TextWithAction from '../controls/TextWithAction';
+import TitledSection from '../layout/TitledSection';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -100,7 +106,7 @@ const toSafeUrl = (url: string) => {
     }
 }
 
-const remotify = (url: string) => {
+const remotify = (url: string) =>{
     if(url && url.startsWith('data:')) {
         return url;
     }

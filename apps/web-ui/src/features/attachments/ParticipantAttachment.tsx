@@ -8,14 +8,16 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   makeStyles,
+  Modal,
   Typography,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import * as _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAuthed } from '../auth/auth.slice';
 import { Converter } from '../../app/Converters';
+import ParticipantDisplayDialog from './ParticipantDisplayDialog';
 
 const useStyles = makeStyles((theme) => ({
   small: {
@@ -44,39 +46,48 @@ export const ParticipantAttachment = (props: {
   onDelete?: () => void;
 }) => {
   const classes = useStyles();
-  const user = useSelector(selectAuthed);
+  const [participantOpen, setParticipantOpen] = useState<boolean>(false);
   const { participant, readOnly, onDelete } = props;
 
   const handleDelete = () => {
-    if(onDelete) {
+    if (onDelete) {
       onDelete();
     }
-  }
+  };
   const avatar = participant.info.avatar ? (
     <Avatar src={participant.info.avatar} className={classes.small}></Avatar>
   ) : (
-    <Avatar className={classes.small}>{Converter.getInitials(participant.info)}</Avatar>
+    <Avatar className={classes.small}>
+      {Converter.getInitials(participant.info)}
+    </Avatar>
   );
 
   return (
-    <ListItem
-      button
-      onClick={() => console.log('clicked: ' + participant.info.ref)}
-    >
-      <ListItemAvatar>{avatar}</ListItemAvatar>
-      <ListItemText
-        primary={participant.info.firstName + ' ' + participant.info.lastName}
-        secondary={Converter.getLabelForEnum(ParticipantType, participant.role)}
-        classes={{ primary: classes.ellipsis, secondary: classes.ellipsis }}
+    <>
+      <ListItem button onClick={() => setParticipantOpen(true)}>
+        <ListItemAvatar>{avatar}</ListItemAvatar>
+        <ListItemText
+          primary={participant.info.firstName + ' ' + participant.info.lastName}
+          secondary={Converter.getLabelForEnum(
+            ParticipantType,
+            participant.role
+          )}
+          classes={{ primary: classes.ellipsis, secondary: classes.ellipsis }}
+        />
+        {!readOnly && (
+          <ListItemSecondaryAction>
+            <IconButton edge="end" aria-label="delete" onClick={handleDelete}>
+              <Delete />
+            </IconButton>
+          </ListItemSecondaryAction>
+        )}
+      </ListItem>
+      <ParticipantDisplayDialog
+        participant={participant}
+        open={participantOpen}
+        onClose={() => setParticipantOpen(false)}
       />
-      {!readOnly && (
-        <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="delete" onClick={handleDelete}>
-            <Delete />
-          </IconButton>
-        </ListItemSecondaryAction>
-      )}
-    </ListItem>
+    </>
   );
 };
 
