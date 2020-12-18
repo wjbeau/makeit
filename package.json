@@ -55,6 +55,7 @@
     "formik-material-ui": "^3.0.1",
     "formik-material-ui-lab": "^0.0.8",
     "formik-material-ui-pickers": "^0.0.12",
+    "fullcalendar-reactwrapper": "^1.0.7",
     "lodash": "^4.17.20",
     "material-ui-dropzone": "^3.5.0",
     "moment": "^2.29.1",

@@ -7,6 +7,7 @@ import { doLogout, selectAuthed } from '../auth/auth.slice';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
 import AccountMenu from "../profile/AccountMenu";
 import { useSelector } from 'react-redux';
+import logo from './logo.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
         left: 0,
         top: 0
     },
+    logo: {
+        height: 40,
+        marginTop: 5
+    }
 }));
 
 export function Header() {
@@ -41,7 +46,7 @@ export function Header() {
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        Make It!
+                        <img className={classes.logo} src={logo} alt="Make It!" />
                     </Typography>
                     <IfAuthenticated>
                         <IconButton color="inherit">
