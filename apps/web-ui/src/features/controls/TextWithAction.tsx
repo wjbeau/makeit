@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { Button, Grid, Hidden, makeStyles, Typography } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
+    whiteSpace: 'nowrap'
   },
   icon: {
     marginRight: theme.spacing(1),
@@ -30,8 +31,8 @@ export const TextWithAction = (props: {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      {label && (
+    <Grid container wrap="nowrap" alignItems="center">
+      {label && (<Grid item>
         <Typography
           display="inline"
           variant="subtitle1"
@@ -39,17 +40,18 @@ export const TextWithAction = (props: {
         >
           <span className={classes.icon}>{icon}</span> {label}
         </Typography>
-      )}
-      {children && (
+      </Grid>)}
+      {children && (<Grid item xs zeroMinWidth>
         <Typography
           display="inline"
           variant="body2"
           className={classes.children}
+          noWrap
         >
           {children}
         </Typography>
-      )}
-    </div>
+        </Grid>)}
+    </Grid>
   );
 };
 

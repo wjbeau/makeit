@@ -13,7 +13,7 @@ export const TitledSection = (props:any) => {
     const {variant, title, className} = props
     const classes = useStyles()
     return (
-        <Grid container direction="column" className={className}>
+        <Grid container direction="column" className={className} style={{overflow: 'hidden'}}>
             <Grid item className={classes.titleContainer}>
                 <Typography variant={variant}>{title}</Typography>
             </Grid>
