@@ -13,6 +13,7 @@ import { DIMENSIONS } from './features/layout/dimensions';
 import MessagePanel from './features/logging/MessagePanel';
 import { ErrorGuard } from './features/logging/ErrorGuard';
 import { useHistory } from 'react-router-dom';
+import SupportButton from './features/support/SupportButton';
 
 const useStyles = makeStyles((theme) => ({
   layoutGrid: {
@@ -47,6 +48,7 @@ function App() {
           </Grid>
           <Grid item className={classes.content}>
             <PageContent />
+            <SupportButton />
             <Footer />
           </Grid>
         </Grid>
