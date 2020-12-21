@@ -1,15 +1,8 @@
-import { AuditionType } from '@makeit/types';
-import * as moment from 'moment';
+import { UnionType, ProjectType, ProjectStatus } from '@makeit/types';
 import MUIDataTable from 'mui-datatables';
 import React, { useEffect } from 'react';
 import { Converter } from '../../app/Converters';
 import { makeStyles } from '@material-ui/core';
-import {
-  UnionType,
-  ProjectType,
-  ProjectStatus,
-} from '../../../../../libs/types/src/project.model';
-import { Edit } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { selectAuthed } from '../auth/auth.slice';
 import {
@@ -18,73 +11,16 @@ import {
   fetchProjects,
 } from './project.slice';
 import { useAppDispatch } from '../../app/store';
-import { useHistory } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { logError } from '../logging/logging.slice';
 import IfNotLoading from '../layout/IfNotLoading';
+import ProjectCardActions from './ProjectCardActions';
 
 const useStyles = makeStyles((theme) => ({
   padding: {
     marginBottom: '20px',
   },
 }));
-
-const columns = [
-  {
-    name: 'ame',
-    label: 'Name',
-    options: {
-      filter: true,
-      sort: true,
-    },
-  },
-  {
-    name: 'projectType',
-    label: 'Type',
-    options: {
-      filter: true,
-      sort: true,
-      customBodyRender: (value, tableMeta, updateValue) => {
-        return Converter.getLabelForEnum(ProjectType, value);
-      },
-    },
-  },
-  {
-    name: 'status',
-    label: 'Status',
-    options: {
-      filter: true,
-      sort: true,
-      customBodyRender: (value, tableMeta, updateValue) => {
-        return Converter.getLabelForEnum(ProjectStatus, value);
-      },
-    },
-  },
-  {
-    name: 'union',
-    label: 'Union Status',
-    options: {
-      filter: true,
-      sort: true,
-      customBodyRender: (value, tableMeta, updateValue) => {
-        return Converter.getLabelForEnum(UnionType, value);
-      },
-    },
-  },
-  {
-    name: '_id',
-    label: 'Actions',
-    options: {
-      filter: false,
-      sort: false,
-      print: false,
-      searchable: false,
-      customBodyRender: (value, tableMeta, updateValue) => {
-        return <Edit />; //<ProjectButtons id={value} />
-      },
-    },
-  },
-];
 
 const options = {
   filtertype: 'checkbox',
@@ -99,6 +35,67 @@ export const ProjectsList = () => {
   const projects = projectsRaw.map((a) => Converter.convertAllDates(a));
   const dispatch = useAppDispatch();
   const classes = useStyles();
+
+  const columns = [
+    {
+      name: 'ame',
+      label: 'Name',
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: 'projectType',
+      label: 'Type',
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return Converter.getLabelForEnum(ProjectType, value);
+        },
+      },
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return Converter.getLabelForEnum(ProjectStatus, value);
+        },
+      },
+    },
+    {
+      name: 'union',
+      label: 'Union Status',
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return Converter.getLabelForEnum(UnionType, value);
+        },
+      },
+    },
+    {
+      name: '_id',
+      label: 'Actions',
+      options: {
+        filter: false,
+        sort: false,
+        print: false,
+        searchable: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return (
+            <ProjectCardActions
+              project={projects.find((a) => a._id === value)}
+            />
+          );
+        },
+      },
+    },
+  ];
 
   useEffect(() => {
     if (!loading) {

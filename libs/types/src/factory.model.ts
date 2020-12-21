@@ -66,11 +66,11 @@ export class ModelFactory {
             description: undefined,
             union: UnionType.NonUnion,
             startDate: null,
+            events: [],
             participants: [],
             links: [],
             attachments: [],
             status: ProjectStatus.Provisional,
-            calls: [],
             permissions: []
         }
     }

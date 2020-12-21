@@ -1,4 +1,4 @@
-import { Address, Attachment, Link, Participant, Project, ProjectCall, ProjectStatus, ProjectType, UnionType } from '@makeit/types';
+import { Address, Attachment, Link, Participant, Project, ProjectEvent, ProjectEventType, ProjectStatus, ProjectType, UnionType, Permission } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
@@ -6,19 +6,24 @@ import { AttachmentSchema } from './attachment.schema';
 import { LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
 import { PermissionSchema } from './permission.schema';
-import { Permission } from '../../../../../libs/types/src/permission.model';
 
 
 
-export type ProjectCallModelDocument = ProjectCallModel & mongoose.Document;
+export type ProjectEventModelDocument = ProjectEventModel & mongoose.Document;
 
 @Schema()
-export class ProjectCallModel implements ProjectCall {
-    notes: string;
+export class ProjectEventModel implements ProjectEvent {
     @Prop({required: true})
-    callTime: Date;
+    time: Date;
     @Prop({ type: AddressSchema })
-    location: Address;
+    location?: Address;
+
+    @Prop()
+    notes: string;
+    
+    @Prop({ enum: Object.values(ProjectEventType), type: String })
+    eventType: ProjectEventType;
+
     @Prop({ type: [AttachmentSchema] })
     attachments: Attachment[]; 
     @Prop({ type: [LinkSchema] })
@@ -28,7 +33,7 @@ export class ProjectCallModel implements ProjectCall {
     permissions: Permission[];
 }
 
-export const ProjectCallSchema = SchemaFactory.createForClass(ProjectCallModel);
+export const ProjectEventSchema = SchemaFactory.createForClass(ProjectEventModel);
 
 export type ProjectModelDocument = ProjectModel & mongoose.Document;
 
@@ -55,8 +60,8 @@ export class ProjectModel implements Project {
     @Prop({ enum: Object.values(ProjectStatus), type: String, required: true })
     status: ProjectStatus;
 
-    @Prop({ type: [ProjectCallSchema] })
-    calls: ProjectCall[];
+    @Prop({ type: [ProjectEventSchema] })
+    events: ProjectEvent[];
 
     @Prop({ type: [PermissionSchema] })
     permissions: Permission[];

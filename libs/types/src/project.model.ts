@@ -12,13 +12,30 @@ export interface Project extends BaseEntity, HasAttachments, HasParticipants, Ha
     startDate: Date;
     status: ProjectStatus;
 
-    calls: ProjectCall[];
+    events: ProjectEvent[];
 }
 
-export interface ProjectCall extends BaseEntity, HasAttachments, HasPermissions {
-    callTime: Date;
-    location: Address;
+export interface ProjectEvent extends BaseEntity, HasAttachments, HasPermissions {
+    time: Date;
+    location?: Address;
     notes: string;
+    eventType: ProjectEventType;
+}
+
+export enum ProjectEventType {
+    DirectorMeeting = 'Director Meeting',
+    Rehearsal = 'Rehearsal',
+    DressRehearsal = 'Dress Rehearsal',
+    TechRehearsal = 'Tech Rehearsal',
+    CallTime = 'Call Time',
+    Wardrobe = 'Wardrobe',
+    SoundCheck = 'Sound Check',
+    TableRead = 'Table Read',
+    Publicity = 'Publicity',
+    Screening = 'Screening',
+    WrapParty = 'Wrap Party',
+    Release = 'Release',
+    Other = 'Other'
 }
 
 export enum ProjectStatus {

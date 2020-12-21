@@ -19,6 +19,7 @@ import { Converter } from '../../app/Converters';
 import FileAttachmentList from '../attachments/FileAttachmentList';
 import LinkAttachmentList from '../attachments/LinkAttachmentList';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
+import ProjectCardActions from './ProjectCardActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -85,10 +86,10 @@ export const ProjectCard = (props: { project: Project }) => {
                 </Typography>
               </Grid>
             )}
-            {project.calls?.length > 0 && (
+            {project.events?.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
-                  Call Times
+                  Scheduled Events
                 </Typography>
                 List here...
               </Grid>
@@ -124,6 +125,7 @@ export const ProjectCard = (props: { project: Project }) => {
         </CardContent>
       </Collapse>
       <CardActions disableSpacing>
+        <ProjectCardActions project={project} />
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
