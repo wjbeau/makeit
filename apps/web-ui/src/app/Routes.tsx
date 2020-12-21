@@ -15,6 +15,7 @@ export const routeDefinitions = {
         routes: [
             { path: "/auditions/:auditionId/edit", exact: true, main: lazy(() => import('../features/auditions/AuditionEditPage')), title: "Audition Edit", icon: undefined, requiresAuth: true, showInMenu: false },
             { path: "/auditions", exact: false, main: lazy(() => import('../features/auditions/AuditionsPage')), title: "Auditions", icon: <MeetingRoom />, requiresAuth: true, showInMenu: true },
+            { path: "/projects/:projectId/edit", exact: true, main: lazy(() => import('../features/projects/ProjectEditPage')), title: "Project Edit", icon: undefined, requiresAuth: true, showInMenu: false },
             { path: "/projects", exact: false, main: lazy(() => import('../features/projects/ProjectPage')), title: "Projects", icon: <PermMedia />, requiresAuth: true, showInMenu: true },
             { path: "/marketing", exact: false, main: lazy(() => import('../features/marketing/MarketingPage')), title: "Marketing", icon: <Send />, requiresAuth: true, showInMenu: true, disabled: true, description: 'Marketing will offer the ability to manage your social media feeds, schedule posts and build a marketing calendar with reminders and automation.' },
             { path: "/finance", exact: false, main: lazy(() => import('../features/finance/FinancePage')), title: "Finance", icon: <MonetizationOn />, requiresAuth: true, showInMenu: true, disabled: true, description: 'Finance will handle expense and income tracking, tax calculations and automatic mileage logging.' },

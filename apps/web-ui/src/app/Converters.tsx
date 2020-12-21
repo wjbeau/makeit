@@ -8,11 +8,12 @@ export class Converter {
     private static items = {};
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public static enumToMenuItems(key: string, data: any) {
+    public static enumToMenuItems(key: string, data: any, exclude?:any[]) {
         if(Converter.items[key]) {
             return Converter.items[key]
         }
         const list = Object.keys(data)
+            .filter(i => !exclude || !exclude.find(e => e === i))
             .map(val => 
                 <MenuItem key={data[val]} value={data[val]}>{Converter.decamelCase(val)}</MenuItem>
             );

@@ -6,7 +6,6 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import React from 'react';
 import { Converter } from '../../app/Converters';
 import TitledPaper from '../layout/TitledPaper';
-import AttachmentButtons from '../attachments/AttachmentButtons';
 import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,8 +14,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProjectDetailsEdit = (props: { project: Project }) => {
+const getPath = (prefix: string, path: string) => {
+  if(prefix) { 
+    return prefix + '.' + path;
+  }
+  else {
+    return path
+  }
+}
+
+const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) => {
   const classes = useStyles();
+  const { project, formikPrefix } = props
 
   return (
     <TitledPaper
@@ -31,23 +40,23 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
             <Grid item xs={8}>
               <FastField
                 component={TextField}
-                name="breakdown.project.name"
+                name={getPath(formikPrefix, "name")}
                 label="Project Name"
                 fullWidth={true}
               />
             </Grid>
             <Grid item xs={4}>
               <FormControl fullWidth={true}>
-                <InputLabel htmlFor="union-status">Status</InputLabel>
+                <InputLabel htmlFor="project-status">Status</InputLabel>
                 <FastField
                   component={Select}
-                  name="breakdown.project.status"
+                  name={getPath(formikPrefix, "status")}
                   inputProps={{
                     id: 'project-status',
                   }}
                   fullWidth={true}
                 >
-                  {Converter.enumToMenuItems('ProjectStatus', ProjectStatus)}
+                  {Converter.enumToMenuItems('ProjectStatus', ProjectStatus, [ProjectStatus.Provisional])}
                 </FastField>
               </FormControl>
             </Grid>
@@ -60,7 +69,7 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
                 <InputLabel htmlFor="project-type">Project Type</InputLabel>
                 <FastField
                   component={Select}
-                  name="breakdown.project.projectType"
+                  name={getPath(formikPrefix, "projectType")}
                   inputProps={{
                     id: 'project-type',
                   }}
@@ -72,7 +81,7 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
             <Grid item xs={4}>
               <FastField
                 component={KeyboardDatePicker}
-                name="breakdown.project.startDate"
+                name={getPath(formikPrefix, "startDate")}
                 label="Start Date"
                 fullWidth={true}
                 initialFocusedDate={null}
@@ -84,7 +93,7 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
                 <InputLabel htmlFor="union-status">Union Status</InputLabel>
                 <FastField
                   component={Select}
-                  name="breakdown.project.union"
+                  name={getPath(formikPrefix, "union")}
                   inputProps={{
                     id: 'union-status',
                   }}
@@ -99,14 +108,14 @@ const ProjectDetailsEdit = (props: { project: Project }) => {
         <Grid item>
           <FastField
             component={TextField}
-            name="breakdown.project.description"
+            name={getPath(formikPrefix, "description")}
             label="Description"
             multiline
             fullWidth={true}
           />
         </Grid>
       </Grid>
-      <AttachmentPanel container={props.project} rootPath="breakdown.project" />
+      <AttachmentPanel container={project} rootPath={getPath(formikPrefix, "project")} />
     </TitledPaper>
   );
 };

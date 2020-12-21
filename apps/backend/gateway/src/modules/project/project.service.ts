@@ -1,14 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Project, ProjectStatus } from '../../../../../../libs/types/src/project.model';
+import { Project, ProjectStatus, PermissionRole } from '@makeit/types';
 import { ensureAdminPermission, permissionsSpec } from '../../schema/permission.schema';
 import {
   ProjectModel,
   ProjectModelDocument
 } from '../../schema/project.schema';
-import { PermissionRole, PermissionType } from '@makeit/types';
-import { Permission } from '../../../../../../libs/types/src/permission.model';
 
 @Injectable()
 export class ProjectService {
@@ -25,7 +23,7 @@ export class ProjectService {
 
     if(!id) {
       ensureAdminPermission(project, userid);
-      project.calls.forEach(c => ensureAdminPermission(c, userid));
+      project.events.forEach(c => ensureAdminPermission(c, userid));
     }
 
     // Find the document and update it if required or save a new one if not.

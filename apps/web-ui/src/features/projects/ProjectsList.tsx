@@ -38,7 +38,7 @@ export const ProjectsList = () => {
 
   const columns = [
     {
-      name: 'ame',
+      name: 'name',
       label: 'Name',
       options: {
         filter: true,

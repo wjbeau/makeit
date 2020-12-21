@@ -59,7 +59,7 @@ export class ModelFactory {
         }
     }
 
-    public static createEmptyProject():Project {
+    public static createEmptyProject(status?: ProjectStatus):Project {
         return {
             name: undefined,
             projectType: ProjectType.Pilot,
@@ -70,7 +70,7 @@ export class ModelFactory {
             participants: [],
             links: [],
             attachments: [],
-            status: ProjectStatus.Provisional,
+            status: status ? status : ProjectStatus.Provisional,
             permissions: []
         }
     }

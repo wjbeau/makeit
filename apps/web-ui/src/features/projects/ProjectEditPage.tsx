@@ -1,41 +1,32 @@
 import DateFnsUtils from '@date-io/moment';
 import {
-  Audition,
-  ModelFactory,
-  ParticipantReferenceType,
-  ParticipantType,
+  ModelFactory, Project, ProjectStatus
 } from '@makeit/types';
 import {
   Breadcrumbs,
   Button,
   Grid,
   makeStyles,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { ArrowBack, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { FastField, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
-import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
+import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
-import { selectAuthed } from '../auth/auth.slice';
 import Loading from '../layout/Loading';
-import TitledPaper from '../layout/TitledPaper';
 import { logError, logSuccess } from '../logging/logging.slice';
 import {
-  saveAudition,
-  selectAuditions,
-  selectAuditionsLoading,
-} from './audition.slice';
-import AuditionDetailsEdit from './AuditionDetailsEdit';
-import AuditionNotesEdit from './AuditionNotesEdit';
-import BreakdownDetailsEdit from './BreakdownDetailsEdit';
-import * as yup from 'yup';
-import ProjectDetailsEdit from '../projects/ProjectDetailsEdit';
+  saveProject,
+  selectProjects,
+  selectProjectsLoading
+} from './project.slice';
+import ProjectDetailsEdit from './ProjectDetailsEdit';
+import ProjectEventsEdit from './ProjectEventsEdit';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -56,22 +47,22 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AuditionEditPage = () => {
+const ProjectEditPage = () => {
   const classes = useStyles();
-  const { auditionId } = useParams<{ auditionId: string }>();
-  const [formValues, setFormValues] = useState<Audition>(
-    ModelFactory.createEmptyAudition()
+  const { projectId } = useParams<{ projectId: string }>();
+  const [formValues, setFormValues] = useState<Project>(
+    ModelFactory.createEmptyProject(ProjectStatus.Active)
   );
-  const loading = useSelector(selectAuditionsLoading);
-  const auditions = useSelector(selectAuditions);
+  const loading = useSelector(selectProjectsLoading);
+  const Projects = useSelector(selectProjects);
   const history = useHistory();
   const dispatch = useAppDispatch();
 
   const handleSave = (values) => {
-    dispatch(saveAudition(values))
+    dispatch(saveProject(values))
       .then(unwrapResult)
       .then((p) => {
-        history.push('/auditions');
+        history.push('/projects');
         dispatch(logSuccess({ message: 'Save completed successfully.' }));
       })
       .catch((e) => {
@@ -83,25 +74,26 @@ const AuditionEditPage = () => {
     history.goBack();
   };
 
-  const title = auditionId === 'new' ? 'New Audition' : 'Edit Audition';
+  const title = projectId === 'new' ? 'New Project' : 'Edit Project';
 
   const validationSchema = yup.object().shape({
-    type: yup.string().required('Required'),
-    auditionTime: yup.date().required('Required').nullable(),
+    name: yup.string().required('Required'),
     status: yup.string().required('Required'),
-    breakdown: yup.object({
-      roleName: yup.string().required('Required'),
-      project: yup.object({
-        name: yup.string().required('Required'),
+    events: yup.array(
+      yup.object({
+        time: yup.date().transform((curr, orig) => {
+          return !orig || !orig.isValid || !orig.isValid() ? undefined : curr
+        }).required('Required'),
+        eventType: yup.string().required('Required')
       }),
-    }),
+    ),
   });
 
   useEffect(() => {
-    if (auditionId !== 'new') {
-      setFormValues(auditions.find((a) => a._id === auditionId));
+    if (projectId !== 'new') {
+      setFormValues(Projects.find((a) => a._id === projectId));
     }
-  }, [auditionId, setFormValues, formValues, auditions]);
+  }, [projectId, setFormValues, formValues, Projects]);
 
   return (
     <div>
@@ -125,7 +117,7 @@ const AuditionEditPage = () => {
                         onClick={handleCancel}
                         startIcon={<ArrowBack />}
                       >
-                        Back to Auditions
+                        Back to Projects
                       </Button>
                     </Breadcrumbs>
                   </Grid>
@@ -167,52 +159,10 @@ const AuditionEditPage = () => {
                     )}
                   </Grid>
                   <Grid item>
-                    <AuditionDetailsEdit audition={values} />
+                    <ProjectDetailsEdit formikPrefix={null} project={values} />
                   </Grid>
                   <Grid item>
-                    <Grid container direction="row" spacing={3}>
-                      <Grid item xs={6}>
-                        <BreakdownDetailsEdit breakdown={values.breakdown} />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <ProjectDetailsEdit
-                          formikPrefix='breakdown.project'
-                          project={values.breakdown.project}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <AuditionNotesEdit formValues={values} />
-                  </Grid>
-                  <Grid item>
-                    <TitledPaper
-                      variant="h6"
-                      component="h2"
-                      title="Set Reminder"
-                    >
-                      <Grid container direction="row" spacing={2}>
-                        <Grid item xs={3}>
-                          <FastField
-                            component={KeyboardDateTimePicker}
-                            name="reminderTime"
-                            label="Date / Time"
-                            format="MM/DD/YYYY hh:mm a"
-                            fullWidth={true}
-                            initialFocusedDate={null}
-                          />
-                        </Grid>
-                        <Grid item xs={9}>
-                          <FastField
-                            component={TextField}
-                            name="reminderDescription"
-                            label="Description"
-                            multiline
-                            fullWidth={true}
-                          />
-                        </Grid>
-                      </Grid>
-                    </TitledPaper>
+                    <ProjectEventsEdit project={values} />
                   </Grid>
                   <Grid item>
                     <Grid container spacing={2} direction="row">
@@ -249,4 +199,4 @@ const AuditionEditPage = () => {
   );
 };
 
-export default AuditionEditPage;
+export default ProjectEditPage;

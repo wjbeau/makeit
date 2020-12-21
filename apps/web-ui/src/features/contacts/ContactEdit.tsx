@@ -68,27 +68,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const iconForSocial = (val: ContactLinkType) => {
-  switch (val) {
-    case ContactLinkType.Facebook:
-      return <Facebook />;
-    case ContactLinkType.Instagram:
-      return <Instagram />;
-    case ContactLinkType.LinkedIn:
-      return <LinkedIn />;
-    case ContactLinkType.IMDb:
-      return <ImdbIcon />;
-    case ContactLinkType.YouTube:
-      return <YouTube />;
-    case ContactLinkType.Pintrest:
-      return <Pinterest />;
-    case ContactLinkType.Twitter:
-      return <Twitter />;
-    case ContactLinkType.Vimeo:
-      return <Vimeo />;
-  }
-};
-
 export const ContactEdit = (props: {
   contact: Contact;
   onCancel: () => void;
