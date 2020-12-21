@@ -10,6 +10,7 @@ import { CommonServicesModule } from './common-services/common-services.module';
 import { FileModule } from './files/file.module';
 import { ContactModule } from './contact/contact.module';
 import { ConfigModule } from '@nestjs/config';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     ProjectModule,
     FileModule,
     ContactModule,
+    EventModule,
     MongooseModule.forRoot(`mongodb://localhost/makeit`, {'useFindAndModify': false}) //TODO externalize this config
   ],
   controllers: [],

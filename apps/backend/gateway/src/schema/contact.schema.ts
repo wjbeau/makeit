@@ -1,9 +1,8 @@
-import { Address, AddressType, ContactAddress, Contact, ContactLink, ContactLinkType, Telecom, TelecomType, BaseEntity } from '@makeit/types';
+import { Address, AddressType, ContactAddress, Contact, ContactLink, ContactLinkType, Telecom, TelecomType, BaseEntity, UserAccount } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
 import { UserAccountModel } from './user.schema';
-import { UserAccount } from '../../../../../libs/types/src/user.model';
 
 export type ContactAddressDocument = ContactAddressModel & mongoose.Document;
 

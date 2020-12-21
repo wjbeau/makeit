@@ -1,0 +1,21 @@
+.MuiTypography-root .fc .fc-button-primary, .MuiTypography-root .fc .fc-button, .MuiTypography-root .fc .fc-button-active {
+    background-color: #303f9f;
+    color: #fff;
+    padding: 6px 16px;
+    font-size: 0.875rem;
+    min-width: 64px;
+    box-sizing: border-box;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    line-height: 1.75;
+    border-radius: 4px;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    border: 0;
+}
+
+.MuiTypography-root .fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #f50057;
+    color: #fff;
+}
