@@ -13,16 +13,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TitledSection = (props: {variant?, title: string, children?}) => {
-    const {variant, title} = props
+export const TitledSection = (props: {variant?, component?, title: string, children?}) => {
+    const {variant, title, component, children} = props
     const classes = useStyles()
     return (
         <Grid container direction="column" className={classes.root}>
             <Grid item className={classes.titleContainer}>
-                <Typography variant={variant}>{title}</Typography>
+                <Typography variant={variant} component={component}>{title}</Typography>
             </Grid>
             <Grid item>
-                {props.children}
+                {children}
             </Grid>
         </Grid>
     );
