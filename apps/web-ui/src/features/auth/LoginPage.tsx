@@ -48,7 +48,7 @@ export const LoginPage = () => {
     dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then((auth) => {
-        if(location.state['from']) {
+        if(location && location.state['from']) {
           history.push(location.state['from'])
         }
         else {
