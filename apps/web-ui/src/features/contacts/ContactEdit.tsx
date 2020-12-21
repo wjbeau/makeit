@@ -236,6 +236,8 @@ export const ContactEdit = (props: {
                             spacing={1}
                             direction="row"
                             key={`telecoms[${index}]`}
+                            wrap="nowrap"
+                            alignItems="center"
                           >
                             <Grid item>
                               <ContactTelecomEdit
@@ -280,6 +282,8 @@ export const ContactEdit = (props: {
                             spacing={1}
                             direction="row"
                             key={`links[${index}]`}
+                            wrap="nowrap"
+                            alignItems="center"
                           >
                             <Grid item>
                               <ContactLinkEdit

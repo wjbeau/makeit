@@ -30,7 +30,6 @@ import {
   Twitter,
   YouTube,
 } from '@material-ui/icons';
-import { mdiVimeo as Vimeo } from '@mdi/js';
 import React, { useState } from 'react';
 import { SERVER_URL } from '../../app/config';
 import { Converter } from '../../app/Converters';
@@ -43,6 +42,8 @@ import { deleteContact } from './contact.slice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { logError } from '../logging/logging.slice';
 import { useHistory } from 'react-router-dom';
+import VimeoIcon from 'mdi-react/VimeoIcon';
+import SkypeIcon from 'mdi-react/SkypeIcon';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -93,7 +94,7 @@ const iconForSocial = (val: ContactLinkType) => {
     case ContactLinkType.Twitter:
       return <Twitter />;
     case ContactLinkType.Vimeo:
-      return <Vimeo />;
+      return <VimeoIcon />;
   }
 };
 
@@ -327,6 +328,10 @@ export const ContactDetails = (props: {
                   } else if (ContactUtils.isEmail(s.type)) {
                     url = 'mailto:' + s.details;
                     icon = <Email />;
+                  }
+                  else if(TelecomType.Skype === s.type) {
+                    url = 'skype:' + s.details;
+                    icon = <SkypeIcon />;
                   }
                   return (
                     <TextWithAction

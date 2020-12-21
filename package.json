@@ -58,6 +58,7 @@
     "fullcalendar-reactwrapper": "^1.0.7",
     "lodash": "^4.17.20",
     "material-ui-dropzone": "^3.5.0",
+    "mdi-react": "^7.4.0",
     "moment": "^2.29.1",
     "mongoose": "5.10.1",
     "mui-datatables": "^3.7.1",

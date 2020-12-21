@@ -26,7 +26,7 @@ export const ContactTelecomEdit = (props: {
   const { telecom, prefix } = props;
   const classes = useStyles();
   return (
-    <Grid container spacing={1} direction="row">
+    <Grid container spacing={1} direction="row" wrap="nowrap">
       <Grid item>
         <FormControl>
           <FastField
