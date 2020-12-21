@@ -8,7 +8,7 @@ import {
   makeStyles,
   Tooltip,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -28,13 +28,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const RouteItem = (props: any) => {
-  const { route, classes } = props;
+  const { route, classes, showLabels } = props;
   if (route.disabled) {
     return (
       <Tooltip title={route.description}>
         <ListItem button className={classes.disabled}>
           <ListItemIcon>{route.icon}</ListItemIcon>
-          {props.showLabels && <ListItemText primary={route.title} />}
+          {showLabels && <ListItemText primary={route.title} />}
         </ListItem>
       </Tooltip>
     );
@@ -49,13 +49,17 @@ const RouteItem = (props: any) => {
       exact={route.exact}
       className={classes.passive}
     >
-      {!props.showLabels && (
+      {!showLabels && (
         <Tooltip title={route.title}>
           <ListItemIcon>{route.icon}</ListItemIcon>
         </Tooltip>
       )}
-      {props.showLabels && <ListItemIcon>{route.icon}</ListItemIcon>}
-      <ListItemText primary={route.title} />
+      {showLabels && (
+        <>
+          <ListItemIcon>{route.icon}</ListItemIcon>
+          <ListItemText primary={route.title} />
+        </>
+      )}
     </ListItem>
   );
 };
