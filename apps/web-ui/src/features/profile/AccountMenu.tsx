@@ -36,10 +36,12 @@ export const AccountMenu = (props: {
 
   const handleLogout = () => {
     dispatch(doLogout());
+    onClose();
   };
 
   const handleAccountClick = () => {
     history.push('/account');
+    onClose();
   };
 
   return (
