@@ -1,18 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Event, PermissionRole } from '@makeit/types';
+import { Event, EventType, PermissionRole, Project, ProjectEventType, Audition, AuditionType } from '@makeit/types';
 import { ensureAdminPermission, permissionsSpec } from '../../schema/permission.schema';
 import {
   EventModel,
   EventDocument
 } from '../../schema/event.schema';
+import { AuditionService } from '../audition/audition.service';
+import { ProjectService } from '../project/project.service';
+import * as moment from 'moment';
+import * as _ from 'lodash';
 
 const DATE_LIMIT = 8640000000000000
 
 @Injectable()
 export class EventService {
   constructor(
+    private auditionService: AuditionService,
+    private projectService: ProjectService,
     @InjectModel(EventModel.name)
     private eventModel: Model<EventDocument>
   ) {}
@@ -57,16 +63,19 @@ export class EventService {
 
     //TODO we need to pull in projects, auditions and other types here then merge with the 
     //results of the calendar collection query
-    const projectMeetings = []
-    const auditions = []    
+    const projects = await this.projectService.findAllForUser(id, start, end)
+    const projectEvents = projects.flatMap(p => this.projectToEvents(p, start, end))
+
+    const auditions = await this.auditionService.findAllForUser(id, start, end)
+    const auditionEvents = auditions.map(a => this.auditionToEvent(a))
     
     const result: Event[] = await this.eventModel
       .find({
         $and: [
           {
             $and: [
-              { startTime: { $gt: fromDate }},
-              { startTime: { $lt: toDate }}
+              { start: { $gt: fromDate }},
+              { start: { $lt: toDate }}
             ]
           },
           permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
@@ -76,7 +85,49 @@ export class EventService {
       .exec();
 
     return []
-      .concat(projectMeetings, auditions, result)
+      .concat(
+        projectEvents, 
+        auditionEvents, 
+        result)
       .sort((a,b) => a.startTime - b.startTime)
+  }
+
+  public getLabelForEnum(data, value: string) {
+      const label = Object.keys(data).find(k => data[k] === value)
+      return label ? _.startCase(label) : "Unspecified";
+  }
+
+  private auditionToEvent(aud: Audition) {
+    return {
+      start: aud.auditionTime,
+      end: moment(aud.auditionTime).add(1, 'hour').toDate(),
+      description: aud.instructions,
+      eventType: EventType.Audition,
+      participants: aud.participants,
+      permissions: aud.permissions,
+      title: this.getLabelForEnum(AuditionType, aud.type) + (aud.breakdown?.project?.name ? ' for ' + aud.breakdown?.project?.name : ''),
+      location: aud.address
+    }
+  }
+
+  private projectToEvents(p: Project, start: Date, end: Date) {
+    if(!p.events) {
+      return []
+    }
+
+    return p.events
+      .filter(e => e.time >= start && e.time <= end)
+      .map(pe => {
+        return {
+          start: pe.time,
+          end: moment(pe.time).add(1, 'hour').toDate(),
+          description: pe.notes,
+          eventType: EventType.ProjectMeeting,
+          participants: pe.participants,
+          permissions: pe.permissions,
+          title: this.getLabelForEnum(ProjectEventType, pe.eventType) + " for " + p.name,
+          location: pe.location
+        }
+      })
   }
 }

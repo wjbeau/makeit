@@ -1,16 +1,11 @@
 import {
-  Audition,
-  ParticipantType,
-  ParticipantReferenceType,
-  UserAccount,
-  toParticipantReference
+  Audition, PermissionRole
 } from '@makeit/types';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditionDocument, AuditionModel } from '../../schema/Audition.schema';
 import { BreakdownService } from '../breakdown/breakdown.service';
-import { PermissionRole } from '../../../../../../libs/types/src/permission.model';
 import { permissionsSpec, ensureAdminPermission } from '../../schema/permission.schema';
 
 @Injectable()
@@ -21,7 +16,7 @@ export class AuditionService {
     private auditionModel: Model<AuditionDocument>
   ) {}
 
-  async save(id: string, audition: Audition, userid: any): Promise<Audition | undefined> {
+  async save(id: string, audition: Audition, userid): Promise<Audition | undefined> {
     //the path variable must match the data posted
     if ((id || audition._id) && id !== audition._id) {
       throw new BadRequestException();
@@ -69,14 +64,26 @@ export class AuditionService {
   async findById(id: any): Promise<Audition | undefined> {
     return await this.auditionModel.findOne({ _id: id }).lean().exec();
   }
+            
+  async findAllForUser(id, from?: Date, to?: Date): Promise<Audition[] | undefined> {
+    let datefilter = {}
+    if(from && to) {
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findAllForUser(id: any): Promise<Audition[] | undefined> {
+      datefilter = {
+          $and: [
+            { 'auditionTime': { $gt: from }},
+            { 'auditionTime': { $lt: to }}
+          ]
+        }
+    }
     //find all auditions where the given user is a relevant participant
     const result: Audition[] = await this.auditionModel
-      .find(
-        permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
-      )
+      .find({
+        $and: [
+          datefilter,
+          permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
+        ]
+      })
       .populate({
         path: 'breakdown',
         populate: { path: 'project' },

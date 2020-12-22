@@ -15,7 +15,7 @@ export interface Project extends BaseEntity, HasAttachments, HasParticipants, Ha
     events: ProjectEvent[];
 }
 
-export interface ProjectEvent extends BaseEntity, HasAttachments, HasPermissions {
+export interface ProjectEvent extends BaseEntity, HasAttachments, HasParticipants, HasPermissions {
     time: Date;
     location?: Address;
     notes: string;

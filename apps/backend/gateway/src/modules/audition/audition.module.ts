@@ -14,5 +14,6 @@ import { BreakdownModule } from '../breakdown/breakdown.module';
     ],
     controllers: [AuditionController],
     providers: [AuditionService],
+    exports: [AuditionService]
 })
 export class AuditionModule {}

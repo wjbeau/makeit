@@ -4,7 +4,10 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["node"],
     "emitDecoratorMetadata": true,
-    "target": "es2015"
+    "target": "es2015",
+    "lib": [
+      "es2019"
+    ]
   },
   "exclude": ["**/*.spec.ts", "src/test/*.ts"],
   "include": ["**/*.ts"]

@@ -7,8 +7,7 @@ import { PersonInfo } from '@makeit/types';
 export class Converter {
     private static items = {};
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public static enumToMenuItems(key: string, data: any, exclude?:any[]) {
+    public static enumToMenuItems(key: string, data, exclude?) {
         if(Converter.items[key]) {
             return Converter.items[key]
         }
@@ -22,8 +21,7 @@ export class Converter {
         return list;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public static getLabelForEnum(data: any, value: string) {
+    public static getLabelForEnum(data, value: string) {
         const label = Object.keys(data).find(k => data[k] === value)
         return label ? Converter.decamelCase(label) : "Unspecified";
     }
@@ -42,8 +40,7 @@ export class Converter {
         }
     }
   
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private static convertToDate(value: any) {
+    private static convertToDate(value) {
         if (Converter.isSerializedDate(value)) return new Date(value);
         return value;
     }

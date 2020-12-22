@@ -4,8 +4,8 @@ import { HasParticipants } from './participant.model';
 import { BaseEntity } from './base.model';
 
 export interface Event extends BaseEntity, HasPermissions, HasParticipants {
-    startTime: Date;
-    endTime: Date;
+    start: Date;
+    end: Date;
     location?: Address;
     description: string;
     title: string;

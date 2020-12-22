@@ -10,9 +10,9 @@ export type EventDocument = EventModel & mongoose.Document;
 @Schema()
 export class EventModel implements Event {
     @Prop({required: true})
-    startTime: Date;
+    start: Date;
     @Prop({required: true})
-    endTime: Date;
+    end: Date;
     @Prop({ type: [AddressSchema] })
     location?: Address;
     @Prop({required: true})

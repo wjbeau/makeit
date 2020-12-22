@@ -31,6 +31,9 @@ export class ProjectEventModel implements ProjectEvent {
 
     @Prop({ type: [PermissionSchema] })
     permissions: Permission[];
+
+    @Prop({type: [ParticipantSchema]})
+    participants: Participant[];
 }
 
 export const ProjectEventSchema = SchemaFactory.createForClass(ProjectEventModel);

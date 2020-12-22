@@ -44,17 +44,27 @@ export class ProjectService {
     return result.toObject();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findById(id: any): Promise<Project | undefined> {
+  async findById(id): Promise<Project | undefined> {
     return await this.projectModel.findOne({ _id: id }).lean().exec();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findAllForUser(id: any): Promise<Project[] | undefined> {
+  async findAllForUser(id, from?: Date, to?: Date): Promise<Project[] | undefined> {
+    let datefilter = {}
+    if(from && to) {
+
+      datefilter = {
+          $and: [
+            { 'events.time': { $gt: from }},
+            { 'events.time': { $lt: to }}
+          ]
+        }
+    }
+
     //find all Projects where the given user is a relevant participant
     const result: Project[] = await this.projectModel
       .find({
         $and: [
+          datefilter,
           {
             $or: [
               {'status': ProjectStatus.Active},

@@ -13,10 +13,16 @@
     right: 5% !important;
 }
 
+#root .fc-daygrid-dot-event .fc-event-title {
+    font-weight: normal;
+    white-space: break-spaces;
+}
+
 /* Bolds the name of the event and inherits the font size */
 #root .fc .fc-event {
-    font-size: inherit !important;
-    font-weight: bold !important;
+    align-items: self-start;
+    font-size: 80%;
+    line-height: 1.2;
 }
 
 /* Remove the header border from Schedule */
@@ -25,6 +31,10 @@
     border-width: 1px !important;
     padding: 0 !important;
     vertical-align: top !important;
+}
+
+#root .fc-daygrid-event-dot {
+    margin-top: 3px;
 }
 
 /* Inherits background for each event from Schedule. */
