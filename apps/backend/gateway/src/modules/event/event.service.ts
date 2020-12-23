@@ -106,7 +106,8 @@ export class EventService {
       participants: aud.participants,
       permissions: aud.permissions,
       title: this.getLabelForEnum(AuditionType, aud.type) + (aud.breakdown?.project?.name ? ' for ' + aud.breakdown?.project?.name : ''),
-      location: aud.address
+      location: aud.address,
+      sourceId: aud._id
     }
   }
 
@@ -126,7 +127,8 @@ export class EventService {
           participants: pe.participants,
           permissions: pe.permissions,
           title: this.getLabelForEnum(ProjectEventType, pe.eventType) + " for " + p.name,
-          location: pe.location
+          location: pe.location,
+          sourceId: p._id
         }
       })
   }

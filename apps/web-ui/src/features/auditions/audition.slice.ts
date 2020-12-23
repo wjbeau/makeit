@@ -4,19 +4,33 @@ import { apiClient } from '../../app/api-client';
 import { RootState } from '../../app/store';
 import { AuditionsState } from './audition.state';
 
+const MAX_FETCH_STALE_AGE = 60000; //a minute
+
 const initialState: AuditionsState = {
   auditions: [],
-  loading: false
+  loading: false,
+  lastFetch: null
 };
 
+const needsRefresh = (state) => {
+  const nowTime = new Date().getTime();
+ 
+  const result = !state.auditions.lastFetch || nowTime - state.auditions.lastFetch > MAX_FETCH_STALE_AGE;
+  return result
+}
+
 export const fetchAuditions = createAsyncThunk('auditions/fetchAuditions', async (userId: string, thunkAPI) => {
-  const result = await apiClient().get('/auditions');
-  thunkAPI.dispatch(receiveAuditions(result.data))
+  if(needsRefresh(thunkAPI.getState())) {
+    const result = await apiClient().get('/auditions');
+    thunkAPI.dispatch(receiveAuditions(result.data))
+    return result.data;
+  }
 })
 
 export const fetchAudition = createAsyncThunk('auditions/fetchAudition', async (auditionId: string, thunkAPI) => {
   const result = await apiClient().get('/auditions/' + auditionId);
   thunkAPI.dispatch(receiveAudition(result.data))
+  return result.data;
 })
 
 export const saveAudition = createAsyncThunk('auditions/saveAudition', async (audition: Audition, thunkAPI) => {
@@ -37,6 +51,7 @@ export const auditionsSlice = createSlice({
     receiveAuditions: (state, action) => {
       state.loading = false;
       state.auditions = action.payload
+      state.lastFetch = new Date().getTime();
     },
     receiveAudition: (state, action) => {
       state.loading = false;

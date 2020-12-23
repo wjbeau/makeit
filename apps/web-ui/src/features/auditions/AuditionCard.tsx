@@ -11,7 +11,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import { Done, Edit, ExpandMore, MoreVert } from '@material-ui/icons';
+import { Close, Done, Edit, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
@@ -44,11 +44,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const AuditionCard = (props: { audition: Audition }) => {
-  const { audition } = props;
+export const AuditionCard = (props: {
+  audition: Audition;
+  expand?: boolean;
+  onClose?: () => void;
+}) => {
+  const { audition, expand, onClose } = props;
   const classes = useStyles();
   const history = useHistory();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(!!expand);
   const dispatch = useAppDispatch();
 
   const handleExpandClick = () => {
@@ -80,9 +84,16 @@ export const AuditionCard = (props: { audition: Audition }) => {
       <CardHeader
         avatar={<AuditionAvatar audition={audition} />}
         action={
-          <IconButton aria-label="settings">
-            <MoreVert />
-          </IconButton>
+          <>
+            {onClose && (
+              <IconButton aria-label="close" onClick={onClose}>
+                <Close />
+              </IconButton>
+            )}
+            <IconButton aria-label="settings">
+              <MoreVert />
+            </IconButton>
+          </>
         }
         title={buildTitle()}
         subheader={
@@ -150,7 +161,10 @@ export const AuditionCard = (props: { audition: Audition }) => {
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>
-                <ParticipantAttachmentList container={audition} readOnly={true} />
+                <ParticipantAttachmentList
+                  container={audition}
+                  readOnly={true}
+                />
               </Grid>
             )}
           </Grid>

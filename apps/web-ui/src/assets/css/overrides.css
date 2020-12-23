@@ -1,3 +1,11 @@
+#root .fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 8px;
+}
+
+#root .fc .fc-toolbar-title {
+    font-size: 1.5rem;
+}
+
 #root .fc .fc-state-highlight {
     opacity: 0;
     border: none;
@@ -73,7 +81,7 @@
     position: relative;
     cursor: pointer;
     min-height: 36px;
-    min-width: 88px;
+    min-width: 66px;
     line-height: 36px;
     vertical-align: middle;
     -webkit-box-align: center;
@@ -88,8 +96,8 @@
     user-select: none;
     outline: none;
     border: 0;
-    padding: 0 6px;
-    margin: 6px 8px;
+    padding: 0;
+    margin: 0;
     letter-spacing: .01em;
     background: transparent;
     color: #303f9f;

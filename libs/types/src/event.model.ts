@@ -10,6 +10,7 @@ export interface Event extends BaseEntity, HasPermissions, HasParticipants {
     description: string;
     title: string;
     eventType: EventType;
+    sourceId?;
 }
 
 export enum EventType {

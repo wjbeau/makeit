@@ -1,25 +1,18 @@
-import { Project, ProjectType } from '@makeit/types';
+import { Event } from '@makeit/types';
 import {
-  Avatar,
-  Card,
+  Avatar, Card,
   CardActions,
   CardContent,
   CardHeader,
   Collapse,
-  Grid,
-  IconButton,
-  makeStyles,
+  Grid, IconButton, makeStyles,
   Typography
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
-import { Converter } from '../../app/Converters';
-import FileAttachmentList from '../attachments/FileAttachmentList';
-import LinkAttachmentList from '../attachments/LinkAttachmentList';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
-import ProjectCardActions from './ProjectCardActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -39,11 +32,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ProjectCard = (props: { project: Project, expand?: boolean, onClose?: () => void }) => {
-  const { project, expand, onClose } = props;
+export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () => void}) => {
   const classes = useStyles();
+  const {event, expand, onClose} = props
   const [expanded, setExpanded] = React.useState(expand);
-
+  
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -64,66 +57,36 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
             </IconButton>
           </>
         }
-        title={project.name}
+        title={event.title}
         subheader={
-          <>
-            {project.projectType &&
-              Converter.getLabelForEnum(ProjectType, project.projectType)}
-            {project.startDate && (
-              <span>
-                <span>Starts on:</span>
-                <Moment interval={0} format="LLL">
-                  {project.startDate}
-                </Moment>
-              </span>
-            )}
-          </>
+          <span>
+            <span>Starts on:</span>
+            <Moment interval={0} format="LLL">
+              {event.start}
+            </Moment>
+          </span>
         }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container spacing={2}>
-            {project.description && (
+            {event.description && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Description
                 </Typography>
                 <Typography variant="body2">
-                  {project.description}
+                  {event.description}
                 </Typography>
               </Grid>
             )}
-            {project.events?.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Scheduled Events
-                </Typography>
-                List here...
-              </Grid>
-            )}
-            {project.attachments && project.attachments.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Files
-                </Typography>
-                <FileAttachmentList container={project} readOnly={true} />
-              </Grid>
-            )}
-            {project.links && project.links.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Links
-                </Typography>
-                <LinkAttachmentList container={project} readOnly={true} />
-              </Grid>
-            )}
-            {project.participants && project.participants.length > 0 && (
+            {event.participants && event.participants.length > 0 && (
               <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>
                 <ParticipantAttachmentList
-                  container={project}
+                  container={event}
                   readOnly={true}
                 />
               </Grid>
@@ -132,7 +95,6 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
         </CardContent>
       </Collapse>
       <CardActions disableSpacing>
-        <ProjectCardActions project={project} />
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
@@ -148,4 +110,4 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
   );
 };
 
-export default ProjectCard;
+export default EventCard;

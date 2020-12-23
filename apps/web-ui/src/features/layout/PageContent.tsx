@@ -17,7 +17,10 @@ const useStyles = makeStyles((theme) => ({
   },
   sidebar: {
     flexGrow: 0,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none'
+    },
+    [theme.breakpoints.only('sm')]: {
       width: theme.spacing(8),
     },
     [theme.breakpoints.up('md')]: {

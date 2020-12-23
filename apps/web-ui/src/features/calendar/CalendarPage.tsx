@@ -3,14 +3,18 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { Event, EventType } from '@makeit/types';
 import {
+  Box,
+  Button,
   Card,
   Grid,
   makeStyles,
-  Theme, Typography,
-  useTheme
+  Paper,
+  Theme,
+  Typography,
+  useTheme,
 } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import Loading from '../layout/Loading';
@@ -18,12 +22,35 @@ import { logError } from '../logging/logging.slice';
 import {
   fetchEvents,
   selectEvents,
-  selectEventsLoading
+  selectEventsLoading,
 } from './calendar.slice';
+import EventPanel from './EventPanel';
+import { CancelOutlined } from '@material-ui/icons';
+import { DIMENSIONS } from '../layout/dimensions';
+
+const LOADING_INDICATOR_DELAY = 300;
 
 const useStyles = makeStyles((theme) => ({
   calendar: {
     position: 'relative',
+    flexGrow: 1,
+  },
+  eventView: {
+    flexGrow: 0,
+    position: 'absolute',
+    right: 0,
+    background: 'white',
+    zIndex: 2,
+    [theme.breakpoints.down('xs')]: {
+      left: 0,
+      right: 0,
+      top: DIMENSIONS.headerHeight - theme.spacing(1),
+      position: 'fixed'
+    },
+    [theme.breakpoints.up('sm')]: {
+      top: 92,
+      maxWidth: 450,
+    },
   },
   loadingOverlay: {
     position: 'fixed',
@@ -75,6 +102,10 @@ const augmentEvent = (e: Event, theme: Theme) => {
   return {
     start: new Date(e.start),
     end: new Date(e.end),
+    extendedProps: {
+      sourceId: e.sourceId,
+      type: e.eventType,
+    },
     ...e,
     ...colorsFor(e.eventType, theme),
   };
@@ -85,8 +116,30 @@ export const CalendarPage = () => {
   const loadedEvents = useSelector(selectEvents);
   const dispatch = useAppDispatch();
   const classes = useStyles();
-  const calendarRef = React.createRef();
+  const calendarRef = React.createRef<FullCalendar>();
   const theme = useTheme();
+  const [activeEvent, setActiveEvent] = useState(null);
+  const [showLoading, setShowLoading] = useState<boolean>(false);
+  const [timeoutHandle, setTimeoutHandle] = useState(null);
+
+
+  useEffect(() => {
+    if(loading) {
+      const handle = setTimeout(
+        () => setShowLoading(loading),
+        LOADING_INDICATOR_DELAY
+      ); //don't show the loading screen unless there is an actual delay
+      setTimeoutHandle(handle);
+    }
+    else {
+      setShowLoading(false);
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+        setTimeoutHandle(null);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading])
 
   const events = loadedEvents.map((e) => augmentEvent(e, theme));
 
@@ -104,15 +157,23 @@ export const CalendarPage = () => {
     }
   };
 
+  const handleEventClick = (evtInfo) => {
+    setActiveEvent(evtInfo.event);
+  };
+
+  const handleCloseEvent = () => {
+    setActiveEvent(null);
+  };
+
   useEffect(() => {
     loadEvents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Grid container direction="column" spacing={5}>
-      <Grid item>
-        <Typography component="span" className={classes.calendar}>
+    <Grid container direction="row" spacing={5}>
+      <Grid item className={classes.calendar}>
+        <Typography component="span">
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin]}
@@ -129,8 +190,9 @@ export const CalendarPage = () => {
             datesSet={(dateInfo) => {
               loadEvents();
             }}
+            eventClick={handleEventClick}
           />
-          {loading && (
+          {showLoading && (
             <div className={classes.loadingOverlay}>
               <Card className={classes.loadingInner}>
                 <Loading />
@@ -138,6 +200,14 @@ export const CalendarPage = () => {
             </div>
           )}
         </Typography>
+        {activeEvent && (
+          <Paper elevation={3} className={classes.eventView}>
+            <EventPanel
+              event={activeEvent}
+              onClose={handleCloseEvent}
+            />
+          </Paper>
+        )}
       </Grid>
     </Grid>
   );

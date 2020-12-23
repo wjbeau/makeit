@@ -49,6 +49,10 @@ export class MockableDocument {
         return null;
     }
 
+    public execPopulate(): Promise<any> {
+        return null;
+    }
+
     public toObject() {
         return null;
     }

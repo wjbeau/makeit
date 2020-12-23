@@ -12,11 +12,13 @@ const initialState: ProjectsState = {
 export const fetchProjects = createAsyncThunk('projects/fetchProjects', async (userId: string, thunkAPI) => {
   const result = await apiClient().get('/projects');
   thunkAPI.dispatch(receiveProjects(result.data))
+  return result.data
 })
 
 export const fetchProject = createAsyncThunk('projects/fetchProject', async (ProjectId: string, thunkAPI) => {
   const result = await apiClient().get('/projects/' + ProjectId);
   thunkAPI.dispatch(receiveProject(result.data))
+  return result.data
 })
 
 export const saveProject = createAsyncThunk('projects/saveProject', async (Project: Project, thunkAPI) => {

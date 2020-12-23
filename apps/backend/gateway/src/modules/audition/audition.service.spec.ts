@@ -54,6 +54,11 @@ describe('AuditionService', () => {
       audition._id = 'auditionid';
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
+      when(mockDocument.populate(deepEqual({
+        path: 'breakdown',
+        populate: { path: 'project'}
+      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
       when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
@@ -94,6 +99,11 @@ describe('AuditionService', () => {
       ).thenResolve(audition.breakdown);
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
+      when(mockDocument.populate(deepEqual({
+        path: 'breakdown',
+        populate: { path: 'project'}
+      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
       when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
@@ -126,6 +136,11 @@ describe('AuditionService', () => {
       audition._id = null;
 
       when(mockDocument.toObject()).thenReturn(audition);
+      when(mockDocument.populate(deepEqual({
+        path: 'breakdown',
+        populate: { path: 'project'}
+      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
 
       when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
         new Promise((resolve) => resolve(null))
@@ -297,13 +312,12 @@ describe('AuditionService', () => {
       );
       when(
         mockModel.find(
-          deepEqual(
-            permissionsSpec(id, null, [
-              PermissionRole.Admin,
-              PermissionRole.Editor,
-              PermissionRole.Viewer,
-            ])
-          )
+          deepEqual({
+            $and: [
+              {},
+              permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
+            ]
+          })
         )
       ).thenReturn(instance(mockQuery));
 
@@ -327,13 +341,12 @@ describe('AuditionService', () => {
       );
       when(
         mockModel.find(
-          deepEqual(
-            permissionsSpec(id, null, [
-              PermissionRole.Admin,
-              PermissionRole.Editor,
-              PermissionRole.Viewer,
-            ])
-          )
+          deepEqual({
+            $and: [
+              {},
+              permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
+            ]
+          })
         )
       ).thenReturn(instance(mockQuery));
       when(

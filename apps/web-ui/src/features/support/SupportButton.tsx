@@ -13,7 +13,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     right: -66,
     top: 'calc(50% - 10px)',
-    transform: 'rotate(-90deg)'
+    transform: 'rotate(-90deg)',
+    zIndex: 1200
   },
   menuIcon: {
     marginRight: theme.spacing(2),
