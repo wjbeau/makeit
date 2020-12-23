@@ -64,9 +64,8 @@ export class EventService {
     return await this.eventModel.findOne({ _id: id }).lean().exec();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async findAllForUser(
-    id: any,
+    id,
     start: Date,
     end: Date
   ): Promise<Event[] | undefined> {
