@@ -17,6 +17,7 @@ const toQueryParamDate = (date: Date) => {
 export const fetchEvents = createAsyncThunk('calendar/fetchEvents', async (crits: EventQueryCriteria, thunkAPI) => {
   const result = await apiClient().get(`/events?from=${toQueryParamDate(crits.from)}&to=${toQueryParamDate(crits.to)}`);
   thunkAPI.dispatch(receiveEvents(result.data))
+  return result.data;
 })
 
 export const saveEvent = createAsyncThunk('calendar/saveEvent', async (event: Event, thunkAPI) => {

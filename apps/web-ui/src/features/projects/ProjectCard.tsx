@@ -20,6 +20,7 @@ import FileAttachmentList from '../attachments/FileAttachmentList';
 import LinkAttachmentList from '../attachments/LinkAttachmentList';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 import ProjectCardActions from './ProjectCardActions';
+import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -55,9 +56,11 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
         action={
           <>
             {onClose && (
-              <IconButton aria-label="close" onClick={onClose}>
-                <Close />
-              </IconButton>
+              <Tooltip title="Close">
+                <IconButton aria-label="close" onClick={onClose}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
             )}
             <IconButton aria-label="settings">
               <MoreVert />

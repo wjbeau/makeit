@@ -1,7 +1,7 @@
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { Event, EventType } from '@makeit/types';
+import { Event, EventType, ModelFactory } from '@makeit/types';
 import {
   Box,
   Button,
@@ -11,22 +11,24 @@ import {
   Paper,
   Theme,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { useConfirm } from 'material-ui-confirm';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
+import { DIMENSIONS } from '../layout/dimensions';
 import Loading from '../layout/Loading';
 import { logError } from '../logging/logging.slice';
 import {
   fetchEvents,
   selectEvents,
-  selectEventsLoading,
+  selectEventsLoading
 } from './calendar.slice';
+import EventDetailsEdit from './EventDetailsEdit';
 import EventPanel from './EventPanel';
-import { CancelOutlined } from '@material-ui/icons';
-import { DIMENSIONS } from '../layout/dimensions';
+import * as moment from 'moment';
 
 const LOADING_INDICATOR_DELAY = 300;
 
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
       left: 0,
       right: 0,
       top: DIMENSIONS.headerHeight - theme.spacing(1),
-      position: 'fixed'
+      position: 'fixed',
     },
     [theme.breakpoints.up('sm')]: {
       top: 92,
@@ -98,15 +100,18 @@ const colorsFor = (t: EventType, theme: Theme) => {
   }
 };
 
+const addHour = (date: Date) => {
+  return moment.default(date).add(1, 'hour').toDate()
+}
+
 const augmentEvent = (e: Event, theme: Theme) => {
   return {
     start: new Date(e.start),
     end: new Date(e.end),
+    title: e.title,
     extendedProps: {
-      sourceId: e.sourceId,
-      type: e.eventType,
+      original: e
     },
-    ...e,
     ...colorsFor(e.eventType, theme),
   };
 };
@@ -119,37 +124,38 @@ export const CalendarPage = () => {
   const calendarRef = React.createRef<FullCalendar>();
   const theme = useTheme();
   const [activeEvent, setActiveEvent] = useState(null);
+  const [editEvent, setEditEvent] = useState(null);
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const [timeoutHandle, setTimeoutHandle] = useState(null);
-
+  const [start, setStart] = useState(null);
+  const [end, setEnd] = useState(null);
+  const confirmPrompt = useConfirm();
 
   useEffect(() => {
-    if(loading) {
+    if (loading) {
       const handle = setTimeout(
         () => setShowLoading(loading),
         LOADING_INDICATOR_DELAY
       ); //don't show the loading screen unless there is an actual delay
       setTimeoutHandle(handle);
-    }
-    else {
+    } else {
       setShowLoading(false);
       if (timeoutHandle) {
         clearTimeout(timeoutHandle);
         setTimeoutHandle(null);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   const events = loadedEvents.map((e) => augmentEvent(e, theme));
 
   const loadEvents = () => {
-    if (!loading && calendarRef && calendarRef.current) {
-      const currentView = calendarRef.current.getApi().view;
+    if (!loading && start && end) {
       dispatch(
         fetchEvents({
-          from: currentView.activeStart,
-          to: currentView.activeEnd,
+          from: start,
+          to: end,
         })
       )
         .then(unwrapResult)
@@ -158,22 +164,56 @@ export const CalendarPage = () => {
   };
 
   const handleEventClick = (evtInfo) => {
-    setActiveEvent(evtInfo.event);
+    if (editEvent) {
+      confirmPrompt({
+        description: 'Your unsaved changes will be lost.  Continue?',
+      }).then(() => {
+        setActiveEvent(evtInfo.event.extendedProps?.original);
+        setEditEvent(null);
+      }).catch(() => { /* ignore */ });
+    } else {
+      setActiveEvent(evtInfo.event.extendedProps?.original);
+      setEditEvent(null);
+    }
+  };
+
+  const handleEditClick = () => {
+    setEditEvent(activeEvent);
+    setActiveEvent(null);
   };
 
   const handleCloseEvent = () => {
     setActiveEvent(null);
+    setEditEvent(null);
   };
 
+  //if we haven't had a date range set deduce it from the calendar
+  useEffect(() => {
+    if (calendarRef && calendarRef.current && (!start || !end)) {
+      const currentView = calendarRef.current.getApi().view;
+      setStart(currentView.activeStart);
+      setEnd(currentView.activeEnd);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calendarRef]);
+
+  //if the date range changes, reload the events
   useEffect(() => {
     loadEvents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [start, end]);
 
   return (
     <Grid container direction="row" spacing={5}>
       <Grid item className={classes.calendar}>
         <Typography component="span">
+          <div>
+            <Button
+              onClick={() => handleEventClick({ event: ModelFactory.createEmptyEvent(new Date(), addHour(new Date()))})}
+            >
+              New Event
+            </Button>
+          </div>
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin]}
@@ -188,7 +228,8 @@ export const CalendarPage = () => {
             allDaySlot={false}
             events={events}
             datesSet={(dateInfo) => {
-              loadEvents();
+              setStart(dateInfo.start);
+              setEnd(dateInfo.end);
             }}
             eventClick={handleEventClick}
           />
@@ -200,12 +241,24 @@ export const CalendarPage = () => {
             </div>
           )}
         </Typography>
-        {activeEvent && (
+        {(activeEvent || editEvent) && (
           <Paper elevation={3} className={classes.eventView}>
-            <EventPanel
-              event={activeEvent}
-              onClose={handleCloseEvent}
-            />
+            {activeEvent && (
+              <EventPanel
+                event={activeEvent}
+                onClose={handleCloseEvent}
+                onEdit={handleEditClick}
+              />
+            )}
+            {editEvent && (
+              <Box padding={3}>
+                <EventDetailsEdit
+                  event={editEvent}
+                  onSave={handleCloseEvent}
+                  onCancel={handleCloseEvent}
+                />
+              </Box>
+            )}
           </Paper>
         )}
       </Grid>

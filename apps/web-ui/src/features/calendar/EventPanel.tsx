@@ -30,22 +30,22 @@ import { fetchProject } from '../projects/project.slice';
 const useStyles = makeStyles((theme) => ({
 }));
 
-export const EventPanel = (props: {event, onClose: () => void}) => {
+export const EventPanel = (props: {event, onClose: () => void, onEdit: () => void}) => {
   const classes = useStyles();
-  const {event, onClose} = props
+  const {event, onClose, onEdit} = props
   const [resource, setResource] = useState(null);
   const dispatch = useAppDispatch();
   
-  let doDispatch = () => { return new Promise(resolve => resolve(resource)) };
-  let card = <EventCard event={event} expand={true} onClose={onClose}/>;
-  switch(event.extendedProps.eventType) {
+  let doDispatch = () => { return new Promise(resolve => resolve({ payload: event })) };
+  let card = <EventCard event={resource} expand={true} onClose={onClose} onEdit={onEdit} />;
+  switch(event.eventType) {
     case EventType.Audition:
     case EventType.Reminder:
-      doDispatch = () => { return dispatch(fetchAudition(event.extendedProps.sourceId));}
+      doDispatch = () => { return dispatch(fetchAudition(event.sourceId));}
       card = <AuditionCard audition={resource} expand={true} onClose={onClose}/>;
       break;
     case EventType.ProjectMeeting:
-      doDispatch = () => { return dispatch(fetchProject(event.extendedProps.sourceId));}
+      doDispatch = () => { return dispatch(fetchProject(event.sourceId));}
       card = <ProjectCard project={resource} expand={true} onClose={onClose} />;
       break;
   }

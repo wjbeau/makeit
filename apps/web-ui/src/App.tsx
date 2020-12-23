@@ -14,6 +14,7 @@ import MessagePanel from './features/logging/MessagePanel';
 import { ErrorGuard } from './features/logging/ErrorGuard';
 import { useHistory } from 'react-router-dom';
 import SupportButton from './features/support/SupportButton';
+import { ConfirmProvider } from 'material-ui-confirm';
 
 const useStyles = makeStyles((theme) => ({
   layoutGrid: {
@@ -42,16 +43,18 @@ function App() {
     <ThemeProvider theme={theme}>
       <MessagePanel />
       <ErrorGuard retry={retry}>
-        <Grid container direction="column" className={classes.layoutGrid}>
-          <Grid item className={classes.header}>
-            <Header />
+        <ConfirmProvider>
+          <Grid container direction="column" className={classes.layoutGrid}>
+            <Grid item className={classes.header}>
+              <Header />
+            </Grid>
+            <Grid item className={classes.content}>
+              <PageContent />
+              <SupportButton />
+              <Footer />
+            </Grid>
           </Grid>
-          <Grid item className={classes.content}>
-            <PageContent />
-            <SupportButton />
-            <Footer />
-          </Grid>
-        </Grid>
+        </ConfirmProvider>
       </ErrorGuard>
     </ThemeProvider>
   );

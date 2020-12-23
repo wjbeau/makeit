@@ -1,18 +1,26 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Event, EventType, PermissionRole, Project, ProjectEventType, Audition, AuditionType } from '@makeit/types';
-import { ensureAdminPermission, permissionsSpec } from '../../schema/permission.schema';
 import {
-  EventModel,
-  EventDocument
-} from '../../schema/event.schema';
+  Event,
+  EventType,
+  PermissionRole,
+  Project,
+  ProjectEventType,
+  Audition,
+  AuditionType,
+} from '@makeit/types';
+import {
+  ensureAdminPermission,
+  permissionsSpec,
+} from '../../schema/permission.schema';
+import { EventModel, EventDocument } from '../../schema/event.schema';
 import { AuditionService } from '../audition/audition.service';
 import { ProjectService } from '../project/project.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
-const DATE_LIMIT = 8640000000000000
+const DATE_LIMIT = 8640000000000000;
 
 @Injectable()
 export class EventService {
@@ -29,7 +37,7 @@ export class EventService {
       throw new BadRequestException();
     }
 
-    if(!id) {
+    if (!id) {
       ensureAdminPermission(event, userid);
     }
 
@@ -57,44 +65,44 @@ export class EventService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findAllForUser(id: any, start: Date, end: Date): Promise<Event[] | undefined> {
+  async findAllForUser(
+    id: any,
+    start: Date,
+    end: Date
+  ): Promise<Event[] | undefined> {
     const fromDate = start ? start : new Date(-DATE_LIMIT);
-    const toDate = end ? start : new Date(DATE_LIMIT)
+    const toDate = end ? end : new Date(DATE_LIMIT);
 
-    //TODO we need to pull in projects, auditions and other types here then merge with the 
-    //results of the calendar collection query
-    const projects = await this.projectService.findAllForUser(id, start, end)
-    const projectEvents = projects.flatMap(p => this.projectToEvents(p, start, end))
+    const projects = await this.projectService.findAllForUser(id, start, end);
+    const projectEvents = projects.flatMap((p) =>
+      this.projectToEvents(p, start, end)
+    );
 
-    const auditions = await this.auditionService.findAllForUser(id, start, end)
-    const auditionEvents = auditions.map(a => this.auditionToEvent(a))
-    
-    const result: Event[] = await this.eventModel
-      .find({
-        $and: [
-          {
-            $and: [
-              { start: { $gt: fromDate }},
-              { start: { $lt: toDate }}
-            ]
-          },
-          permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
-        ]
-      })
-      .lean()
-      .exec();
+    const auditions = await this.auditionService.findAllForUser(id, start, end);
+    const auditionEvents = auditions.map((a) => this.auditionToEvent(a));
+
+    const agg = {
+      $and: [
+        { start: { $gte: fromDate } },
+        { start: { $lte: toDate } },
+        permissionsSpec(id, null, [
+          PermissionRole.Admin,
+          PermissionRole.Editor,
+          PermissionRole.Viewer,
+        ]),
+      ],
+    };
+
+    const result: Event[] = await this.eventModel.find(agg).lean().exec();
 
     return []
-      .concat(
-        projectEvents, 
-        auditionEvents, 
-        result)
-      .sort((a,b) => a.startTime - b.startTime)
+      .concat(projectEvents, auditionEvents, result)
+      .sort((a, b) => a.start - b.start);
   }
 
   public getLabelForEnum(data, value: string) {
-      const label = Object.keys(data).find(k => data[k] === value)
-      return label ? _.startCase(label) : "Unspecified";
+    const label = Object.keys(data).find((k) => data[k] === value);
+    return label ? _.startCase(label) : 'Unspecified';
   }
 
   private auditionToEvent(aud: Audition) {
@@ -105,20 +113,24 @@ export class EventService {
       eventType: EventType.Audition,
       participants: aud.participants,
       permissions: aud.permissions,
-      title: this.getLabelForEnum(AuditionType, aud.type) + (aud.breakdown?.project?.name ? ' for ' + aud.breakdown?.project?.name : ''),
+      title:
+        this.getLabelForEnum(AuditionType, aud.type) +
+        (aud.breakdown?.project?.name
+          ? ' for ' + aud.breakdown?.project?.name
+          : ''),
       location: aud.address,
-      sourceId: aud._id
-    }
+      sourceId: aud._id,
+    };
   }
 
   private projectToEvents(p: Project, start: Date, end: Date) {
-    if(!p.events) {
-      return []
+    if (!p.events) {
+      return [];
     }
 
     return p.events
-      .filter(e => e.time >= start && e.time <= end)
-      .map(pe => {
+      .filter((e) => e.time >= start && e.time <= end)
+      .map((pe) => {
         return {
           start: pe.time,
           end: moment(pe.time).add(1, 'hour').toDate(),
@@ -126,10 +138,13 @@ export class EventService {
           eventType: EventType.ProjectMeeting,
           participants: pe.participants,
           permissions: pe.permissions,
-          title: this.getLabelForEnum(ProjectEventType, pe.eventType) + " for " + p.name,
+          title:
+            this.getLabelForEnum(ProjectEventType, pe.eventType) +
+            ' for ' +
+            p.name,
           location: pe.location,
-          sourceId: p._id
-        }
-      })
+          sourceId: p._id,
+        };
+      });
   }
 }

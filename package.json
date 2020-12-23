@@ -59,6 +59,7 @@
     "formik-material-ui-lab": "^0.0.8",
     "formik-material-ui-pickers": "^0.0.12",
     "lodash": "^4.17.20",
+    "material-ui-confirm": "^2.1.1",
     "material-ui-dropzone": "^3.5.0",
     "mdi-react": "^7.4.0",
     "moment": "^2.29.1",

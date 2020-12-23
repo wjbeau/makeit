@@ -4,6 +4,8 @@ import { Breakdown } from './breakdown.model';
 import { Project, ProjectStatus, ProjectType, UnionType } from './project.model';
 import { Gender, Ethnicity } from './base-enums.model';
 import { Contact } from './contact.model';
+import { Event } from '@makeit/types';
+import { EventType } from './event.model';
 
 
 export class ModelFactory {
@@ -56,6 +58,18 @@ export class ModelFactory {
             state: undefined,
             zip: undefined,
             country: undefined,
+        }
+    }
+    
+    public static createEmptyEvent(start?:Date, end?:Date):Event {
+        return {
+            title: undefined,
+            description: undefined,
+            eventType: EventType.Calendar,
+            start: start,
+            end: end,
+            participants: [],
+            permissions: []
         }
     }
 

@@ -13,7 +13,7 @@ export class EventModel implements Event {
     start: Date;
     @Prop({required: true})
     end: Date;
-    @Prop({ type: [AddressSchema] })
+    @Prop({ type: AddressSchema })
     location?: Address;
     @Prop({required: true})
     title: string;

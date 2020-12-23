@@ -25,6 +25,7 @@ import AuditionCardActions from './AuditionCardActions';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
 import FileAttachmentList from '../attachments/FileAttachmentList';
 import LinkAttachmentList from '../attachments/LinkAttachmentList';
+import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -86,9 +87,11 @@ export const AuditionCard = (props: {
         action={
           <>
             {onClose && (
-              <IconButton aria-label="close" onClick={onClose}>
-                <Close />
-              </IconButton>
+              <Tooltip title="Close">
+                <IconButton aria-label="close" onClick={onClose}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
             )}
             <IconButton aria-label="settings">
               <MoreVert />

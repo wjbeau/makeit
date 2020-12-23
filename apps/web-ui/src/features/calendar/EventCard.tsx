@@ -1,18 +1,23 @@
 import { Event } from '@makeit/types';
 import {
-  Avatar, Card,
+  Avatar,
+  Card,
   CardActions,
   CardContent,
   CardHeader,
   Collapse,
-  Grid, IconButton, makeStyles,
-  Typography
+  Grid,
+  IconButton,
+  makeStyles,
+  Tooltip,
+  Typography,
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
 import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
+import EventEditButton from './EventEditButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -32,11 +37,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () => void}) => {
+export const EventCard = (props: {
+  event: Event;
+  expand?: boolean;
+  onClose?: () => void;
+  onEdit?: () => void;
+}) => {
   const classes = useStyles();
-  const {event, expand, onClose} = props
+  const { event, expand, onClose, onEdit } = props;
   const [expanded, setExpanded] = React.useState(expand);
-  
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -48,9 +58,11 @@ export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () =
         action={
           <>
             {onClose && (
-              <IconButton aria-label="close" onClick={onClose}>
-                <Close />
-              </IconButton>
+              <Tooltip title="Close">
+                <IconButton aria-label="close" onClick={onClose}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
             )}
             <IconButton aria-label="settings">
               <MoreVert />
@@ -59,12 +71,21 @@ export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () =
         }
         title={event.title}
         subheader={
-          <span>
-            <span>Starts on:</span>
-            <Moment interval={0} format="LLL">
-              {event.start}
-            </Moment>
-          </span>
+          <>
+            <div>
+              <Moment interval={0} format="lll">
+                {event.start}
+              </Moment>
+            </div>
+            {event.end && (
+              <div>
+                to&nbsp;
+                <Moment interval={0} format="lll">
+                  {event.end}
+                </Moment>
+              </div>
+            )}
+          </>
         }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -72,11 +93,20 @@ export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () =
           <Grid container spacing={2}>
             {event.description && (
               <Grid item xs={12}>
+                <Typography variant="body2">{event.description}</Typography>
+              </Grid>
+            )}
+            {event.location && event.location.line1 && (
+              <Grid item xs={12}>
                 <Typography variant="body2" className={classes.bold}>
-                  Description
+                  Address Location
                 </Typography>
+                <Typography variant="body2">{event.location?.line1}</Typography>
+                <Typography variant="body2">{event.location?.line2}</Typography>
+                <Typography variant="body2">{event.location?.line3}</Typography>
                 <Typography variant="body2">
-                  {event.description}
+                  {event.location?.city}
+                  {', ' + event.location?.state} {event.location?.zip}
                 </Typography>
               </Grid>
             )}
@@ -85,16 +115,14 @@ export const EventCard = (props: {event: Event, expand?: boolean, onClose?: () =
                 <Typography variant="body2" className={classes.bold}>
                   Participants
                 </Typography>
-                <ParticipantAttachmentList
-                  container={event}
-                  readOnly={true}
-                />
+                <ParticipantAttachmentList container={event} readOnly={true} />
               </Grid>
             )}
           </Grid>
         </CardContent>
       </Collapse>
       <CardActions disableSpacing>
+        <EventEditButton onClick={onEdit} />
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
