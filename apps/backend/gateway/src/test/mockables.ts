@@ -34,6 +34,10 @@ export class MockableModel {
     public create(spec: any): any {
         return null;
     }
+
+    public remove(spec: any): any {
+        return null;
+    }
 }
 
 export class MockableDocument {

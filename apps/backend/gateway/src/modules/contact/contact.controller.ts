@@ -1,5 +1,5 @@
 import { Contact } from '@makeit/types';
-import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ContactService } from './contact.service';
 
@@ -9,8 +9,8 @@ export class ContactController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getContacts(@Request() req) {
-    return this.contactService.findAllForUser(req.user._id)
+  async getContacts() {
+    return this.contactService.findAllForUser()
   }
 
   @UseGuards(JwtAuthGuard)
@@ -27,7 +27,7 @@ export class ContactController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async deleteContact(@Param() params, @Request() req) {
-    return this.contactService.delete(params.id, req.user._id)
+  async deleteContact(@Param() params) {
+    return this.contactService.delete(params.id)
   }
 }

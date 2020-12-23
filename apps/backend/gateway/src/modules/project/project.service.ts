@@ -54,8 +54,8 @@ export class ProjectService {
 
       datefilter = {
           $and: [
-            { 'events.time': { $gt: from }},
-            { 'events.time': { $lt: to }}
+            { 'events.time': { $gte: from }},
+            { 'events.time': { $lte: to }}
           ]
         }
     }

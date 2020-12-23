@@ -2,18 +2,15 @@ import { Contact } from '@makeit/types';
 import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
-import { Request } from 'express';
 import { Model } from 'mongoose';
 import { ContactDocument, ContactModel } from '../../schema/contact.schema';
-import { FileService } from '../files/file.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class ContactService {
   constructor(
-    @Inject(REQUEST) private readonly request: Request,
+    @Inject(REQUEST) private readonly request,
     @InjectModel(ContactModel.name)
-    private contactModel: Model<ContactDocument>,
-    private fileService: FileService,
+    private contactModel: Model<ContactDocument>
   ) {}
 
   async save(id: string, contact: Contact): Promise<Contact | undefined> {
@@ -42,32 +39,35 @@ export class ContactService {
           throw new BadRequestException(error, 'Database update failed.')
         })
 
-    return result;
+    return result.toObject();
   }
 
-  async delete(id: string, userId): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
+    const user = this.request.user;
     const result = await this.contactModel.remove({
       _id: id,
-      owner: userId
+      owner: user['_id']
     })
 
     return (result.deletedCount > 0);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findById(id: any, userId: any): Promise<Contact | undefined> {
+  async findById(id: any): Promise<Contact | undefined> {
+    const user = this.request.user;
     return await this.contactModel.findOne({
       _id: id,
-      owner: userId
+      owner: user['_id']
     }).lean().exec();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findAllForUser(id: any): Promise<Contact[] | undefined> {
+  async findAllForUser(): Promise<Contact[] | undefined> {
+    const user = this.request.user;
     //find all contacts where a given user is the owner
     const result: Contact[] = await this.contactModel
       .find({
-        'owner': id,
+        'owner': user['_id'],
       })
       .sort({
         lastName: 1,
