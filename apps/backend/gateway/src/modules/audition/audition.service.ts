@@ -71,8 +71,8 @@ export class AuditionService {
 
       datefilter = {
           $and: [
-            { 'auditionTime': { $gt: from }},
-            { 'auditionTime': { $lt: to }}
+            { 'auditionTime': { $gte: from }},
+            { 'auditionTime': { $lte: to }}
           ]
         }
     }

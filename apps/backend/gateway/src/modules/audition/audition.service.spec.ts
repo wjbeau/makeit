@@ -24,6 +24,7 @@ import {
 import { BreakdownService } from '../breakdown/breakdown.service';
 import { AuditionService } from './Audition.service';
 import { permissionsSpec } from '../../schema/permission.schema';
+import * as moment from 'moment';
 
 describe('AuditionService', () => {
   let classUnderTest: AuditionService;
@@ -356,6 +357,52 @@ describe('AuditionService', () => {
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.findAllForUser(id);
       expect(result).toBeNull();
+    });
+    it('should return valid Auditions when called with date range', async () => {
+      const id = 'someid';
+      const audition1: Audition = ModelFactory.createEmptyAudition();
+      audition1._id = 'auditionid1';
+      audition1.breakdown = null;
+      const audition2: Audition = ModelFactory.createEmptyAudition();
+      audition2._id = 'auditionid2';
+      audition2.breakdown = null;
+      const auditions: Audition[] = [audition1, audition2];
+      const fromDate = moment("2020-12-12", "YYYY-MM-DD").toDate();
+      const toDate = moment("2021-01-12", "YYYY-MM-DD").toDate();
+
+      when(mockQuery.lean()).thenReturn(instance(mockQuery));
+      when(mockQuery.populate(anything())).thenReturn(instance(mockQuery));
+      when(
+        mockQuery.sort(deepEqual({ deadline: -1, auditionTime: -1 }))
+      ).thenReturn(instance(mockQuery));
+      when(mockQuery.exec()).thenReturn(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        new Promise<any>((resolve) => {
+          resolve(auditions);
+        })
+      );
+      when(
+        mockModel.find(
+          deepEqual({
+            $and: [
+              {
+                $and: [
+                  { 'auditionTime': { $gte: fromDate }},
+                  { 'auditionTime': { $lte: toDate }}
+                ]
+              },
+              permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
+            ]
+          })
+        )
+      ).thenReturn(instance(mockQuery));
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.findAllForUser(id, fromDate, toDate);
+      expect(result).toEqual(auditions);
+
+      verify(mockQuery.populate(anything())).once();
+      verify(mockQuery.exec()).once();
     });
 
     it('should throw error when db error occurs', async () => {

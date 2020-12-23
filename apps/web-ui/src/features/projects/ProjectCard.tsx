@@ -1,4 +1,4 @@
-import { Project, ProjectType } from '@makeit/types';
+import { Project, ProjectType, ProjectEventType } from '@makeit/types';
 import {
   Avatar,
   Card,
@@ -9,7 +9,7 @@ import {
   Grid,
   IconButton,
   makeStyles,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -40,7 +40,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ProjectCard = (props: { project: Project, expand?: boolean, onClose?: () => void }) => {
+export const ProjectCard = (props: {
+  project: Project;
+  expand?: boolean;
+  onClose?: () => void;
+}) => {
   const { project, expand, onClose } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(expand);
@@ -70,15 +74,18 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
         title={project.name}
         subheader={
           <>
-            {project.projectType &&
-              Converter.getLabelForEnum(ProjectType, project.projectType)}
+            {project.projectType && (
+              <div>
+                {Converter.getLabelForEnum(ProjectType, project.projectType)}
+              </div>
+            )}
             {project.startDate && (
-              <span>
-                <span>Starts on:</span>
-                <Moment interval={0} format="LLL">
+              <div>
+                Starts{' '}
+                <Moment interval={0} format="lll">
                   {project.startDate}
                 </Moment>
-              </span>
+              </div>
             )}
           </>
         }
@@ -88,12 +95,7 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
           <Grid container spacing={2}>
             {project.description && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Description
-                </Typography>
-                <Typography variant="body2">
-                  {project.description}
-                </Typography>
+                <Typography variant="body2">{project.description}</Typography>
               </Grid>
             )}
             {project.events?.length > 0 && (
@@ -101,7 +103,22 @@ export const ProjectCard = (props: { project: Project, expand?: boolean, onClose
                 <Typography variant="body2" className={classes.bold}>
                   Scheduled Events
                 </Typography>
-                List here...
+                {project.events.map((event, index) => {
+                  return <div key={event._id}>
+                    <Typography variant="body1">
+                      {Converter.getLabelForEnum(
+                        ProjectEventType,
+                        event.eventType
+                      )}
+                    </Typography>
+                    <Typography variant="body2">
+                      <Moment interval={0} format="lll">
+                        {event.time}
+                      </Moment>
+                    </Typography>
+                    <Typography variant="body2">{event.notes}</Typography>
+                  </div>
+                })}
               </Grid>
             )}
             {project.attachments && project.attachments.length > 0 && (

@@ -1,7 +1,7 @@
 import { Address } from './address.model';
 import { Audition, AuditionType, AuditionStatus } from './audition.model';
 import { Breakdown } from './breakdown.model';
-import { Project, ProjectStatus, ProjectType, UnionType } from './project.model';
+import { Project, ProjectStatus, ProjectType, UnionType, ProjectEvent, ProjectEventType } from './project.model';
 import { Gender, Ethnicity } from './base-enums.model';
 import { Contact } from './contact.model';
 import { Event } from '@makeit/types';
@@ -88,6 +88,19 @@ export class ModelFactory {
             permissions: []
         }
     }
+    
+    public static createEmptyProjectEvent(time?:Date):ProjectEvent {
+        return {
+            notes: undefined,
+            time: time,
+            eventType: ProjectEventType.CallTime,
+            attachments: [],
+            links: [],
+            participants: [],
+            permissions: []
+        }
+    }
+
     public static createEmptyContact():Contact {
         return {
             addresses: [],
