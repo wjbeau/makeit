@@ -15,21 +15,41 @@ const useStyles = makeStyles((theme) => ({
     minHeight: DIMENSIONS.pageContentHeight,
     flexWrap: 'nowrap',
   },
-  sidebar: {
+  container: {
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: 0,
+      paddingRight: 0
+    },
+  },
+  sidebarLeft: {
     flexGrow: 0,
     [theme.breakpoints.down('xs')]: {
-      display: 'none'
+      display: 'none',
     },
     [theme.breakpoints.only('sm')]: {
       width: theme.spacing(8),
     },
     [theme.breakpoints.up('md')]: {
       width: DIMENSIONS.drawerWidth,
+      marginRight: theme.spacing(8)
+    },
+  },
+  sidebarRight: {
+    flexGrow: 0,
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+    [theme.breakpoints.only('sm')]: {
+      width: theme.spacing(8),
+    },
+    [theme.breakpoints.up('md')]: {
+      width: DIMENSIONS.drawerWidth,
+      marginLeft: theme.spacing(8)
     },
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(3)
   },
 }));
 
@@ -37,14 +57,14 @@ export function PageContent() {
   const classes = useStyles();
   return (
     <Router>
-      <Grid container direction="row" className={classes.grid}>
-        <IfAuthenticated>
-          <Grid item className={classes.sidebar}>
-            <SidebarMenu />
-          </Grid>
-        </IfAuthenticated>
-        <Grid item className={classes.content}>
-          <Container>
+      <Container maxWidth="xl"  className={classes.container}>
+        <Grid container direction="row" className={classes.grid}>
+          <IfAuthenticated>
+            <Grid item className={classes.sidebarLeft}>
+              <SidebarMenu />
+            </Grid>
+          </IfAuthenticated>
+          <Grid item className={classes.content}>
             <Suspense fallback={<Loading />}>
               <Switch>
                 {[
@@ -71,12 +91,12 @@ export function PageContent() {
                 )}
               </Switch>
             </Suspense>
-          </Container>
+          </Grid>
+          <IfAuthenticated>
+            <Grid item className={classes.sidebarRight}></Grid>
+          </IfAuthenticated>
         </Grid>
-        <IfAuthenticated>
-          <Grid item className={classes.sidebar}></Grid>
-        </IfAuthenticated>
-      </Grid>
+      </Container>
     </Router>
   );
 }

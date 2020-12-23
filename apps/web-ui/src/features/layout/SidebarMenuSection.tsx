@@ -70,7 +70,6 @@ export function SidebarMenuSection(props: any) {
   const showLabels = useMediaQuery(theme.breakpoints.up('md'));
   return (
     <>
-      {props.section.title && <Divider />}
       {showLabels && props.section.title && (
         <ListSubheader>{props.section.title}</ListSubheader>
       )}
