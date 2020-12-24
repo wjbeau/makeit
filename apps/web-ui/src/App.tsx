@@ -30,7 +30,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const theme = createMuiTheme({});
+const theme = createMuiTheme({
+  palette: {
+    secondary: {
+      light: '#64d8cb',
+      dark: '#00766c',
+      main: '#26a69a',
+      contrastText: '#eeeeee'
+    },
+    primary: {
+      light: '#757de8',
+      dark: '#002984',
+      main: '#3f51b5',
+      contrastText: '#eeeeee'
+    }
+  }
+});
 
 function App() {
   const classes = useStyles();

@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
   event: {
     marginTop: theme.spacing(1),
   },
+  titleCell: {
+    paddingTop: 5,
+    paddingRight: theme.spacing(2)
+  }
 }));
 
 const sortEvents = (a, b) => {
@@ -96,23 +100,40 @@ export const ProjectCard = (props: {
             </IconButton>
           </>
         }
-        title={project.name}
-        subheader={
-          <>
-            {project.projectType && (
-              <div>
-                {Converter.getLabelForEnum(ProjectType, project.projectType)}
-              </div>
-            )}
-            {project.startDate && (
-              <div>
-                Starts{' '}
-                <Moment interval={0} format="lll">
-                  {project.startDate}
-                </Moment>
-              </div>
-            )}
-          </>
+        title={
+          <Grid container>
+            <Grid item className={classes.titleCell}>
+              <Typography variant="body2" color="textPrimary">
+                {project.name}
+              </Typography>
+              {project.projectType && (
+                <Typography variant="body2" color="textSecondary">
+                  {Converter.getLabelForEnum(ProjectType, project.projectType)}
+                </Typography>
+              )}
+              {project.startDate && (
+                <Typography variant="body2" color="textSecondary">
+                  Starts{' '}
+                  <Moment interval={0} format="lll">
+                    {project.startDate}
+                  </Moment>
+                </Typography>
+              )}
+            </Grid>
+            <Grid item>
+              <Grid container spacing={2}>
+                <Grid item>
+                  <FileAttachmentMenu container={project} iconOnly />
+                </Grid>
+                <Grid item>
+                  <LinkAttachmentMenu container={project} iconOnly />
+                </Grid>
+                <Grid item>
+                  <ParticipantAttachmentMenu container={project} iconOnly />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -140,23 +161,6 @@ export const ProjectCard = (props: {
                     />
                   ))}
                 </TitledSection>
-              </Grid>
-            )}
-            {((project.attachments && project.attachments.length > 0) ||
-              (project.links && project.links.length > 0) ||
-              (project.participants && project.participants.length > 0)) && (
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item>
-                    <FileAttachmentMenu container={project} />
-                  </Grid>
-                  <Grid item>
-                    <LinkAttachmentMenu container={project} />
-                  </Grid>
-                  <Grid item>
-                    <ParticipantAttachmentMenu container={project} />
-                  </Grid>
-                </Grid>
               </Grid>
             )}
           </Grid>

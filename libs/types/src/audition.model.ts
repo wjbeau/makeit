@@ -27,7 +27,7 @@ export interface Audition extends BaseEntity, HasAttachments, HasParticipants, H
     notes: AuditionNote[];
 }
 
-export interface AuditionNote extends HasAttachments, HasPermissions {
+export interface AuditionNote extends BaseEntity, HasAttachments, HasPermissions {
     description: string;
     createdBy: UserAccount;
     createdOn: Date;

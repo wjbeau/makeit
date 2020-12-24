@@ -21,8 +21,12 @@ import { useAppDispatch } from '../../app/store';
 import FileAttachmentMenu from '../attachments/FileAttachmentMenu';
 import LinkAttachmentMenu from '../attachments/LinkAttachmentMenu';
 import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu';
+import TitledSection from '../layout/TitledSection';
 import { AuditionAvatar } from './AuditionAvatar';
 import AuditionCardActions from './AuditionCardActions';
+import AddressDisplay from '../controls/AddressDisplay';
+import AuditionNoteDisplay from './AuditionNoteDisplay';
+import ConditionalTooltip from '../controls/ConditionalTooltip';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -40,6 +44,13 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  detailSection: {
+    marginTop: theme.spacing(2),
+  },
+  titleCell: {
+    paddingTop: 5,
+    paddingRight: theme.spacing(2)
+  }
 }));
 
 export const AuditionCard = (props: {
@@ -74,7 +85,36 @@ export const AuditionCard = (props: {
       result = Converter.getLabelForEnum(AuditionType, audition.type);
     }
 
-    return result;
+    return (
+      <Grid container>
+        <Grid item className={classes.titleCell}>
+          <Typography variant="body2" color="textPrimary">
+            {result}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {audition.auditionTime && (
+              <Moment interval={0} format="LLL">
+                {audition.auditionTime}
+              </Moment>
+            )}
+            {!audition.auditionTime && 'No date set'}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Grid container spacing={2}>
+            <Grid item>
+              <FileAttachmentMenu container={audition} iconOnly />
+            </Grid>
+            <Grid item>
+              <LinkAttachmentMenu container={audition} iconOnly />
+            </Grid>
+            <Grid item>
+              <ParticipantAttachmentMenu container={audition} iconOnly />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    );
   };
 
   return (
@@ -96,65 +136,59 @@ export const AuditionCard = (props: {
           </>
         }
         title={buildTitle()}
-        subheader={
-          <>
-            {audition.auditionTime && (
-              <Moment interval={0} format="LLL">
-                {audition.auditionTime}
-              </Moment>
-            )}
-            {!audition.auditionTime && 'No date set'}
-          </>
-        }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Grid container spacing={2}>
-            {audition.instructions && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Instructions
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.instructions}
-                </Typography>
+            {(audition.instructions ||
+              audition?.breakdown?.roleName ||
+              audition?.breakdown?.project?.name) && (
+              <Grid item xs={12} sm={6}>
+                <TitledSection title="Details" variant="body2">
+                  <section>
+                    {audition?.breakdown?.roleName && (
+                      <ConditionalTooltip
+                        title={audition?.breakdown?.roleDescription}
+                      >
+                        <Typography variant="body2">
+                          {audition?.breakdown?.roleName}{' '}
+                          {audition.breakdown?.roleType &&
+                            '(' + audition?.breakdown?.roleType + ')'}
+                        </Typography>
+                      </ConditionalTooltip>
+                    )}
+                    {audition?.breakdown?.project?.name && (
+                      <ConditionalTooltip
+                        title={audition?.breakdown?.project?.description}
+                      >
+                        <Typography variant="body2">
+                          {audition?.breakdown?.project?.name}
+                        </Typography>
+                      </ConditionalTooltip>
+                    )}
+                  </section>
+                  <section className={classes.detailSection}>
+                    <Typography variant="body2">
+                      {audition?.instructions}
+                    </Typography>
+                  </section>
+                </TitledSection>
               </Grid>
             )}
             {audition.address && audition.address.line1 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Address
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line1}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line2}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.line3}
-                </Typography>
-                <Typography variant="body2">
-                  {audition?.address?.city}
-                  {', ' + audition?.address?.state} {audition?.address?.zip}
-                </Typography>
+              <Grid item xs={12} sm={6}>
+                <TitledSection title="Address" variant="body2">
+                  <AddressDisplay address={audition.address} variant="body2" />
+                </TitledSection>
               </Grid>
             )}
-            {((audition.attachments && audition.attachments.length > 0) ||
-              (audition.links && audition.links.length > 0) ||
-              (audition.participants && audition.participants.length > 0)) && (
+            {audition.notes?.length > 0 && (
               <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item>
-                    <FileAttachmentMenu container={audition} />
-                  </Grid>
-                  <Grid item>
-                    <LinkAttachmentMenu container={audition} />
-                  </Grid>
-                  <Grid item>
-                    <ParticipantAttachmentMenu container={audition} />
-                  </Grid>
-                </Grid>
+                <TitledSection title="Notes" variant="body2">
+                  {audition.notes.map((note, index) => (
+                    <AuditionNoteDisplay note={note} key={note._id} />
+                  ))}
+                </TitledSection>
               </Grid>
             )}
           </Grid>
