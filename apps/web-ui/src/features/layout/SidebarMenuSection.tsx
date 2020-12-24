@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
     borderLeft: '5px solid transparent',
   },
   active: {
-    color: theme.palette.primary.dark,
-    borderLeft: '5px solid ' + theme.palette.primary.dark,
+    color: theme.palette.secondary.dark,
+    borderLeft: '5px solid ' + theme.palette.secondary.dark,
   },
   disabled: {
     color: theme.palette.grey[400],

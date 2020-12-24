@@ -3,7 +3,6 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        padding: theme.spacing(1),
         overflow: 'hidden'
     },
     titleContainer: {
@@ -13,11 +12,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TitledSection = (props: {variant?, component?, title: string, children?}) => {
-    const {variant, title, component, children} = props
+export const TitledSection = (props: {variant?, component?, title: string, children?, spacing?: 0|1|2|3|4|5|6|7|8}) => {
+    const {variant, title, component, children, spacing} = props
     const classes = useStyles()
+    const useSpacing = spacing !== undefined ? spacing : 1;
+
     return (
-        <Grid container direction="column" className={classes.root}>
+        <Grid container direction="column" className={classes.root} spacing={useSpacing}>
             <Grid item className={classes.titleContainer}>
                 <Typography variant={variant} component={component}>{title}</Typography>
             </Grid>

@@ -8,49 +8,73 @@ export const useStyles = makeStyles((theme) => ({
   label: {},
 }));
 
-export const AddressDisplay = (props: { address: Address; variant: any }) => {
-  const { address, variant } = props;
+const prefixIfNotNull = (line: string) => {
+  if (line) {
+    return ', ' + line;
+  }
+  return '';
+};
+
+export const AddressDisplay = (props: {
+  address: Address;
+  variant: any;
+  singleLine?: boolean;
+  className?;
+}) => {
+  const { address, variant, singleLine, className } = props;
   const classes = useStyles();
 
-  let cityLine = ''
-  if(address.city) {
-      cityLine = address.city
+  let cityLine = '';
+  if (address.city) {
+    cityLine = address.city;
   }
-  let stateLine = ''
-  if(address.state) {
-      stateLine = address.state 
+  let stateLine = '';
+  if (address.state) {
+    stateLine = address.state;
   }
-  if(address.zip) {
-      if(stateLine.length) {
-          stateLine += ' '
-      }
-      stateLine += address.zip
+  if (address.zip) {
+    if (stateLine.length) {
+      stateLine += ' ';
+    }
+    stateLine += address.zip;
   }
-  if(cityLine.length) {
-      cityLine += ', '
+  if (cityLine.length) {
+    cityLine += ', ';
   }
-  cityLine += stateLine
+  cityLine += stateLine;
 
   return (
-    <div className={classes.root}>
-      {address.line1 && (
-        <Typography variant={variant} className={classes.label}>
-          {address.line1}
-        </Typography>
+    <div className={className}>
+      {!singleLine && (
+        <div className={classes.root}>
+          {address.line1 && (
+            <Typography variant={variant} className={classes.label}>
+              {address.line1}
+            </Typography>
+          )}
+          {address.line2 && (
+            <Typography variant={variant} className={classes.label}>
+              {address.line2}
+            </Typography>
+          )}
+          {address.line3 && (
+            <Typography variant={variant} className={classes.label}>
+              {address.line3}
+            </Typography>
+          )}
+          {cityLine && cityLine.length > 0 && (
+            <Typography variant={variant} className={classes.label}>
+              {cityLine}
+            </Typography>
+          )}
+        </div>
       )}
-      {address.line2 && (
+      {singleLine && address.line1 && (
         <Typography variant={variant} className={classes.label}>
-          {address.line2}
-        </Typography>
-      )}
-      {address.line3 && (
-        <Typography variant={variant} className={classes.label}>
-          {address.line3}
-        </Typography>
-      )}
-      {cityLine && cityLine.length > 0 && (
-        <Typography variant={variant} className={classes.label}>
-          {cityLine}
+          {address.line1 +
+            prefixIfNotNull(address.line2) +
+            prefixIfNotNull(address.line3) +
+            prefixIfNotNull(cityLine)}
         </Typography>
       )}
     </div>

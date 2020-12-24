@@ -1,4 +1,4 @@
-import { Project, ProjectType, ProjectEventType } from '@makeit/types';
+import { Event, Project, ProjectType } from '@makeit/types';
 import {
   Avatar,
   Card,
@@ -9,18 +9,21 @@ import {
   Grid,
   IconButton,
   makeStyles,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
+import * as moment from 'moment';
 import React from 'react';
 import Moment from 'react-moment';
 import { Converter } from '../../app/Converters';
-import FileAttachmentList from '../attachments/FileAttachmentList';
-import LinkAttachmentList from '../attachments/LinkAttachmentList';
-import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
+import FileAttachmentMenu from '../attachments/FileAttachmentMenu';
+import LinkAttachmentMenu from '../attachments/LinkAttachmentMenu';
+import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu';
+import TitledSection from '../layout/TitledSection';
 import ProjectCardActions from './ProjectCardActions';
-import { Tooltip } from '@material-ui/core';
+import ProjectEventDisplay from './ProjectEventDisplay';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -38,20 +41,42 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  event: {
+    marginTop: theme.spacing(1),
+  },
 }));
+
+const sortEvents = (a, b) => {
+  const aTime = moment.default(a.time);
+  const bTime = moment.default(b.time);
+
+  if (aTime && bTime) {
+    return aTime.diff(bTime);
+  } else if (aTime && !bTime) {
+    return -1;
+  } else if (bTime && !aTime) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
 
 export const ProjectCard = (props: {
   project: Project;
   expand?: boolean;
   onClose?: () => void;
+  highlightedEvent?: Event;
 }) => {
-  const { project, expand, onClose } = props;
+  const { project, expand, onClose, highlightedEvent } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(expand);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const events = [].concat(project.events);
+
+  events?.sort(sortEvents);
 
   return (
     <Card className={classes.root}>
@@ -98,54 +123,40 @@ export const ProjectCard = (props: {
                 <Typography variant="body2">{project.description}</Typography>
               </Grid>
             )}
-            {project.events?.length > 0 && (
+            {events?.length > 0 && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Scheduled Events
-                </Typography>
-                {project.events.map((event, index) => {
-                  return <div key={event._id}>
-                    <Typography variant="body1">
-                      {Converter.getLabelForEnum(
-                        ProjectEventType,
-                        event.eventType
-                      )}
-                    </Typography>
-                    <Typography variant="body2">
-                      <Moment interval={0} format="lll">
-                        {event.time}
-                      </Moment>
-                    </Typography>
-                    <Typography variant="body2">{event.notes}</Typography>
-                  </div>
-                })}
+                <TitledSection
+                  title="Project Events"
+                  variant="body2"
+                  spacing={0}
+                >
+                  {events.map((event, index) => (
+                    <ProjectEventDisplay
+                      event={event}
+                      expand={false}
+                      highlight={event._id === highlightedEvent?._id}
+                      key={index}
+                      className={index > 0 ? classes.event : null}
+                    />
+                  ))}
+                </TitledSection>
               </Grid>
             )}
-            {project.attachments && project.attachments.length > 0 && (
+            {((project.attachments && project.attachments.length > 0) ||
+              (project.links && project.links.length > 0) ||
+              (project.participants && project.participants.length > 0)) && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Files
-                </Typography>
-                <FileAttachmentList container={project} readOnly={true} />
-              </Grid>
-            )}
-            {project.links && project.links.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Links
-                </Typography>
-                <LinkAttachmentList container={project} readOnly={true} />
-              </Grid>
-            )}
-            {project.participants && project.participants.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Participants
-                </Typography>
-                <ParticipantAttachmentList
-                  container={project}
-                  readOnly={true}
-                />
+                <Grid container spacing={2}>
+                  <Grid item>
+                    <FileAttachmentMenu container={project} />
+                  </Grid>
+                  <Grid item>
+                    <LinkAttachmentMenu container={project} />
+                  </Grid>
+                  <Grid item>
+                    <ParticipantAttachmentMenu container={project} />
+                  </Grid>
+                </Grid>
               </Grid>
             )}
           </Grid>

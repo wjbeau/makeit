@@ -119,6 +119,7 @@ export class EventService {
           : ''),
       location: aud.address,
       sourceId: aud._id,
+      _id: aud._id
     };
   }
 
@@ -143,6 +144,7 @@ export class EventService {
             p.name,
           location: pe.location,
           sourceId: p._id,
+          _id: pe._id
         };
       });
   }

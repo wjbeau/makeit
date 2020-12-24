@@ -59,7 +59,7 @@ export const ActiveProjects = () => {
             <Grid container direction="column" spacing={2}>
               {activeProjects.length > 0 &&
                 activeProjects.map((m) => (
-                  <Grid item key={m._id} xs={12} md={6}>
+                  <Grid item key={m._id} xs={12} lg={6}>
                     <ProjectCard project={m} />
                   </Grid>
                 ))}

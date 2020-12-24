@@ -1,4 +1,4 @@
-import { Audition, AuditionStatus, AuditionType } from '@makeit/types';
+import { Audition, AuditionType } from '@makeit/types';
 import {
   Card,
   CardActions,
@@ -7,25 +7,22 @@ import {
   Collapse,
   Grid,
   IconButton,
-  Link,
   makeStyles,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
-import { Close, Done, Edit, ExpandMore, MoreVert } from '@material-ui/icons';
+import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
 import { useHistory } from 'react-router-dom';
 import { Converter } from '../../app/Converters';
 import { useAppDispatch } from '../../app/store';
-import { logError, logSuccess } from '../logging/logging.slice';
-import { saveAudition } from './audition.slice';
+import FileAttachmentMenu from '../attachments/FileAttachmentMenu';
+import LinkAttachmentMenu from '../attachments/LinkAttachmentMenu';
+import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu';
 import { AuditionAvatar } from './AuditionAvatar';
 import AuditionCardActions from './AuditionCardActions';
-import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
-import FileAttachmentList from '../attachments/FileAttachmentList';
-import LinkAttachmentList from '../attachments/LinkAttachmentList';
-import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -143,31 +140,21 @@ export const AuditionCard = (props: {
                 </Typography>
               </Grid>
             )}
-            {audition.attachments && audition.attachments.length > 0 && (
+            {((audition.attachments && audition.attachments.length > 0) ||
+              (audition.links && audition.links.length > 0) ||
+              (audition.participants && audition.participants.length > 0)) && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Files
-                </Typography>
-                <FileAttachmentList container={audition} readOnly={true} />
-              </Grid>
-            )}
-            {audition.links && audition.links.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Links
-                </Typography>
-                <LinkAttachmentList container={audition} readOnly={true} />
-              </Grid>
-            )}
-            {audition.participants && audition.participants.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Participants
-                </Typography>
-                <ParticipantAttachmentList
-                  container={audition}
-                  readOnly={true}
-                />
+                <Grid container spacing={2}>
+                  <Grid item>
+                    <FileAttachmentMenu container={audition} />
+                  </Grid>
+                  <Grid item>
+                    <LinkAttachmentMenu container={audition} />
+                  </Grid>
+                  <Grid item>
+                    <ParticipantAttachmentMenu container={audition} />
+                  </Grid>
+                </Grid>
               </Grid>
             )}
           </Grid>

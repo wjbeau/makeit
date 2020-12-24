@@ -10,13 +10,13 @@ import {
   IconButton,
   makeStyles,
   Tooltip,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
-import ParticipantAttachmentList from '../attachments/ParticipantAttachmentList';
+import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu';
 import EventEditButton from './EventEditButton';
 
 const useStyles = makeStyles((theme) => ({
@@ -112,10 +112,9 @@ export const EventCard = (props: {
             )}
             {event.participants && event.participants.length > 0 && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Participants
-                </Typography>
-                <ParticipantAttachmentList container={event} readOnly={true} />
+                <ParticipantAttachmentMenu
+                  container={event}
+                />
               </Grid>
             )}
           </Grid>

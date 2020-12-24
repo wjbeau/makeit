@@ -1,17 +1,11 @@
 import {
-  FormControl,
-  Grid,
   makeStyles,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@material-ui/core';
-import { FastField } from 'formik';
-import React from 'react';
-import { Converter } from '../../app/Converters';
-import { ContactLink, ContactLinkType } from '@makeit/types';
-import { Select, TextField } from 'formik-material-ui';
-import { useHistory } from 'react-router-dom';
 import { AccountBox, ExitToApp } from '@material-ui/icons';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
 import { doLogout } from '../auth/auth.slice';
 
