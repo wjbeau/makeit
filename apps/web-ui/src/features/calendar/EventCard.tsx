@@ -10,7 +10,7 @@ import {
   IconButton,
   makeStyles,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -18,6 +18,8 @@ import React from 'react';
 import Moment from 'react-moment';
 import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu';
 import EventEditButton from './EventEditButton';
+import TitledSection from '../layout/TitledSection';
+import AddressDisplay from '../controls/AddressDisplay';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -35,6 +37,13 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  titleCell: {
+    paddingTop: 5,
+    paddingRight: theme.spacing(2)
+  },
+  attachmentIcons: {
+    marginTop: theme.spacing(1)
+  }
 }));
 
 export const EventCard = (props: {
@@ -69,23 +78,36 @@ export const EventCard = (props: {
             </IconButton>
           </>
         }
-        title={event.title}
-        subheader={
-          <>
-            <div>
-              <Moment interval={0} format="lll">
-                {event.start}
-              </Moment>
-            </div>
-            {event.end && (
-              <div>
-                to&nbsp;
-                <Moment interval={0} format="lll">
-                  {event.end}
-                </Moment>
-              </div>
-            )}
-          </>
+        title={
+          <Grid container>
+            <Grid item className={classes.titleCell}>
+              <Typography variant="body2" color="textPrimary">
+                {event.title}
+              </Typography>
+              {event.start && (
+                <Typography variant="body2" color="textSecondary">
+                  <Moment interval={0} format="lll">
+                    {event.start}
+                  </Moment>
+                </Typography>
+              )}
+              {event.end && (
+                <Typography variant="body2" color="textSecondary">
+                  to&nbsp;
+                  <Moment interval={0} format="lll">
+                    {event.end}
+                  </Moment>
+                </Typography>
+              )}
+            </Grid>
+            {event.participants?.length > 0 && <Grid item className={classes.attachmentIcons}>
+              <Grid container spacing={2}>
+                <Grid item>
+                  <ParticipantAttachmentMenu container={event} iconOnly />
+                </Grid>
+              </Grid>
+            </Grid>}
+          </Grid>
         }
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -98,23 +120,9 @@ export const EventCard = (props: {
             )}
             {event.location && event.location.line1 && (
               <Grid item xs={12}>
-                <Typography variant="body2" className={classes.bold}>
-                  Address Location
-                </Typography>
-                <Typography variant="body2">{event.location?.line1}</Typography>
-                <Typography variant="body2">{event.location?.line2}</Typography>
-                <Typography variant="body2">{event.location?.line3}</Typography>
-                <Typography variant="body2">
-                  {event.location?.city}
-                  {', ' + event.location?.state} {event.location?.zip}
-                </Typography>
-              </Grid>
-            )}
-            {event.participants && event.participants.length > 0 && (
-              <Grid item xs={12}>
-                <ParticipantAttachmentMenu
-                  container={event}
-                />
+                <TitledSection title="Address Location" variant="body2">
+                  <AddressDisplay address={event.location} variant="body2" />
+                </TitledSection>
               </Grid>
             )}
           </Grid>

@@ -49,7 +49,10 @@ const useStyles = makeStyles((theme) => ({
   },
   titleCell: {
     paddingTop: 5,
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
+  },
+  attachmentIcons: {
+    paddingTop: theme.spacing(1)
   }
 }));
 
@@ -100,19 +103,29 @@ export const AuditionCard = (props: {
             {!audition.auditionTime && 'No date set'}
           </Typography>
         </Grid>
-        <Grid item>
-          <Grid container spacing={2}>
-            <Grid item>
-              <FileAttachmentMenu container={audition} iconOnly />
-            </Grid>
-            <Grid item>
-              <LinkAttachmentMenu container={audition} iconOnly />
-            </Grid>
-            <Grid item>
-              <ParticipantAttachmentMenu container={audition} iconOnly />
+        {(audition.attachments?.length > 0 ||
+          audition.links?.length > 0 ||
+          audition.participants?.length > 0) && (
+          <Grid item className={classes.attachmentIcons}>
+            <Grid container spacing={2}>
+              {audition.attachments?.length > 0 && (
+                <Grid item>
+                  <FileAttachmentMenu container={audition} iconOnly />
+                </Grid>
+              )}
+              {audition.links?.length > 0 && (
+                <Grid item>
+                  <LinkAttachmentMenu container={audition} iconOnly />
+                </Grid>
+              )}
+              {audition.participants?.length > 0 && (
+                <Grid item>
+                  <ParticipantAttachmentMenu container={audition} iconOnly />
+                </Grid>
+              )}
             </Grid>
           </Grid>
-        </Grid>
+        )}
       </Grid>
     );
   };

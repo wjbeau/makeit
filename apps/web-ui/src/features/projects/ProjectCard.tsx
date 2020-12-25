@@ -46,7 +46,10 @@ const useStyles = makeStyles((theme) => ({
   },
   titleCell: {
     paddingTop: 5,
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
+  },
+  attachmentIcons: {
+    paddingTop: theme.spacing(1)
   }
 }));
 
@@ -120,19 +123,29 @@ export const ProjectCard = (props: {
                 </Typography>
               )}
             </Grid>
-            <Grid item>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <FileAttachmentMenu container={project} iconOnly />
-                </Grid>
-                <Grid item>
-                  <LinkAttachmentMenu container={project} iconOnly />
-                </Grid>
-                <Grid item>
-                  <ParticipantAttachmentMenu container={project} iconOnly />
+            {(project.attachments?.length > 0 ||
+              project.links?.length > 0 ||
+              project.participants?.length > 0) && (
+              <Grid item className={classes.attachmentIcons}>
+                <Grid container spacing={2}>
+                  {project.attachments?.length > 0 && (
+                    <Grid item>
+                      <FileAttachmentMenu container={project} iconOnly />
+                    </Grid>
+                  )}
+                  {project.links?.length > 0 && (
+                    <Grid item>
+                      <LinkAttachmentMenu container={project} iconOnly />
+                    </Grid>
+                  )}
+                  {project.participants?.length > 0 && (
+                    <Grid item>
+                      <ParticipantAttachmentMenu container={project} iconOnly />
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
-            </Grid>
+            )}
           </Grid>
         }
       />
