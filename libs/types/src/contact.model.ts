@@ -1,8 +1,8 @@
 import { Address } from './address.model';
-import { PersonInfo, UserAccount } from './user.model';
-import { BaseEntity } from './base.model';
+import { TenantEntity } from './base.model';
+import { PersonInfo } from './user.model';
 
-export interface Contact extends PersonInfo {
+export interface Contact extends TenantEntity, PersonInfo {
   addresses: ContactAddress[];
   telecoms: Telecom[];
   links: ContactLink[];
@@ -10,7 +10,6 @@ export interface Contact extends PersonInfo {
   jobTitle: string;
   note: string;
   description: string;
-  owner: UserAccount|BaseEntity;
 }
 
 export interface ContactAddress {
