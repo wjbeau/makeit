@@ -119,7 +119,6 @@ export const TransactionsList = () => {
     customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage) => {
       const startIndex = page * rowsPerPage;
       const endIndex = (page + 1) * rowsPerPage;
-      console.log(`Count: ${count}, Page: ${page}, RowsPerPage:${rowsPerPage}`)
       return (
         <TableFooter>
           <TableRow>
