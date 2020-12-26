@@ -112,13 +112,14 @@ export const TransactionsList = () => {
 
   const options = {
     filter: true,
-    selectableRows: false,
+    selectableRows: 'none',
     filterType: 'dropdown',
-    rowsPerPage: 3,
+    rowsPerPage: 5,
 
     customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage) => {
       const startIndex = page * rowsPerPage;
       const endIndex = (page + 1) * rowsPerPage;
+      console.log(`Count: ${count}, Page: ${page}, RowsPerPage:${rowsPerPage}`)
       return (
         <TableFooter>
           <TableRow>
@@ -137,17 +138,13 @@ export const TransactionsList = () => {
               </Typography>
             </TableCell>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5, 10, 25]}
               colSpan={2}
               count={count}
               rowsPerPage={rowsPerPage}
               page={page}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-              onChangePage={changePage}
-              onChangeRowsPerPage={changeRowsPerPage}
+              onChangePage={(e,p) => changePage(p)}
+              onChangeRowsPerPage={(e) => changeRowsPerPage(e.target.value)}
             />
           </TableRow>
         </TableFooter>
@@ -250,7 +247,7 @@ export const TransactionsList = () => {
       <div className={classes.padding}>
         <MuiThemeProvider theme={theme}>
           <MUIDataTable
-            title="Income/Expenses"
+            title=""
             data={transactions}
             columns={columns}
             options={options}

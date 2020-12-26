@@ -9,7 +9,7 @@ import { Button, Grid, InputAdornment, makeStyles } from '@material-ui/core';
 import { CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Form, Formik, FastField } from 'formik';
+import { Form, Formik, FastField, Field } from 'formik';
 import React, { useState } from 'react';
 import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
@@ -21,7 +21,7 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import { saveTransaction } from './finance.slice';
 import AttachmentPanel from '../attachments/AttachmentPanel';
 import NumberFormat from 'react-number-format';
-import { TransactionExpenseCategory } from '@makeit/types';
+import { TransactionExpenseCategory } from '../../../../../libs/types/src/finance.model';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -42,9 +42,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const NumberFormatCustom = (props) => {
-  const {inputRef, onChange, ...other} = props
+  const { inputRef, onChange, ...other } = props;
   return (
     <NumberFormat
       getInputRef={inputRef}
@@ -61,15 +60,15 @@ const NumberFormatCustom = (props) => {
       isNumericString
     />
   );
-}
+};
 
-const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
+const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
   const classes = useStyles();
   const { onSave } = props;
   const [formValues, setFormValues] = useState<Transaction>(
     ModelFactory.createEmptyTransaction(
-      TransactionType.Expense,
-      TransactionExpenseCategory.Fuel
+      TransactionType.Income,
+      TransactionIncomeCategory.Salary
     )
   );
   const dispatch = useAppDispatch();
@@ -78,12 +77,14 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
     dispatch(saveTransaction(values))
       .then(unwrapResult)
       .then((p) => {
-        resetForm(
-          ModelFactory.createEmptyTransaction(
-            TransactionType.Expense,
-            TransactionExpenseCategory.Fuel
-          )
-        );
+        const replacement = ModelFactory.createEmptyTransaction(
+          TransactionType.Income,
+          TransactionIncomeCategory.Salary
+        )
+        replacement.type = p.type;
+        replacement.category = p.category;
+        replacement.date = p.date;
+        resetForm(replacement);
         setSubmitting(false);
         dispatch(logSuccess({ message: 'Save completed successfully.' }));
         if (onSave) {
@@ -98,8 +99,8 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
   const handleCancel = (setSubmitting, reset) => {
     reset(
       ModelFactory.createEmptyTransaction(
-        TransactionType.Expense,
-        TransactionExpenseCategory.Fuel
+        TransactionType.Income,
+        TransactionIncomeCategory.Salary
       )
     );
     setSubmitting(false);
@@ -107,13 +108,16 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
 
   const validationSchema = yup.object().shape({
     type: yup.string().required('Required'),
-    amount: yup.number().required('Required').min(0, "Please enter positive amount."),
+    amount: yup
+      .number()
+      .required('Required')
+      .min(0, 'Please enter positive amount.'),
     date: yup
-          .date()
-          .transform((curr, orig) => {
-            return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
-          })
-          .required('Required'),
+      .date()
+      .transform((curr, orig) => {
+        return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
+      })
+      .required('Required'),
     category: yup.string().required('Required'),
   });
 
@@ -135,7 +139,25 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
         }) => (
           <Form>
             <Grid container direction="row" spacing={3}>
-              <Grid item xs={4}>
+              <Grid item xs={6} md={3}>
+                <FormControl fullWidth={true}>
+                  <InputLabel htmlFor="transact-type">Type</InputLabel>
+                  <Field
+                    component={Select}
+                    name="type"
+                    inputProps={{
+                      id: 'transact-type',
+                    }}
+                    fullWidth={true}
+                  >
+                    {Converter.enumToMenuItems(
+                      'TransactionType',
+                      TransactionType
+                    )}
+                  </Field>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} md={3}>
                 <FastField
                   component={KeyboardDatePicker}
                   initialFocusedDate={null}
@@ -145,10 +167,10 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
                   fullWidth={true}
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={6} md={3}>
                 <FormControl fullWidth={true}>
                   <InputLabel htmlFor="transact-category">Category</InputLabel>
-                  <FastField
+                  <Field
                     component={Select}
                     name="category"
                     inputProps={{
@@ -156,21 +178,28 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
                     }}
                     fullWidth={true}
                   >
-                    {Converter.enumToMenuItems(
-                      'TransactionExpenseCategory',
-                      TransactionExpenseCategory
-                    )}
-                  </FastField>
+                    {values.type === TransactionType.Expense
+                      ? Converter.enumToMenuItems(
+                          'TransactionExpenseCategory',
+                          TransactionExpenseCategory
+                        )
+                      : Converter.enumToMenuItems(
+                          'TransactionIncomeCategory',
+                          TransactionIncomeCategory
+                        )}
+                  </Field>
                 </FormControl>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={6} md={3}>
                 <FastField
                   component={TextField}
                   name="amount"
                   label="Amount"
                   InputProps={{
                     inputComponent: NumberFormatCustom,
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
                   }}
                   fullWidth={true}
                 />
@@ -215,4 +244,4 @@ const ExpenseEdit = (props: { onSave?: (t: Transaction) => void }) => {
   );
 };
 
-export default ExpenseEdit;
+export default TransactionEdit;
