@@ -31,20 +31,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const theme = createMuiTheme({
+  overrides: {
+    MuiTableCell: {
+      root: {
+        padding: '4px 16px',
+      },
+    },
+  },
   palette: {
     secondary: {
       light: '#64d8cb',
       dark: '#00766c',
       main: '#26a69a',
-      contrastText: '#eeeeee'
+      contrastText: '#eeeeee',
     },
     primary: {
       light: '#757de8',
       dark: '#002984',
       main: '#3f51b5',
-      contrastText: '#eeeeee'
-    }
-  }
+      contrastText: '#eeeeee',
+    },
+  },
 });
 
 function App() {

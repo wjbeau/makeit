@@ -102,10 +102,10 @@ export class ModelFactory {
   ): Transaction {
     return {
       type: type ?? TransactionType.Expense,
-      description: undefined,
+      description: '',
       amount: 0,
       category: category ?? TransactionExpenseCategory.Fuel,
-      date: undefined,
+      date: new Date(),
       owner: undefined,
       relatesTo: undefined,
       relatesToType: undefined,

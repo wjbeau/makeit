@@ -8,6 +8,7 @@ import filesReducer from '../features/files/files.slice';
 import contactsReducer from '../features/contacts/contact.slice';
 import projectsReducer from '../features/projects/project.slice';
 import calendarReducer from '../features/calendar/calendar.slice';
+import financeReducer from '../features/finance/finance.slice';
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     files: filesReducer,
     contacts: contactsReducer,
     projects: projectsReducer,
-    calendar: calendarReducer
+    calendar: calendarReducer,
+    finance: financeReducer
   },
 });
 

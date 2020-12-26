@@ -35,11 +35,12 @@ export const AttachmentPanel = (props: {
   container: HasAttachments | HasParticipants;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children?: any;
-  rootPath?: string
+  rootPath?: string;
+  disableMargin?: boolean;
 }) => {
   const classes = useStyles();
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
-  const { container } = props;
+  const { container, disableMargin, rootPath, children } = props;
   const showFiles =
     (container as HasAttachments).attachments?.length > 0
       ? null
@@ -52,12 +53,12 @@ export const AttachmentPanel = (props: {
       : classes.hidden;
 
   return (
-      <Grid container spacing={3} direction="row" className={classes.attachmentContainer}>
+      <Grid container spacing={3} direction="row" className={disableMargin ? null : classes.attachmentContainer}>
         {hasAttachments(container) && (
           <Grid item className={showFiles} xs={4}>
             <TitledSection title="Files">
               <FileAttachmentList
-                rootPath={props.rootPath}
+                rootPath={rootPath}
                 container={container as HasAttachments}
                 readOnly={false}
                 helpers={helpers}
@@ -69,7 +70,7 @@ export const AttachmentPanel = (props: {
           <Grid item className={showLinks} xs={4}>
             <TitledSection title="Links">
               <LinkAttachmentList
-                rootPath={props.rootPath}
+                rootPath={rootPath}
                 container={container as HasAttachments}
                 readOnly={false}
                 helpers={helpers}
@@ -81,7 +82,7 @@ export const AttachmentPanel = (props: {
           <Grid item className={showParticipants} xs={4}>
             <TitledSection title="Participants">
               <ParticipantAttachmentList
-                rootPath={props.rootPath}
+                rootPath={rootPath}
                 container={container as HasParticipants}
                 readOnly={false}
                 helpers={helpers}
@@ -91,7 +92,7 @@ export const AttachmentPanel = (props: {
         )}
         <Grid item xs={12}>
           <AttachmentButtons container={container} helpers={helpers}>
-            {props.children}
+            {children}
           </AttachmentButtons>
         </Grid>
       </Grid>

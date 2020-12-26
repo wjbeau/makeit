@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Suspense } from 'react';
-import { routeDefinitions } from '../../app/Routes';
+import { Routes } from '../../app/Routes';
 import { SidebarMenu } from './SidebarMenu';
 import { AuthedRoute } from '../auth/AuthedRoute';
 import { makeStyles } from '@material-ui/core/styles';
@@ -68,8 +68,8 @@ export function PageContent() {
             <Suspense fallback={<Loading />}>
               <Switch>
                 {[
-                  routeDefinitions.public,
-                  routeDefinitions.career,
+                  Routes.routeDefinitions.public,
+                  Routes.routeDefinitions.career,
                 ].map((set: any) =>
                   set.routes.map((route: any) =>
                     route.requiresAuth ? (
