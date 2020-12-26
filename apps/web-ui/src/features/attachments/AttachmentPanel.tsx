@@ -12,6 +12,9 @@ import AttachmentButtons from './AttachmentButtons';
 import FileAttachmentList from './FileAttachmentList';
 import LinkAttachmentList from './LinkAttachmentList';
 import ParticipantAttachmentList from './ParticipantAttachmentList';
+import FileAttachmentMenu from './FileAttachmentMenu';
+import LinkAttachmentMenu from './LinkAttachmentMenu';
+import ParticipantAttachmentMenu from './ParticipantAttachmentMenu';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -19,9 +22,6 @@ const useStyles = makeStyles((theme) => ({
   },
   bold: {
     fontWeight: 'bold',
-  },
-  hidden: {
-    display: 'none',
   },
 }));
 
@@ -41,61 +41,46 @@ export const AttachmentPanel = (props: {
   const classes = useStyles();
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
   const { container, disableMargin, rootPath, children } = props;
-  const showFiles =
-    (container as HasAttachments).attachments?.length > 0
-      ? null
-      : classes.hidden;
-  const showLinks =
-    (container as HasAttachments).links?.length > 0 ? null : classes.hidden;
-  const showParticipants =
-    (container as HasParticipants).participants?.length > 0
-      ? null
-      : classes.hidden;
 
   return (
-      <Grid container spacing={3} direction="row" className={disableMargin ? null : classes.attachmentContainer}>
+    <Grid
+      container
+      spacing={3}
+      direction="row"
+      className={disableMargin ? null : classes.attachmentContainer}
+    >
+      <Grid item xs={12}>
         {hasAttachments(container) && (
-          <Grid item className={showFiles} xs={4}>
-            <TitledSection title="Files">
-              <FileAttachmentList
-                rootPath={rootPath}
-                container={container as HasAttachments}
-                readOnly={false}
-                helpers={helpers}
-              />
-            </TitledSection>
-          </Grid>
-        )}
-        {hasAttachments(container) && (
-          <Grid item className={showLinks} xs={4}>
-            <TitledSection title="Links">
-              <LinkAttachmentList
-                rootPath={rootPath}
-                container={container as HasAttachments}
-                readOnly={false}
-                helpers={helpers}
-              />
-            </TitledSection>
-          </Grid>
+          <>
+            <FileAttachmentMenu
+              rootPath={rootPath}
+              container={container as HasAttachments}
+              readOnly={false}
+              helpers={helpers}
+            />
+            <LinkAttachmentMenu
+              rootPath={rootPath}
+              container={container as HasAttachments}
+              readOnly={false}
+              helpers={helpers}
+            />
+          </>
         )}
         {hasParticipants(container) && (
-          <Grid item className={showParticipants} xs={4}>
-            <TitledSection title="Participants">
-              <ParticipantAttachmentList
-                rootPath={rootPath}
-                container={container as HasParticipants}
-                readOnly={false}
-                helpers={helpers}
-              />
-            </TitledSection>
-          </Grid>
+          <ParticipantAttachmentMenu
+            rootPath={rootPath}
+            container={container as HasParticipants}
+            readOnly={false}
+            helpers={helpers}
+          />
         )}
-        <Grid item xs={12}>
-          <AttachmentButtons container={container} helpers={helpers}>
-            {children}
-          </AttachmentButtons>
-        </Grid>
       </Grid>
+      <Grid item xs={12}>
+        <AttachmentButtons container={container} helpers={helpers}>
+          {children}
+        </AttachmentButtons>
+      </Grid>
+    </Grid>
   );
 };
 

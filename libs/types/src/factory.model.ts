@@ -76,6 +76,8 @@ export class ModelFactory {
       start: start,
       end: end,
       participants: [],
+      attachments: [],
+      links: [],
       permissions: [],
     };
   }

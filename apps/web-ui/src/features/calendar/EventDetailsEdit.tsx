@@ -1,11 +1,6 @@
 import DateFnsUtils from '@date-io/moment';
 import { Event } from '@makeit/types';
-import {
-  Button,
-  Grid,
-  makeStyles,
-  Typography
-} from '@material-ui/core';
+import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
 import { CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { unwrapResult } from '@reduxjs/toolkit';
@@ -17,6 +12,7 @@ import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
 import { logError, logSuccess } from '../logging/logging.slice';
 import { saveEvent } from './calendar.slice';
+import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -47,13 +43,16 @@ const EventDetailsEdit = (props: {
   const [formValues, setFormValues] = useState<Event>(event);
   const dispatch = useAppDispatch();
 
-  const handleSave = (values, {setSubmitting, setErrors, setStatus, resetForm}) => {
+  const handleSave = (
+    values,
+    { setSubmitting, setErrors, setStatus, resetForm }
+  ) => {
     dispatch(saveEvent(values))
       .then(unwrapResult)
       .then((p) => {
         setSubmitting(false);
-        resetForm(p)
-        setStatus({success: true})
+        resetForm(p);
+        setStatus({ success: true });
         onSave();
         dispatch(logSuccess({ message: 'Save completed successfully.' }));
       })
@@ -110,7 +109,7 @@ const EventDetailsEdit = (props: {
                     (Unsaved)
                   </Typography>
                 )}
-                </Grid>
+              </Grid>
               <Grid item>
                 <Grid container direction="row" spacing={2}>
                   <Grid item xs={12}>
@@ -194,6 +193,9 @@ const EventDetailsEdit = (props: {
                       </Grid>
                     </Grid>
                   </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <AttachmentPanel container={values} />
                 </Grid>
               </Grid>
               <Grid item>

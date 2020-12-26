@@ -1,17 +1,16 @@
 import {
-  Transaction,
-  TransactionExpenseCategory,
-  TransactionIncomeCategory,
-  TransactionRelationType,
-  TransactionType,
-  UserAccount,
+    Attachment, Link, Transaction,
+    TransactionExpenseCategory,
+    TransactionIncomeCategory,
+    TransactionRelationType,
+    TransactionType,
+    UserAccount
 } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { AttachmentSchema } from './attachment.schema';
+import { LinkSchema } from './link.schema';
 import { UserAccountModel } from './user.schema';
-import { Link, Attachment } from '@makeit/types';
-import { LinkModel } from './link.schema';
-import { AttachmentModel } from './attachment.schema';
 
 export type TransactionDocument = TransactionModel & mongoose.Document;
 
@@ -41,9 +40,9 @@ export class TransactionModel implements Transaction {
     required: true,
   })
   owner: UserAccount;
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: LinkModel.name }] })
+  @Prop({ type: [LinkSchema] })
   links: Link[];
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: AttachmentModel.name }] })
+  @Prop({ type: [AttachmentSchema] })
   attachments: Attachment[];
 }
 

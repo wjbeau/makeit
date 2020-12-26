@@ -130,17 +130,17 @@ export const ProjectCard = (props: {
                 <Grid container spacing={2}>
                   {project.attachments?.length > 0 && (
                     <Grid item>
-                      <FileAttachmentMenu container={project} iconOnly />
+                      <FileAttachmentMenu container={project} iconOnly readOnly />
                     </Grid>
                   )}
                   {project.links?.length > 0 && (
                     <Grid item>
-                      <LinkAttachmentMenu container={project} iconOnly />
+                      <LinkAttachmentMenu container={project} iconOnly readOnly />
                     </Grid>
                   )}
                   {project.participants?.length > 0 && (
                     <Grid item>
-                      <ParticipantAttachmentMenu container={project} iconOnly />
+                      <ParticipantAttachmentMenu container={project} iconOnly readOnly />
                     </Grid>
                   )}
                 </Grid>

@@ -110,17 +110,17 @@ export const AuditionCard = (props: {
             <Grid container spacing={2}>
               {audition.attachments?.length > 0 && (
                 <Grid item>
-                  <FileAttachmentMenu container={audition} iconOnly />
+                  <FileAttachmentMenu container={audition} iconOnly readOnly />
                 </Grid>
               )}
               {audition.links?.length > 0 && (
                 <Grid item>
-                  <LinkAttachmentMenu container={audition} iconOnly />
+                  <LinkAttachmentMenu container={audition} iconOnly readOnly />
                 </Grid>
               )}
               {audition.participants?.length > 0 && (
                 <Grid item>
-                  <ParticipantAttachmentMenu container={audition} iconOnly />
+                  <ParticipantAttachmentMenu container={audition} iconOnly readOnly />
                 </Grid>
               )}
             </Grid>

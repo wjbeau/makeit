@@ -19,9 +19,9 @@ export class AuditionNoteModel implements AuditionNote {
     createdBy: UserAccount;
     @Prop()
     createdOn: Date;
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: LinkModel.name }] })
+    @Prop({ type: [LinkSchema] })
     links: Link[];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: AttachmentModel.name }] })
+    @Prop({ type: [AttachmentSchema] })
     attachments: Attachment[];
 
     @Prop({ type: [PermissionSchema] })

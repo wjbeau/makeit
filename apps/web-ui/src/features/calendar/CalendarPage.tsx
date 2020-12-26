@@ -209,7 +209,10 @@ export const CalendarPage = () => {
         <Typography component="span">
           <div>
             <Button
-              onClick={() => handleEventClick({ event: ModelFactory.createEmptyEvent(new Date(), addHour(new Date()))})}
+              onClick={() => {
+                setEditEvent(ModelFactory.createEmptyEvent(new Date(), addHour(new Date())));
+                setActiveEvent(null);
+              }}
             >
               New Event
             </Button>

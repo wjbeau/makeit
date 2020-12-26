@@ -1,7 +1,9 @@
-import { Event, EventType, Address, Permission, Participant } from '@makeit/types';
+import { Address, Attachment, Event, EventType, Link, Participant, Permission } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
+import { AttachmentSchema } from './attachment.schema';
+import { LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
 import { PermissionSchema } from './permission.schema';
 
@@ -27,6 +29,10 @@ export class EventModel implements Event {
 
     @Prop({ type: [ParticipantSchema] })
     participants: Participant[];
+    @Prop({ type: [LinkSchema] })
+    links: Link[];
+    @Prop({ type: [AttachmentSchema] })
+    attachments: Attachment[];
 }
 
 export const EventSchema = SchemaFactory.createForClass(EventModel);

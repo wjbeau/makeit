@@ -20,6 +20,8 @@ import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu'
 import EventEditButton from './EventEditButton';
 import TitledSection from '../layout/TitledSection';
 import AddressDisplay from '../controls/AddressDisplay';
+import FileAttachmentMenu from '../attachments/FileAttachmentMenu';
+import LinkAttachmentMenu from '../attachments/LinkAttachmentMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -39,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
   },
   titleCell: {
     paddingTop: 5,
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
   },
   attachmentIcons: {
-    marginTop: theme.spacing(1)
-  }
+    marginTop: theme.spacing(1),
+  },
 }));
 
 export const EventCard = (props: {
@@ -100,13 +102,23 @@ export const EventCard = (props: {
                 </Typography>
               )}
             </Grid>
-            {event.participants?.length > 0 && <Grid item className={classes.attachmentIcons}>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <ParticipantAttachmentMenu container={event} iconOnly />
+            {(event.participants?.length > 0 ||
+              event.attachments?.length > 0 ||
+              event.links.length > 0) && (
+              <Grid item className={classes.attachmentIcons}>
+                <Grid container spacing={2}>
+                  <Grid item>
+                    <FileAttachmentMenu container={event} iconOnly readOnly />
+                    <LinkAttachmentMenu container={event} iconOnly readOnly />
+                    <ParticipantAttachmentMenu
+                      container={event}
+                      iconOnly
+                      readOnly
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>}
+            )}
           </Grid>
         }
       />

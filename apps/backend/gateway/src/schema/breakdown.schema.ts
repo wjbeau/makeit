@@ -1,11 +1,10 @@
-import { Attachment, Breakdown, Link, Project } from '@makeit/types';
+import { Attachment, Breakdown, Link, Project, Permission } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AttachmentSchema } from './attachment.schema';
 import { LinkSchema } from './link.schema';
 import { ProjectModel } from './project.schema';
 import { PermissionSchema } from './permission.schema';
-import { Permission } from '../../../../../libs/types/src/permission.model';
 
 export type BreakdownDocument = BreakdownModel & mongoose.Document;
 
