@@ -11,6 +11,7 @@ import { FileModule } from './files/file.module';
 import { ContactModule } from './contact/contact.module';
 import { ConfigModule } from '@nestjs/config';
 import { EventModule } from './event/event.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EventModule } from './event/event.module';
     FileModule,
     ContactModule,
     EventModule,
+    TransactionModule,
     MongooseModule.forRoot(`mongodb://localhost/makeit`, {'useFindAndModify': false}) //TODO externalize this config
   ],
   controllers: [],

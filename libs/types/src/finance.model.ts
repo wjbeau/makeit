@@ -1,12 +1,14 @@
 import { TenantEntity } from './base.model';
+import { HasAttachments } from './attachment.model';
 
-export interface Transaction extends TenantEntity {
-    type: TransactionType,
-    amount: number,
-    date: Date,
-    category: TransactionIncomeCategory|TransactionExpenseCategory,
-    description: string,
-    source
+export interface Transaction extends TenantEntity, HasAttachments {
+    type: TransactionType;
+    amount: number;
+    date: Date;
+    category: TransactionIncomeCategory|TransactionExpenseCategory;
+    description: string;
+    relatesTo;
+    relatesToType: TransactionRelationType;
 }
 
 export enum TransactionType {
@@ -24,4 +26,9 @@ export enum TransactionExpenseCategory {
     Fuel = "Fuel",
     Marketing = "Marketing",
     Education = "Education",
+}
+
+export enum TransactionRelationType {
+    Project = "Project",
+    Audition = "Audition",
 }

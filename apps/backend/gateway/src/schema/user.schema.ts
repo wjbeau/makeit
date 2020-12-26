@@ -1,4 +1,4 @@
-import { UserAccount, Profile, PersonInfo } from '@makeit/types';
+import { UserAccount, Profile, PersonInfo, TenantEntity } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ProfileModel } from './profile.schema';
@@ -39,3 +39,7 @@ export class UserAccountModel implements UserAccount {
 }
 
 export const UserAccountSchema = SchemaFactory.createForClass(UserAccountModel);
+
+export const ensureTenant = (entity: TenantEntity, userid) => {
+    entity.owner = userid;
+}
