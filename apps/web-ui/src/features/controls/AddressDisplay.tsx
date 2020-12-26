@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import {
+  Button,
+  Grid,
+  makeStyles,
+  Typography,
+  IconButton,
+} from '@material-ui/core';
 import { Address } from '@makeit/types';
+import { Room } from '@material-ui/icons';
 
 export const useStyles = makeStyles((theme) => ({
   root: {},
@@ -43,10 +50,25 @@ export const AddressDisplay = (props: {
   }
   cityLine += stateLine;
 
+  const handleClick = () => {
+    window.open(
+      'https://www.google.com/maps/search/?api=1&query=' +
+        address.line1 +
+        ',' +
+        address.city +
+        ',' +
+        address.state +
+        ',' +
+        address.zip,
+      '_blank'
+    );
+  };
+
   return (
-    <div className={className}>
+    <Grid container className={className} direction="row">
       {!singleLine && (
-        <div className={classes.root}>
+        <>
+        <Grid item className={classes.root}>
           {address.line1 && (
             <Typography variant={variant} className={classes.label}>
               {address.line1}
@@ -67,17 +89,28 @@ export const AddressDisplay = (props: {
               {cityLine}
             </Typography>
           )}
-        </div>
+        </Grid>
+        <Grid item>
+          <IconButton onClick={handleClick}>
+            <Room />
+          </IconButton>
+        </Grid>
+        </>
       )}
       {singleLine && address.line1 && (
-        <Typography variant={variant} className={classes.label}>
-          {address.line1 +
-            prefixIfNotNull(address.line2) +
-            prefixIfNotNull(address.line3) +
-            prefixIfNotNull(cityLine)}
-        </Typography>
+        <Grid item className={classes.root}>
+          <Typography variant={variant} className={classes.label} display="inline">
+            {address.line1 +
+              prefixIfNotNull(address.line2) +
+              prefixIfNotNull(address.line3) +
+              prefixIfNotNull(cityLine)}
+          </Typography>
+          <IconButton onClick={handleClick}>
+            <Room />
+          </IconButton>
+        </Grid>
       )}
-    </div>
+    </Grid>
   );
 };
 

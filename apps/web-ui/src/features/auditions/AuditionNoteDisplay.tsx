@@ -107,10 +107,10 @@ export const AuditionNoteDisplay = (props: {
       <Grid item>
         <Grid container spacing={2}>
           <Grid item>
-            <FileAttachmentMenu container={note} iconOnly />
+            <FileAttachmentMenu container={note} iconOnly readOnly />
           </Grid>
           <Grid item>
-            <LinkAttachmentMenu container={note} iconOnly />
+            <LinkAttachmentMenu container={note} iconOnly readOnly />
           </Grid>
         </Grid>
       </Grid>

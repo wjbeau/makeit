@@ -217,10 +217,10 @@ export const TransactionsList = () => {
           return (
             <>
               {tx.attachments?.length > 0 && (
-                <FileAttachmentMenu container={tx} iconOnly />
+                <FileAttachmentMenu container={tx} iconOnly readOnly />
               )}
               {tx.links?.length > 0 && (
-                <LinkAttachmentMenu container={tx} iconOnly />
+                <LinkAttachmentMenu container={tx} iconOnly readOnly />
               )}
               <IconButton>
                 <Delete />
