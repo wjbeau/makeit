@@ -6,6 +6,7 @@ import {
   Avatar,
   Button,
   Grid,
+  Hidden,
   IconButton,
   InputAdornment,
   List,
@@ -96,10 +97,10 @@ export const ContactBook = () => {
 
   const contactsForLetter = (letter: string) => {
     return contacts
-      .filter(c => c.lastName.toUpperCase().startsWith(letter))
-      .filter(c => matchesSearch(c))
-      .sort((a,b) => a.lastName.localeCompare(b.lastName));
-  }
+      .filter((c) => c.lastName.toUpperCase().startsWith(letter))
+      .filter((c) => matchesSearch(c))
+      .sort((a, b) => a.lastName.localeCompare(b.lastName));
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const matchesSearch = (contact: any) => {
@@ -149,29 +150,29 @@ export const ContactBook = () => {
   const handleDeleteContact = () => {
     setEditContact(null);
     setContact(null);
-  }
+  };
 
   useEffect(() => {
     let newLetters = contacts
       .filter((c) => matchesSearch(c))
-      .map(c => c.lastName?.charAt(0).toUpperCase())
-      .sort((a,b) => a.localeCompare(b))
-    
+      .map((c) => c.lastName?.charAt(0).toUpperCase())
+      .sort((a, b) => a.localeCompare(b));
+
     newLetters = _.uniq(newLetters);
     setLetters(newLetters);
-    setContact(null)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setContact(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contacts, search]);
 
   useEffect(() => {
     let newCtx = contact;
-    if(newCtx === null && contacts.length) {
+    if (newCtx === null && contacts.length) {
       newCtx = contacts
         .filter((c) => matchesSearch(c))
-        .sort((a,b) => a.lastName.localeCompare(b.lastName))[0]
+        .sort((a, b) => a.lastName.localeCompare(b.lastName))[0];
     }
-    setActiveLetter(newCtx?.lastName.charAt(0).toUpperCase())
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setActiveLetter(newCtx?.lastName.charAt(0).toUpperCase());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contact]);
 
   useEffect(() => {
@@ -230,71 +231,84 @@ export const ContactBook = () => {
           </div>
         )}
       </Grid>
-      <Grid item xs={3}>
-        <IfNotLoading loading={loading}>
-          {letters.map((letter, index) => (
-            <Accordion
-              expanded={activeLetter === letter}
-              onChange={handleChange(letter)}
-              key={letter}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls={`${letter}-content`}
-                id={`${letter}-header`}
+      <Hidden xsDown>
+        <Grid item sm={3}>
+          <IfNotLoading loading={loading}>
+            {letters.map((letter, index) => (
+              <Accordion
+                expanded={activeLetter === letter}
+                onChange={handleChange(letter)}
+                key={letter}
               >
-                <Typography className={classes.heading}>{letter}</Typography>
-              </AccordionSummary>
-              <AccordionDetails className={classes.accordionItem}>
-                <List className={classes.contactList} disablePadding={true}>
-                  {contactsForLetter(letter).map((c, index2) => {
-                    const avatar = c.avatar ? (
-                      <Avatar src={c.avatar} className={classes.small}></Avatar>
-                    ) : (
-                      <Avatar className={classes.small}>
-                        {Converter.getInitials(c)}
-                      </Avatar>
-                    );
-                    return (
-                      <ListItem
-                        key={c._id}
-                        onClick={() => {
-                          setContact(c);
-                          setEditContact(null);
-                        }}
-                        button
-                      >
-                        <ListItemAvatar>{avatar}</ListItemAvatar>
-                        <ListItemText
-                          primary={c.firstName + ' ' + c.lastName}
-                          secondary={c.description}
-                          classes={{
-                            primary: classes.ellipsis,
-                            secondary: classes.ellipsis,
+                <AccordionSummary
+                  expandIcon={<ExpandMore />}
+                  aria-controls={`${letter}-content`}
+                  id={`${letter}-header`}
+                >
+                  <Typography className={classes.heading}>{letter}</Typography>
+                </AccordionSummary>
+                <AccordionDetails className={classes.accordionItem}>
+                  <List className={classes.contactList} disablePadding={true}>
+                    {contactsForLetter(letter).map((c, index2) => {
+                      const avatar = c.avatar ? (
+                        <Avatar
+                          src={c.avatar}
+                          className={classes.small}
+                        ></Avatar>
+                      ) : (
+                        <Avatar className={classes.small}>
+                          {Converter.getInitials(c)}
+                        </Avatar>
+                      );
+                      return (
+                        <ListItem
+                          key={c._id}
+                          onClick={() => {
+                            setContact(c);
+                            setEditContact(null);
                           }}
-                        />
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-          {letters.length === 0 && (
-            <NothingToShow message="No matching contacts" />
-          )}
-        </IfNotLoading>
-      </Grid>
-      <Grid item xs={9} className={classes.contentArea}>
+                          button
+                        >
+                          <ListItemAvatar>{avatar}</ListItemAvatar>
+                          <ListItemText
+                            primary={c.firstName + ' ' + c.lastName}
+                            secondary={c.description}
+                            classes={{
+                              primary: classes.ellipsis,
+                              secondary: classes.ellipsis,
+                            }}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+            {letters.length === 0 && (
+              <NothingToShow message="No matching contacts" />
+            )}
+          </IfNotLoading>
+        </Grid>
+      </Hidden>
+      <Grid item xs={12} sm={9} className={classes.contentArea}>
         <Paper className={classes.paper}>
           {!editContact &&
             contacts.map((c) => (
               <TabPanel value={contact} index={c} key={c._id}>
-                <ContactDetails contact={c} onEdit={handleEditContact} onDelete={handleDeleteContact}/>
+                <ContactDetails
+                  contact={c}
+                  onEdit={handleEditContact}
+                  onDelete={handleDeleteContact}
+                />
               </TabPanel>
             ))}
           {editContact && (
-            <ContactEdit contact={editContact} onCancel={handleEditCancel} onSave={handleEditSave} />
+            <ContactEdit
+              contact={editContact}
+              onCancel={handleEditCancel}
+              onSave={handleEditSave}
+            />
           )}
         </Paper>
       </Grid>

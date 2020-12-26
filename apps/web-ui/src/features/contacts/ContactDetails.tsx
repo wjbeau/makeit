@@ -315,7 +315,7 @@ export const ContactDetails = (props: {
         </Grid>
       </Grid>
       {contact.telecoms?.length > 0 && (
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} lg={6}>
           <TitledSection title="Contacts">
             {contact.telecoms?.length > 0 && (
               <div>
@@ -352,7 +352,7 @@ export const ContactDetails = (props: {
         </Grid>
       )}
       {contact.links?.length > 0 && (
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} lg={6}>
           <TitledSection title="Links">
             {contact.links?.length > 0 && (
               <div>
