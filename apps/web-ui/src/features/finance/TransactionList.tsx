@@ -1,40 +1,27 @@
+import { Transaction, TransactionType } from '@makeit/types';
 import {
-  UnionType,
-  ProjectType,
-  ProjectStatus,
-  TransactionType,
-} from '@makeit/types';
+  createMuiTheme, IconButton, makeStyles,
+  MuiThemeProvider, TableCell, TableFooter,
+  TablePagination, TableRow, Typography
+} from '@material-ui/core';
+import { unwrapResult } from '@reduxjs/toolkit';
+import * as moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useEffect } from 'react';
-import { Converter } from '../../app/Converters';
-import {
-  makeStyles,
-  IconButton,
-  TableFooter,
-  TableRow,
-  TableCell,
-  Typography,
-  TablePagination,
-  createMuiTheme,
-  MuiThemeProvider,
-} from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { selectAuthed } from '../auth/auth.slice';
-import {
-  selectTransactions,
-  selectTransactionsLoading,
-  fetchTransactions,
-} from './finance.slice';
-import { useAppDispatch } from '../../app/store';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { logError } from '../logging/logging.slice';
-import IfNotLoading from '../layout/IfNotLoading';
-import { Delete } from '@material-ui/icons';
 import NumberFormat from 'react-number-format';
+import { useSelector } from 'react-redux';
+import { Converter } from '../../app/Converters';
+import { useAppDispatch } from '../../app/store';
 import FileAttachmentMenu from '../attachments/FileAttachmentMenu';
 import LinkAttachmentMenu from '../attachments/LinkAttachmentMenu';
-import Moment from 'react-moment';
-import * as moment from 'moment';
+import { selectAuthed } from '../auth/auth.slice';
+import DeleteWithConfirm from '../controls/DeleteWithConfirm';
+import IfNotLoading from '../layout/IfNotLoading';
+import { logError, logSuccess } from '../logging/logging.slice';
+import {
+  deleteTransaction, fetchTransactions, selectTransactions,
+  selectTransactionsLoading
+} from './finance.slice';
 
 const useStyles = makeStyles((theme) => ({
   padding: {
@@ -109,6 +96,13 @@ export const TransactionsList = () => {
       .map((a) => a.type === TransactionType.Expense ? -a.amount : a.amount)
       .reduce((total, amount) => (total += amount), 0);
   };
+
+  const deleteTx = (tx: Transaction) => {
+    dispatch(deleteTransaction(tx._id))
+      .then(unwrapResult)
+      .then(d => dispatch(logSuccess({message: 'Successfully deleted.'})))
+      .catch((e) => dispatch(logError(e)))
+  }
 
   const options = {
     filter: true,
@@ -222,9 +216,7 @@ export const TransactionsList = () => {
               {tx.links?.length > 0 && (
                 <LinkAttachmentMenu container={tx} iconOnly readOnly />
               )}
-              <IconButton>
-                <Delete />
-              </IconButton>
+              <DeleteWithConfirm onDelete={() => deleteTx(tx)} />
             </>
           );
         },

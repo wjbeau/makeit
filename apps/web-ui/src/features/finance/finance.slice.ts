@@ -34,6 +34,12 @@ export const saveTransaction = createAsyncThunk('finance/saveTransaction', async
   }
 })
 
+export const deleteTransaction = createAsyncThunk('finance/deleteTransaction', async (id: string, thunkAPI) => {
+  const result = await apiClient().delete('/transactions/' + id);
+  thunkAPI.dispatch(transactionDeleted(id))
+  return result.data
+})
+
 export const financeSlice = createSlice({
   name: 'finance',
   initialState,
@@ -64,6 +70,13 @@ export const financeSlice = createSlice({
         state.transactions.splice(idx, 1, action.payload)
       }
       state.transactions.sort((a,b) => a.date.toString().localeCompare(b.date.toString()));
+    },
+    transactionDeleted: (state, action) => {
+      state.loading = false;
+      const idx = state.transactions.findIndex(a => a._id === action.payload)
+      if(idx >= 0) {
+        state.transactions.splice(idx, 1)
+      }
     }
   },
   extraReducers: builder => {
@@ -87,10 +100,16 @@ export const financeSlice = createSlice({
       .addCase(saveTransaction.rejected, (state, action) => {
         state.loading = false;
       })
+      .addCase(deleteTransaction.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(deleteTransaction.rejected, (state, action) => {
+        state.loading = false;
+      })
   }
 });
 
-export const { receiveTransactions, receiveTransaction, transactionSaved } = financeSlice.actions;
+export const { receiveTransactions, receiveTransaction, transactionSaved, transactionDeleted } = financeSlice.actions;
 
 export const selectTransactions = (state: RootState) => state.finance.transactions;
 export const selectTransactionsLoading = (state: RootState) => state.finance.loading;

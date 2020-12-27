@@ -1,10 +1,10 @@
-import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, Participant, UserAccount, Permission } from '@makeit/types';
+import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, Participant, Permission, UserAccount } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
-import { AttachmentSchema, AttachmentModel } from './attachment.schema';
+import { AttachmentSchema } from './attachment.schema';
 import { BreakdownModel } from './breakdown.schema';
-import { LinkModel, LinkSchema } from './link.schema';
+import { LinkSchema } from './link.schema';
 import { ParticipantSchema } from './participant.schema';
 import { PermissionSchema } from './permission.schema';
 import { UserAccountModel } from './user.schema';

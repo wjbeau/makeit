@@ -1,5 +1,5 @@
 import { Transaction } from '@makeit/types';
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UseGuards, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TransactionService } from './transaction.service';
 
@@ -29,5 +29,11 @@ export class TransactionController {
   @Post()
   async createTransaction(@Body() body:Transaction, @Request() req) {
     return this.transactionService.save(null, body, req.user._id)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteTransaction(@Param() params) {
+    return this.transactionService.delete(params.id)
   }
 }

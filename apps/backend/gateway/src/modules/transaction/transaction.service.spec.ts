@@ -28,9 +28,15 @@ describe('TransactionService', () => {
   const mockModel = mock(MockableModel);
   const mockQuery = mock(MockableDocumentQuery);
   const mockDocument = mock(MockableDocument);
+  const mockRequest = {
+    user: {
+      _id: 'someID'
+    }
+  }
 
   beforeEach(async () => {
     classUnderTest = new TransactionService(
+      mockRequest,
       instance(mockModel) as Model<TransactionDocument>
     );
   });
@@ -331,6 +337,66 @@ describe('TransactionService', () => {
       expect(classUnderTest).toBeDefined();
       try {
         await classUnderTest.findAllForUser(id);
+        fail();
+      } catch (e) {
+        expect(e).toBe(err);
+      }
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete and return true if found', async () => {
+      const id = 'someid'
+      when(
+        mockModel.remove(deepEqual({
+          _id: id,
+          owner: mockRequest.user['_id']
+        }))
+        ).thenReturn({ deletedCount: 1});
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.delete(id);
+      expect(result).toBeTruthy();
+      verify(
+        mockModel.remove(deepEqual({
+          _id: id,
+          owner: mockRequest.user['_id']
+        }))
+        ).once();
+    });
+    it('should return false if not found', async () => {
+      const id = 'someid'
+      when(
+        mockModel.remove(deepEqual({
+          _id: id,
+          owner: mockRequest.user['_id']
+        }))
+        ).thenReturn({ deletedCount: 0});
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.delete(id);
+      expect(result).toBeFalsy();
+      verify(
+        mockModel.remove(deepEqual({
+          _id: id,
+          owner: mockRequest.user['_id']
+        }))
+        ).once();
+    });
+
+    it('should throw error when db error occurs', async () => {
+      const id = 'someid'
+      const err = new Error('database problem!');
+      when(
+        mockModel.remove(deepEqual({
+          _id: id,
+          owner: mockRequest.user['_id']
+        }))
+        ).thenThrow(err);
+
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.delete(id);
         fail();
       } catch (e) {
         expect(e).toBe(err);

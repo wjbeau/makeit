@@ -121,4 +121,30 @@ describe('TransactionController', () => {
       });
     });
   });
+
+  describe('deleteTransaction', () => {
+    it('should save when all is valid', async () => {
+      const con = 'id';
+
+      when(mockedService.delete(strictEqual(con))).thenReturn(
+        new Promise<boolean>((resolve) => { resolve(true) }),
+      );
+      const result = await controllerUnderTest.deleteTransaction({id: con})
+      expect(result).toBeDefined();
+      expect(result).toBeTruthy();
+    });
+    it('should fail when an error is thrown', async () => {
+      const con = new TransactionModel();
+      const error = new BadRequestException('Nonono');
+
+      when(mockedService.delete(strictEqual(con))).thenThrow(error);
+
+      try {
+        await controllerUnderTest.deleteTransaction({id: con})
+        fail();
+      } catch (e) {
+        expect(e).toEqual(error); 
+      }
+    });
+  });
 });
