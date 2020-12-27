@@ -1,8 +1,14 @@
 import { Transaction, TransactionType } from '@makeit/types';
 import {
-  createMuiTheme, IconButton, makeStyles,
-  MuiThemeProvider, TableCell, TableFooter,
-  TablePagination, TableRow, Typography
+  createMuiTheme,
+  IconButton,
+  makeStyles,
+  MuiThemeProvider,
+  TableCell,
+  TableFooter,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import * as moment from 'moment';
@@ -18,9 +24,12 @@ import { selectAuthed } from '../auth/auth.slice';
 import DeleteWithConfirm from '../controls/DeleteWithConfirm';
 import IfNotLoading from '../layout/IfNotLoading';
 import { logError, logSuccess } from '../logging/logging.slice';
+import { TransactionRelationType } from '../../../../../libs/types/src/finance.model';
 import {
-  deleteTransaction, fetchTransactions, selectTransactions,
-  selectTransactionsLoading
+  deleteTransaction,
+  fetchTransactions,
+  selectTransactions,
+  selectTransactionsLoading,
 } from './finance.slice';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '20px',
   },
   negative: {
-    color: theme.palette.error.dark
-  }
+    color: theme.palette.error.dark,
+  },
 }));
 
 const options = {
@@ -83,26 +92,35 @@ const theme = createMuiTheme({
   },
 });
 
-export const TransactionsList = () => {
+export const TransactionsList = (props: {
+  related?;
+  relatedType?: TransactionRelationType;
+}) => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectTransactionsLoading);
-  const transactions = useSelector(selectTransactions);
+  const transactionsRaw = useSelector(selectTransactions);
   const dispatch = useAppDispatch();
   const classes = useStyles();
+  const { related, relatedType } = props;
+
+  const transactions = transactionsRaw.filter(
+    (t) => (!related || t.relatesTo === related._id) &&
+      (!relatedType || t.relatesToType === relatedType)
+  );
 
   const sumAmount = (startIndex, endIndex) => {
     return transactions
       .slice(startIndex, endIndex)
-      .map((a) => a.type === TransactionType.Expense ? -a.amount : a.amount)
+      .map((a) => (a.type === TransactionType.Expense ? -a.amount : a.amount))
       .reduce((total, amount) => (total += amount), 0);
   };
 
   const deleteTx = (tx: Transaction) => {
     dispatch(deleteTransaction(tx._id))
       .then(unwrapResult)
-      .then(d => dispatch(logSuccess({message: 'Successfully deleted.'})))
-      .catch((e) => dispatch(logError(e)))
-  }
+      .then((d) => dispatch(logSuccess({ message: 'Successfully deleted.' })))
+      .catch((e) => dispatch(logError(e)));
+  };
 
   const options = {
     filter: true,
@@ -117,11 +135,21 @@ export const TransactionsList = () => {
         <TableFooter>
           <TableRow>
             <TableCell>
-              <Typography variant="body2" color="textPrimary" style={{fontWeight: 'bold'}}>Total</Typography>
+              <Typography
+                variant="body2"
+                color="textPrimary"
+                style={{ fontWeight: 'bold' }}
+              >
+                Total
+              </Typography>
             </TableCell>
             <TableCell></TableCell>
             <TableCell>
-              <Typography variant="body2" color="textPrimary" style={{fontWeight: 'bold'}}>
+              <Typography
+                variant="body2"
+                color="textPrimary"
+                style={{ fontWeight: 'bold' }}
+              >
                 <NumberFormat
                   thousandSeparator
                   prefix="$"
@@ -136,7 +164,7 @@ export const TransactionsList = () => {
               count={count}
               rowsPerPage={rowsPerPage}
               page={page}
-              onChangePage={(e,p) => changePage(p)}
+              onChangePage={(e, p) => changePage(p)}
               onChangeRowsPerPage={(e) => changeRowsPerPage(e.target.value)}
             />
           </TableRow>
@@ -176,8 +204,11 @@ export const TransactionsList = () => {
         filter: false,
         sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
-          const v = transactions[tableMeta.rowIndex].type === TransactionType.Expense ? -value : value;
-          const clz = (v < 0) ? classes.negative : null;
+          const v =
+            transactions[tableMeta.rowIndex].type === TransactionType.Expense
+              ? -value
+              : value;
+          const clz = v < 0 ? classes.negative : null;
           return (
             <NumberFormat
               thousandSeparator

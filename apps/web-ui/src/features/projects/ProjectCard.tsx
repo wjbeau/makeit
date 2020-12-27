@@ -24,6 +24,7 @@ import ParticipantAttachmentMenu from '../attachments/ParticipantAttachmentMenu'
 import TitledSection from '../layout/TitledSection';
 import ProjectCardActions from './ProjectCardActions';
 import ProjectEventDisplay from './ProjectEventDisplay';
+import ProjectCardMoreMenu from './ProjectCardMoreMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,9 +100,7 @@ export const ProjectCard = (props: {
                 </IconButton>
               </Tooltip>
             )}
-            <IconButton aria-label="settings">
-              <MoreVert />
-            </IconButton>
+            <ProjectCardMoreMenu project={project} />
           </>
         }
         title={

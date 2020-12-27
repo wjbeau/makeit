@@ -21,7 +21,7 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import { saveTransaction } from './finance.slice';
 import AttachmentPanel from '../attachments/AttachmentPanel';
 import NumberFormat from 'react-number-format';
-import { TransactionExpenseCategory } from '../../../../../libs/types/src/finance.model';
+import { TransactionExpenseCategory, TransactionRelationType } from '../../../../../libs/types/src/finance.model';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {
@@ -62,13 +62,15 @@ const NumberFormatCustom = (props) => {
   );
 };
 
-const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
+const TransactionEdit = (props: { onSave?: (t: Transaction) => void, onCancel?: () => void, related?, relatedType?:TransactionRelationType, stacked?:boolean }) => {
   const classes = useStyles();
-  const { onSave } = props;
+  const { onSave, related, relatedType, stacked, onCancel } = props;
   const [formValues, setFormValues] = useState<Transaction>(
     ModelFactory.createEmptyTransaction(
       TransactionType.Income,
-      TransactionIncomeCategory.Salary
+      TransactionIncomeCategory.Salary,
+      related,
+      relatedType
     )
   );
   const dispatch = useAppDispatch();
@@ -104,6 +106,9 @@ const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
       )
     );
     setSubmitting(false);
+    if(onCancel) {
+      onCancel();
+    }
   };
 
   const validationSchema = yup.object().shape({
@@ -139,7 +144,7 @@ const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
         }) => (
           <Form>
             <Grid container direction="row" spacing={3}>
-              <Grid item xs={6} md={3}>
+              <Grid item xs={stacked ? 12 : 6} md={stacked ? 6 : 3}>
                 <FormControl fullWidth={true}>
                   <InputLabel htmlFor="transact-type">Type</InputLabel>
                   <Field
@@ -157,7 +162,7 @@ const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
                   </Field>
                 </FormControl>
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid item xs={stacked ? 12 : 6} md={stacked ? 6 : 3}>
                 <FastField
                   component={KeyboardDatePicker}
                   initialFocusedDate={null}
@@ -167,7 +172,7 @@ const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
                   fullWidth={true}
                 />
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid item xs={stacked ? 12 : 6} md={stacked ? 6 : 3}>
                 <FormControl fullWidth={true}>
                   <InputLabel htmlFor="transact-category">Category</InputLabel>
                   <Field
@@ -190,7 +195,7 @@ const TransactionEdit = (props: { onSave?: (t: Transaction) => void }) => {
                   </Field>
                 </FormControl>
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid item xs={stacked ? 12 : 6} md={stacked ? 6 : 3}>
                 <FastField
                   component={TextField}
                   name="amount"

@@ -1,4 +1,4 @@
-import { Audition, AuditionType } from '@makeit/types';
+import { Audition, AuditionType, TransactionRelationType } from '@makeit/types';
 import {
   Card,
   CardActions,
@@ -7,11 +7,20 @@ import {
   Collapse,
   Grid,
   IconButton,
+  ListItemIcon,
+  ListItemText,
   makeStyles,
+  MenuItem,
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import { Close, ExpandMore, MoreVert } from '@material-ui/icons';
+import {
+  Close,
+  ExpandMore,
+  MoreVert,
+  MonetizationOn,
+  AccountBalanceWallet,
+} from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
@@ -27,6 +36,7 @@ import AuditionCardActions from './AuditionCardActions';
 import AddressDisplay from '../controls/AddressDisplay';
 import AuditionNoteDisplay from './AuditionNoteDisplay';
 import ConditionalTooltip from '../controls/ConditionalTooltip';
+import AuditionCardMoreMenu from './AuditionCardMoreMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -52,8 +62,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(2),
   },
   attachmentIcons: {
-    paddingTop: theme.spacing(1)
-  }
+    paddingTop: theme.spacing(1),
+  },
 }));
 
 export const AuditionCard = (props: {
@@ -63,9 +73,7 @@ export const AuditionCard = (props: {
 }) => {
   const { audition, expand, onClose } = props;
   const classes = useStyles();
-  const history = useHistory();
   const [expanded, setExpanded] = React.useState(!!expand);
-  const dispatch = useAppDispatch();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -120,7 +128,11 @@ export const AuditionCard = (props: {
               )}
               {audition.participants?.length > 0 && (
                 <Grid item>
-                  <ParticipantAttachmentMenu container={audition} iconOnly readOnly />
+                  <ParticipantAttachmentMenu
+                    container={audition}
+                    iconOnly
+                    readOnly
+                  />
                 </Grid>
               )}
             </Grid>
@@ -143,9 +155,7 @@ export const AuditionCard = (props: {
                 </IconButton>
               </Tooltip>
             )}
-            <IconButton aria-label="settings">
-              <MoreVert />
-            </IconButton>
+            <AuditionCardMoreMenu audition={audition} />
           </>
         }
         title={buildTitle()}

@@ -13,7 +13,7 @@ import { Gender, Ethnicity } from './base-enums.model';
 import { Contact } from './contact.model';
 import { Event, Transaction, TransactionIncomeCategory } from '@makeit/types';
 import { EventType } from './event.model';
-import { TransactionType, TransactionExpenseCategory } from './finance.model';
+import { TransactionType, TransactionExpenseCategory, TransactionRelationType } from './finance.model';
 import { ProjectSource } from './project.model';
 
 export class ModelFactory {
@@ -103,7 +103,9 @@ export class ModelFactory {
 
   public static createEmptyTransaction(
     type?: TransactionType,
-    category?: TransactionExpenseCategory | TransactionIncomeCategory
+    category?: TransactionExpenseCategory | TransactionIncomeCategory,
+    related?,
+    relatedType?: TransactionRelationType
   ): Transaction {
     return {
       type: type ?? TransactionType.Expense,
@@ -112,8 +114,8 @@ export class ModelFactory {
       category: category ?? TransactionExpenseCategory.Fuel,
       date: new Date(),
       owner: undefined,
-      relatesTo: undefined,
-      relatesToType: undefined,
+      relatesTo: related,
+      relatesToType: relatedType,
       links: [],
       attachments: [],
     };
