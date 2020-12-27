@@ -82,7 +82,7 @@ export const ContactEdit = (props: {
 
   const handleAvatarDialogClose = () => {
     setAvatarDialogOpen(false);
-  }
+  };
 
   const handleSave = (values, { setSubmitting }) => {
     dispatch(saveContact(values))
@@ -118,28 +118,38 @@ export const ContactEdit = (props: {
   }, [contact]);
 
   const validationSchema = yup.object().shape({
-    firstName: yup.string().required('Required'),
-    lastName: yup.string().required('Required'),
+    lastName: yup.string().test("hasName", 'Either Last Name or Organization Required', function(value) {
+      const { company } = this.parent;
+      const valid = (value && value.length > 0) || (company && company.length > 0);
+      return valid;
+    }),
+    company: yup.string().test("hasName", 'Either Last Name or Organization Required', function(value) {
+      const { lastName } = this.parent;
+      const valid = (value && value.length > 0) || (lastName && lastName.length > 0);
+      return valid;
+    }),
     telecoms: yup.array(
       yup.object().shape({
         type: yup.string().required('Required'),
-        details: yup.string().required('Required')
+        details: yup.string().required('Required'),
       })
     ),
     links: yup.array(
       yup.object().shape({
         type: yup.string().required('Required'),
-        url: yup.string().matches(
-          /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
-          'Please enter a valid URL'
-        )
+        url: yup
+          .string()
+          .matches(
+            /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+            'Please enter a valid URL'
+          ),
       })
     ),
     addresses: yup.array(
       yup.object().shape({
-        type: yup.string().required('Required')
+        type: yup.string().required('Required'),
       })
-    )
+    ),
   });
 
   const handleAvatarClick = () => {
@@ -191,7 +201,7 @@ export const ContactEdit = (props: {
                   <FastField
                     component={TextField}
                     name="company"
-                    label="Company"
+                    label="Organization"
                     fullWidth={true}
                   />
                   <FastField
@@ -374,7 +384,11 @@ export const ContactEdit = (props: {
               />
             </DialogContent>
             <DialogActions>
-              <Button autoFocus onClick={handleAvatarDialogClose} color="primary">
+              <Button
+                autoFocus
+                onClick={handleAvatarDialogClose}
+                color="primary"
+              >
                 Close
               </Button>
             </DialogActions>

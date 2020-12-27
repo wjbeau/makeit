@@ -83,6 +83,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const primaryName = (ct: Contact) => {
+  if(!ct) {
+    return null;
+  }
+  return !_.isEmpty(ct.lastName) ? ct.lastName : ct.company;
+}
+
+const fullName = (ct: Contact) => {
+  return !_.isEmpty(ct.lastName) ? ct.firstName + ' ' + ct.lastName : ct.company;
+}
+
 export const ContactBook = () => {
   const [activeLetter, setActiveLetter] = useState<string>('');
   const [contact, setContact] = useState<Contact>();
@@ -97,9 +108,9 @@ export const ContactBook = () => {
 
   const contactsForLetter = (letter: string) => {
     return contacts
-      .filter((c) => c.lastName.toUpperCase().startsWith(letter))
+      .filter((c) => primaryName(c).toUpperCase().startsWith(letter))
       .filter((c) => matchesSearch(c))
-      .sort((a, b) => a.lastName.localeCompare(b.lastName));
+      .sort((a, b) => primaryName(a).localeCompare(primaryName(b)));
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -155,7 +166,7 @@ export const ContactBook = () => {
   useEffect(() => {
     let newLetters = contacts
       .filter((c) => matchesSearch(c))
-      .map((c) => c.lastName?.charAt(0).toUpperCase())
+      .map((c) => primaryName(c)?.charAt(0).toUpperCase())
       .sort((a, b) => a.localeCompare(b));
 
     newLetters = _.uniq(newLetters);
@@ -169,9 +180,9 @@ export const ContactBook = () => {
     if (newCtx === null && contacts.length) {
       newCtx = contacts
         .filter((c) => matchesSearch(c))
-        .sort((a, b) => a.lastName.localeCompare(b.lastName))[0];
+        .sort((a, b) => primaryName(a).localeCompare(primaryName(b)))[0];
     }
-    setActiveLetter(newCtx?.lastName.charAt(0).toUpperCase());
+    setActiveLetter(primaryName(newCtx)?.charAt(0).toUpperCase());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contact]);
 
@@ -271,7 +282,7 @@ export const ContactBook = () => {
                         >
                           <ListItemAvatar>{avatar}</ListItemAvatar>
                           <ListItemText
-                            primary={c.firstName + ' ' + c.lastName}
+                            primary={fullName(c)}
                             secondary={c.description}
                             classes={{
                               primary: classes.ellipsis,

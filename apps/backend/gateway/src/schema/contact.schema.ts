@@ -61,9 +61,9 @@ export class ContactModel implements Contact {
     note: string;
     @Prop({trim: true})
     description: string;
-    @Prop({required: true, trim: true})
+    @Prop({trim: true})
     firstName: string;
-    @Prop({required: true, trim: true})
+    @Prop({trim: true})
     lastName: string;
     @Prop()
     avatar: string;

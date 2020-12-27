@@ -44,6 +44,7 @@ import { logError } from '../logging/logging.slice';
 import { useHistory } from 'react-router-dom';
 import VimeoIcon from 'mdi-react/VimeoIcon';
 import SkypeIcon from 'mdi-react/SkypeIcon';
+import * as _ from 'lodash'
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -121,6 +122,10 @@ const remotify = (url: string) => {
 
   return null;
 };
+
+const hasName = (ct: Contact) => {
+  return !_.isEmpty(ct.firstName) || !_.isEmpty(ct.lastName);
+}
 
 export const ContactDetails = (props: {
   contact: Contact;
@@ -203,7 +208,8 @@ export const ContactDetails = (props: {
               component="h2"
               className={classes.headingTitleMain}
             >
-              {contact.firstName} {contact.lastName}
+              {hasName(contact) && contact.firstName + ' ' + contact.lastName }
+              {!hasName(contact) && contact.company }
             </Typography>
             {contact.jobTitle && (
               <Typography
@@ -214,7 +220,7 @@ export const ContactDetails = (props: {
                 {contact.jobTitle}
               </Typography>
             )}
-            {contact.company && (
+            {contact.company && hasName(contact) && (
               <Typography
                 variant="body1"
                 component="p"
