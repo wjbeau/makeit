@@ -30,7 +30,10 @@ const isFuture = (dates: Date[]) => {
   return result;
 };
 
-export const UpcomingAuditions = (props: { preview: number }) => {
+export const UpcomingAuditions = (props: {
+  preview: number;
+  hideIfEmpty?: boolean;
+}) => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);
   const auditionsRaw = useSelector(selectAuditions);
@@ -62,23 +65,30 @@ export const UpcomingAuditions = (props: { preview: number }) => {
   }, []);
 
   return (
-    <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
-      <IfNotLoading loading={loading}>
-        <Grid container direction="column" spacing={2}>
-          {futureAuditions.length > 0 &&
-            futureAuditions.map((m) => (
-              <Grid item key={m._id}>
-                <AuditionCard audition={m} />
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {
+        (!props.hideIfEmpty || loading || futureAuditions.length > 0) &&
+        (
+          <TitledSection variant="h6" component="h2" title="Upcoming Auditions">
+            <IfNotLoading loading={loading}>
+              <Grid container direction="column" spacing={2}>
+                {futureAuditions.length > 0 &&
+                  futureAuditions.map((m) => (
+                    <Grid item key={m._id}>
+                      <AuditionCard audition={m} />
+                    </Grid>
+                  ))}
+                {futureAuditions.length === 0 && (
+                  <Grid item className={classes.noContent}>
+                    <NothingToShow message="No upcoming auditions..." />
+                  </Grid>
+                )}
               </Grid>
-            ))}
-          {futureAuditions.length === 0 && (
-            <Grid item className={classes.noContent}>
-              <NothingToShow message="No upcoming auditions..." />
-            </Grid>
-          )}
-        </Grid>
-      </IfNotLoading>
-    </TitledSection>
+            </IfNotLoading>
+          </TitledSection>
+        )}
+    </>
   );
 };
 

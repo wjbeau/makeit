@@ -23,7 +23,7 @@ export const TitledSection = (props: {variant?, component?, title: string, child
                 <Typography variant={variant} component={component}>{title}</Typography>
             </Grid>
             <Grid item>
-                {children}
+                {children} 
             </Grid>
         </Grid>
     );

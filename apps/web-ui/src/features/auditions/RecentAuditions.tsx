@@ -30,7 +30,7 @@ const isFuture = (dates: Date[]) => {
   return result;
 };
 
-export const RecentAuditions = (props: { preview: number }) => {
+export const RecentAuditions = (props: { preview: number, hideIfEmpty?:boolean }) => {
   const user = useSelector(selectAuthed);
   const loading = useSelector(selectAuditionsLoading);
   const auditionsRaw = useSelector(selectAuditions);
@@ -51,23 +51,28 @@ export const RecentAuditions = (props: { preview: number }) => {
   }, []);
 
   return (
-    <TitledSection variant="h6" component="h2" title="Recent Auditions">
-      <IfNotLoading loading={loading}>
-        <Grid container direction="column" spacing={2}>
-          {pastAuditions.length > 0 &&
-            pastAuditions.map((m) => (
-              <Grid item key={m._id}>
-                <AuditionCard audition={m} />
-              </Grid>
-            ))}
-          {pastAuditions.length === 0 && (
-            <Grid item className={classes.noContent}>
-              <NothingToShow message="No recent auditions..." />
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {(!props.hideIfEmpty || loading || pastAuditions.length > 0) && (
+        <TitledSection variant="h6" component="h2" title="Recent Auditions">
+          <IfNotLoading loading={loading}>
+            <Grid container direction="column" spacing={2}>
+              {pastAuditions.length > 0 &&
+                pastAuditions.map((m) => (
+                  <Grid item key={m._id}>
+                    <AuditionCard audition={m} />
+                  </Grid>
+                ))}
+              {pastAuditions.length === 0 && (
+                <Grid item className={classes.noContent}>
+                  <NothingToShow message="No recent auditions..." />
+                </Grid>
+              )}
             </Grid>
-          )}
-        </Grid>
-      </IfNotLoading>
-    </TitledSection>
+          </IfNotLoading>
+        </TitledSection>
+      )}
+    </>
   );
 };
 

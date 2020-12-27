@@ -26,7 +26,8 @@ import ProjectCardActions from './ProjectCardActions';
 import ProjectEventDisplay from './ProjectEventDisplay';
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+  },
   expand: {
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
@@ -72,7 +73,7 @@ export const ProjectCard = (props: {
   project: Project;
   expand?: boolean;
   onClose?: () => void;
-  highlightedEvent?: Event;
+  highlightedEvent?: Event
 }) => {
   const { project, expand, onClose, highlightedEvent } = props;
   const classes = useStyles();
@@ -120,6 +121,11 @@ export const ProjectCard = (props: {
                   <Moment interval={0} format="lll">
                     {project.startDate}
                   </Moment>
+                </Typography>
+              )}
+              {!project.startDate && (
+                <Typography variant="body2" color="textSecondary">
+                  No Start Date
                 </Typography>
               )}
             </Grid>

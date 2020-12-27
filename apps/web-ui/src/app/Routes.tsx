@@ -1,15 +1,22 @@
-import React, { lazy } from 'react';
 import {
-  Home,
-  Today,
-  People,
-  MeetingRoom,
-  AccountCircle,
-  Assessment,
-  PermMedia,
-  MonetizationOn,
-  Send,
+    AccountCircle,
+    Assessment,
+
+
+
+    Dashboard, MeetingRoom,
+
+
+
+    MonetizationOn, People,
+
+
+
+    PermMedia,
+
+    Send, Today
 } from '@material-ui/icons';
+import React, { lazy } from 'react';
 
 export class Routes {
   static get routeDefinitions() {
@@ -20,8 +27,8 @@ export class Routes {
             path: '/',
             exact: true,
             main: lazy(() => import('../features/home/HomePage')),
-            title: 'Home',
-            icon: <Home />,
+            title: 'Dashboard',
+            icon: <Dashboard />,
             requiresAuth: true,
             showInMenu: true,
           },

@@ -55,10 +55,10 @@ export const AuditionsPage = () => {
       </Grid>
       <Grid container direction="row" spacing={3}>
         <Grid item xs={12} md={6}>
-          <UpcomingAuditions preview={3} />
+          <UpcomingAuditions preview={6} />
         </Grid>
         <Grid item xs={12} md={6}>
-          <RecentAuditions preview={3} />
+          <RecentAuditions preview={6} />
         </Grid>
         <Grid item xs={12}>
           <TitledSection variant="h6" component="h2" title="Audition Log">

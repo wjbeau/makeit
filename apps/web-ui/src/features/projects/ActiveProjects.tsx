@@ -9,7 +9,11 @@ import { selectAuthed } from '../auth/auth.slice';
 import IfNotLoading from '../layout/IfNotLoading';
 import TitledSection from '../layout/TitledSection';
 import { logError } from '../logging/logging.slice';
-import { selectProjects, selectProjectsLoading, fetchProjects } from './project.slice';
+import {
+  selectProjects,
+  selectProjectsLoading,
+  fetchProjects,
+} from './project.slice';
 import ProjectCard from './ProjectCard';
 
 const useStyles = makeStyles((theme) => ({
@@ -54,17 +58,21 @@ export const ActiveProjects = () => {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {activeProjects.length > 0 && (
-        <TitledSection variant="h6" component="h2" title="Active Projects">
-          <IfNotLoading loading={loading}>
-            <Grid container direction="column" spacing={2}>
-              {activeProjects.length > 0 &&
-                activeProjects.map((m) => (
-                  <Grid item key={m._id} xs={12} lg={6}>
+        <TitledSection
+          variant="h6"
+          component="h2"
+          title="Active Projects"
+        >
+          <Grid container direction="row" spacing={2} >
+            {activeProjects.length > 0 &&
+              activeProjects.map((m) => (
+                <Grid item key={m._id} xs={12} lg={6}>
+                  <IfNotLoading loading={loading}>
                     <ProjectCard project={m} />
-                  </Grid>
-                ))}
-            </Grid>
-          </IfNotLoading>
+                  </IfNotLoading>
+                </Grid>
+              ))}
+          </Grid>
         </TitledSection>
       )}
     </>
