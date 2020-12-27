@@ -49,32 +49,36 @@ export const AttachmentPanel = (props: {
       direction="row"
       className={disableMargin ? null : classes.attachmentContainer}
     >
-      <Grid item xs={12}>
-        {hasAttachments(container) && (
-          <>
-            <FileAttachmentMenu
+      {(container['attachments']?.length > 0 ||
+        container['links']?.length > 0 ||
+        container['participants']?.length > 0) && (
+        <Grid item xs={12}>
+          {hasAttachments(container) && (
+            <>
+              <FileAttachmentMenu
+                rootPath={rootPath}
+                container={container as HasAttachments}
+                readOnly={false}
+                helpers={helpers}
+              />
+              <LinkAttachmentMenu
+                rootPath={rootPath}
+                container={container as HasAttachments}
+                readOnly={false}
+                helpers={helpers}
+              />
+            </>
+          )}
+          {hasParticipants(container) && (
+            <ParticipantAttachmentMenu
               rootPath={rootPath}
-              container={container as HasAttachments}
+              container={container as HasParticipants}
               readOnly={false}
               helpers={helpers}
             />
-            <LinkAttachmentMenu
-              rootPath={rootPath}
-              container={container as HasAttachments}
-              readOnly={false}
-              helpers={helpers}
-            />
-          </>
-        )}
-        {hasParticipants(container) && (
-          <ParticipantAttachmentMenu
-            rootPath={rootPath}
-            container={container as HasParticipants}
-            readOnly={false}
-            helpers={helpers}
-          />
-        )}
-      </Grid>
+          )}
+        </Grid>
+      )}
       <Grid item xs={12}>
         <AttachmentButtons container={container} helpers={helpers}>
           {children}
