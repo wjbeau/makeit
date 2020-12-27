@@ -19,6 +19,8 @@ export interface Audition extends BaseEntity, HasAttachments, HasParticipants, H
     status: AuditionStatus;
     statusReason: string;  //reason for status
 
+    source: AuditionSource;
+
     followUpTo?: Audition;
 
     reminderNote: string;
@@ -31,6 +33,14 @@ export interface AuditionNote extends BaseEntity, HasAttachments, HasPermissions
     description: string;
     createdBy: UserAccount;
     createdOn: Date;
+}
+
+export enum AuditionSource {
+    SelfSubmit = "self_submit",
+    Agent = "agent_representation",
+    Manager = "management_representation",
+    Offer = "offer",
+    Other = "other"
 }
 
 export enum AuditionType {

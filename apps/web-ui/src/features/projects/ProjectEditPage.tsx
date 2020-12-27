@@ -1,13 +1,16 @@
 import DateFnsUtils from '@date-io/moment';
 import {
-  ModelFactory, Project, ProjectStatus
+  ModelFactory,
+  Project,
+  ProjectStatus,
+  ProjectSource,
 } from '@makeit/types';
 import {
   Breadcrumbs,
   Button,
   Grid,
   makeStyles,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { ArrowBack, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -23,7 +26,7 @@ import { logError, logSuccess } from '../logging/logging.slice';
 import {
   saveProject,
   selectProjects,
-  selectProjectsLoading
+  selectProjectsLoading,
 } from './project.slice';
 import ProjectDetailsEdit from './ProjectDetailsEdit';
 import ProjectEventsEdit from './ProjectEventsEdit';
@@ -43,18 +46,18 @@ const useStyles = makeStyles((theme) => ({
     float: 'right',
   },
   paddingLeft: {
-    marginLeft: theme.spacing(1)
-  }
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 const ProjectEditPage = () => {
   const classes = useStyles();
   const { projectId } = useParams<{ projectId: string }>();
   const [formValues, setFormValues] = useState<Project>(
-    ModelFactory.createEmptyProject(ProjectStatus.Active)
+    ModelFactory.createEmptyProject(ProjectStatus.Active, ProjectSource.Other)
   );
   const loading = useSelector(selectProjectsLoading);
-  const Projects = useSelector(selectProjects);
+  const projects = useSelector(selectProjects);
   const history = useHistory();
   const dispatch = useAppDispatch();
 
@@ -79,21 +82,26 @@ const ProjectEditPage = () => {
   const validationSchema = yup.object().shape({
     name: yup.string().required('Required'),
     status: yup.string().required('Required'),
+    source: yup.string().required('Required'),
     events: yup.array(
       yup.object({
-        time: yup.date().transform((curr, orig) => {
-          return !orig || !orig.isValid || !orig.isValid() ? undefined : curr
-        }).required('Required'),
-        eventType: yup.string().required('Required')
-      }),
+        time: yup
+          .date()
+          .transform((curr, orig) => {
+            return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
+          })
+          .required('Required'),
+        eventType: yup.string().required('Required'),
+      })
     ),
   });
 
   useEffect(() => {
     if (projectId !== 'new') {
-      setFormValues(Projects.find((a) => a._id === projectId));
+      const proj = projects.find((a) => a._id === projectId);
+      setFormValues(proj);
     }
-  }, [projectId, setFormValues, formValues, Projects]);
+  }, [projectId, setFormValues, formValues, projects]);
 
   return (
     <div>
@@ -159,7 +167,11 @@ const ProjectEditPage = () => {
                     )}
                   </Grid>
                   <Grid item>
-                    <ProjectDetailsEdit formikPrefix={null} project={values} />
+                    <ProjectDetailsEdit
+                      formikPrefix={null}
+                      project={values}
+                      showSource
+                    />
                   </Grid>
                   <Grid item>
                     <ProjectEventsEdit project={values} />

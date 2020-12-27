@@ -1,5 +1,5 @@
 import { Address } from './address.model';
-import { Audition, AuditionType, AuditionStatus } from './audition.model';
+import { Audition, AuditionType, AuditionStatus, AuditionSource } from './audition.model';
 import { Breakdown } from './breakdown.model';
 import {
   Project,
@@ -14,6 +14,7 @@ import { Contact } from './contact.model';
 import { Event, Transaction, TransactionIncomeCategory } from '@makeit/types';
 import { EventType } from './event.model';
 import { TransactionType, TransactionExpenseCategory } from './finance.model';
+import { ProjectSource } from './project.model';
 
 export class ModelFactory {
   public static createEmptyAudition(): Audition {
@@ -35,6 +36,7 @@ export class ModelFactory {
       links: [],
       attachments: [],
       permissions: [],
+      source: AuditionSource.SelfSubmit
     };
   }
 
@@ -82,7 +84,7 @@ export class ModelFactory {
     };
   }
 
-  public static createEmptyProject(status?: ProjectStatus): Project {
+  public static createEmptyProject(status?: ProjectStatus, source?:ProjectSource): Project {
     return {
       name: undefined,
       projectType: ProjectType.Pilot,
@@ -95,6 +97,7 @@ export class ModelFactory {
       attachments: [],
       status: status ? status : ProjectStatus.Provisional,
       permissions: [],
+      source: source
     };
   }
 

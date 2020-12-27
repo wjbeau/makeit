@@ -12,6 +12,8 @@ export interface Project extends BaseEntity, HasAttachments, HasParticipants, Ha
     startDate: Date;
     status: ProjectStatus;
 
+    source: ProjectSource;
+
     events: ProjectEvent[];
 }
 
@@ -36,6 +38,12 @@ export enum ProjectEventType {
     WrapParty = 'Wrap Party',
     Release = 'Release',
     Other = 'Other'
+}
+
+export enum ProjectSource {
+    Audition = 'Audition',
+    Offer = 'Offer',
+    Other = 'Other',
 }
 
 export enum ProjectStatus {

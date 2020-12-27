@@ -33,6 +33,7 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
                 name="breakdown.roleName"
                 label="Role Name"
                 fullWidth={true}
+                required
               />
             </Grid>
             <Grid item xs={3}>

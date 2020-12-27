@@ -1,9 +1,7 @@
 import DateFnsUtils from '@date-io/moment';
 import {
   Audition,
-  ModelFactory,
-  ParticipantReferenceType,
-  ParticipantType,
+  ModelFactory, ProjectSource
 } from '@makeit/types';
 import {
   Breadcrumbs,
@@ -89,10 +87,12 @@ const AuditionEditPage = () => {
     type: yup.string().required('Required'),
     auditionTime: yup.date().required('Required').nullable(),
     status: yup.string().required('Required'),
+    source: yup.string().required('Required'),
     breakdown: yup.object({
       roleName: yup.string().required('Required'),
       project: yup.object({
         name: yup.string().required('Required'),
+        source: yup.string().required('Required'),
       }),
     }),
   });
@@ -100,6 +100,12 @@ const AuditionEditPage = () => {
   useEffect(() => {
     if (auditionId !== 'new') {
       setFormValues(auditions.find((a) => a._id === auditionId));
+    }
+    else {
+      if(formValues?.breakdown?.project) {
+        formValues.breakdown.project.source = ProjectSource.Audition
+      }
+      setFormValues(formValues);
     }
   }, [auditionId, setFormValues, formValues, auditions]);
 

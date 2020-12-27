@@ -1,4 +1,4 @@
-import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, Participant, Permission, UserAccount } from '@makeit/types';
+import { Address, Attachment, Audition, AuditionNote, AuditionStatus, AuditionType, Breakdown, Link, Participant, Permission, UserAccount, AuditionSource } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
@@ -51,7 +51,9 @@ export class AuditionModel implements Audition {
     status: AuditionStatus;
     @Prop()
     statusReason: string;  //reason for status
-    
+
+    @Prop({ enum: Object.values(AuditionSource), type: String, required: true })
+    source: AuditionSource;
 
     @Prop({ type: [AttachmentSchema] })
     attachments: Attachment[]; 

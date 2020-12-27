@@ -1,4 +1,4 @@
-import { Project, ProjectStatus, ProjectType, UnionType } from '@makeit/types';
+import { Project, ProjectStatus, ProjectType, UnionType, ProjectSource } from '@makeit/types';
 import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
@@ -23,9 +23,9 @@ const getPath = (prefix: string, path: string) => {
   }
 }
 
-const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) => {
+const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string, showSource?: boolean }) => {
   const classes = useStyles();
-  const { project, formikPrefix } = props
+  const { project, formikPrefix, showSource } = props
 
   return (
     <TitledPaper
@@ -43,10 +43,11 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) =
                 name={getPath(formikPrefix, "name")}
                 label="Project Name"
                 fullWidth={true}
+                required
               />
             </Grid>
             <Grid item xs={4}>
-              <FormControl fullWidth={true}>
+              <FormControl fullWidth={true} required>
                 <InputLabel htmlFor="project-status">Status</InputLabel>
                 <FastField
                   component={Select}
@@ -64,7 +65,7 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) =
         </Grid>
         <Grid item>
           <Grid container direction="row" spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={showSource ? 3: 4}>
               <FormControl fullWidth={true}>
                 <InputLabel htmlFor="project-type">Project Type</InputLabel>
                 <FastField
@@ -78,7 +79,7 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) =
                 </FastField>
               </FormControl>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={showSource ? 3: 4}>
               <FastField
                 component={KeyboardDatePicker}
                 name={getPath(formikPrefix, "startDate")}
@@ -88,7 +89,7 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) =
                 format="MM/DD/YYYY"
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={showSource ? 3: 4}>
               <FormControl fullWidth={true}>
                 <InputLabel htmlFor="union-status">Union Status</InputLabel>
                 <FastField
@@ -103,6 +104,21 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string }) =
                 </FastField>
               </FormControl>
             </Grid>
+            {showSource && <Grid item xs={3}>
+              <FormControl fullWidth={true} required>
+                <InputLabel htmlFor="project-source">Source</InputLabel>
+                <FastField
+                  component={Select}
+                  name={getPath(formikPrefix, "source")}
+                  inputProps={{
+                    id: 'project-source',
+                  }}
+                  fullWidth={true}
+                >
+                  {Converter.enumToMenuItems('ProjectSource', ProjectSource)}
+                </FastField>
+              </FormControl>
+            </Grid>}
           </Grid>
         </Grid>
         <Grid item>

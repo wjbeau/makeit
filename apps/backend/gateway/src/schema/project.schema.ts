@@ -1,4 +1,4 @@
-import { Address, Attachment, Link, Participant, Project, ProjectEvent, ProjectEventType, ProjectStatus, ProjectType, UnionType, Permission } from '@makeit/types';
+import { Address, Attachment, Link, Participant, Project, ProjectEvent, ProjectEventType, ProjectStatus, ProjectType, UnionType, Permission, ProjectSource } from '@makeit/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AddressSchema } from './address.schema';
@@ -68,6 +68,9 @@ export class ProjectModel implements Project {
 
     @Prop({ type: [PermissionSchema] })
     permissions: Permission[];
+
+    @Prop({ enum: Object.values(ProjectSource), type: String, required: true })
+    source: ProjectSource;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(ProjectModel);

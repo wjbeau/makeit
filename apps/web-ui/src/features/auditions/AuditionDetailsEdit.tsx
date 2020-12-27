@@ -1,4 +1,4 @@
-import { Audition, AuditionStatus, AuditionType } from '@makeit/types';
+import { Audition, AuditionStatus, AuditionType, AuditionSource } from '@makeit/types';
 import { FormControl, Grid, InputLabel, makeStyles } from '@material-ui/core';
 import { FastField } from 'formik';
 import { Select, TextField } from 'formik-material-ui';
@@ -30,7 +30,7 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <Grid container direction="row" spacing={2}>
-            <Grid item xs={2}>
+            <Grid item xs={4}>
               <FormControl fullWidth={true}>
                 <InputLabel htmlFor="type">Type</InputLabel>
                 <FastField
@@ -39,12 +39,42 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
                   inputProps={{
                     id: 'type',
                   }}
+                  required
                 >
                   {Converter.enumToMenuItems('AuditionType', AuditionType)}
                 </FastField>
               </FormControl>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="status">Status</InputLabel>
+                <FastField
+                  component={Select}
+                  name="status"
+                  inputProps={{
+                    id: 'status',
+                  }}
+                  required
+                >
+                  {Converter.enumToMenuItems('AuditionStatus', AuditionStatus)}
+                </FastField>
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="source">Source</InputLabel>
+                <FastField
+                  component={Select}
+                  name="source"
+                  inputProps={{
+                    id: 'source',
+                  }}
+                >
+                  {Converter.enumToMenuItems('AuditionSource', AuditionSource)}
+                </FastField>
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
               <FastField
                 component={KeyboardDateTimePicker}
                 format="MM/DD/YYYY hh:mm a"
@@ -52,9 +82,10 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
                 label="Date / Time"
                 fullWidth={true}
                 initialFocusedDate={null}
+                required
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <FastField
                 component={KeyboardDateTimePicker}
                 format="MM/DD/YYYY hh:mm a"
@@ -64,7 +95,7 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
                 initialFocusedDate={null}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={4}>
               <FastField
                 component={KeyboardDatePicker}
                 format="MM/DD/YYYY"
@@ -73,20 +104,6 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
                 fullWidth={true}
                 initialFocusedDate={null}
               />
-            </Grid>
-            <Grid item xs={2}>
-              <FormControl fullWidth={true}>
-                <InputLabel htmlFor="status">Status</InputLabel>
-                <FastField
-                  component={Select}
-                  name="status"
-                  inputProps={{
-                    id: 'status',
-                  }}
-                >
-                  {Converter.enumToMenuItems('AuditionStatus', AuditionStatus)}
-                </FastField>
-              </FormControl>
             </Grid>
           </Grid>
         </Grid>
