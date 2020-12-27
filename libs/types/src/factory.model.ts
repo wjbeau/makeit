@@ -17,16 +17,16 @@ import { TransactionType, TransactionExpenseCategory, TransactionRelationType } 
 import { ProjectSource } from './project.model';
 
 export class ModelFactory {
-  public static createEmptyAudition(): Audition {
+  public static createEmptyAudition(status?:AuditionStatus, type?:AuditionType): Audition {
     return {
       breakdown: this.createEmptyBreakdown(),
       instructions: undefined,
-      type: AuditionType.InPersonAudition,
+      type: type ?? AuditionType.InPersonAudition,
       auditionTime: null,
       deadline: null,
       callbackDate: null,
       address: this.createEmptyAddress(),
-      status: AuditionStatus.Invited,
+      status: status ?? AuditionStatus.Invited,
       statusReason: undefined,
       followUpTo: undefined,
       reminderNote: undefined,

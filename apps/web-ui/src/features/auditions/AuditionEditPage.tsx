@@ -1,8 +1,5 @@
 import DateFnsUtils from '@date-io/moment';
-import {
-  Audition,
-  ModelFactory, ProjectSource
-} from '@makeit/types';
+import { Audition, ModelFactory, ProjectSource } from '@makeit/types';
 import {
   Breadcrumbs,
   Button,
@@ -18,7 +15,7 @@ import { TextField } from 'formik-material-ui';
 import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
 import { selectAuthed } from '../auth/auth.slice';
 import Loading from '../layout/Loading';
@@ -50,8 +47,8 @@ const useStyles = makeStyles((theme) => ({
     float: 'right',
   },
   paddingLeft: {
-    marginLeft: theme.spacing(1)
-  }
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 const AuditionEditPage = () => {
@@ -64,6 +61,7 @@ const AuditionEditPage = () => {
   const auditions = useSelector(selectAuditions);
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   const handleSave = (values) => {
     dispatch(saveAudition(values))
@@ -100,14 +98,17 @@ const AuditionEditPage = () => {
   useEffect(() => {
     if (auditionId !== 'new') {
       setFormValues(auditions.find((a) => a._id === auditionId));
-    }
-    else {
-      if(formValues?.breakdown?.project) {
-        formValues.breakdown.project.source = ProjectSource.Audition
+    } else {
+      if (location.state['initial']) {
+        setFormValues(location.state['initial']);
+      } else {
+        if (formValues?.breakdown?.project) {
+          formValues.breakdown.project.source = ProjectSource.Audition;
+        }
+        setFormValues(formValues);
       }
-      setFormValues(formValues);
     }
-  }, [auditionId, setFormValues, formValues, auditions]);
+  }, [auditionId, setFormValues, formValues, auditions, location]);
 
   return (
     <div>
@@ -182,7 +183,7 @@ const AuditionEditPage = () => {
                       </Grid>
                       <Grid item xs={6}>
                         <ProjectDetailsEdit
-                          formikPrefix='breakdown.project'
+                          formikPrefix="breakdown.project"
                           project={values.breakdown.project}
                         />
                       </Grid>

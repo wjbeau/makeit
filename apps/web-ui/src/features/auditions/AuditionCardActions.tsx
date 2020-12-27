@@ -1,10 +1,17 @@
-import { Audition, AuditionStatus, ProjectStatus } from '@makeit/types';
+import {
+  Audition,
+  AuditionStatus,
+  ProjectStatus,
+  ModelFactory,
+  AuditionType,
+} from '@makeit/types';
 import { IconButton, Tooltip } from '@material-ui/core';
 import {
   Block,
   Cancel,
   CheckCircle,
   Done,
+  MeetingRoom,
   PermMedia,
   ThumbUp,
 } from '@material-ui/icons';
@@ -15,10 +22,12 @@ import { logError, logSuccess } from '../logging/logging.slice';
 import { saveProject } from '../projects/project.slice';
 import { saveAudition } from './audition.slice';
 import AuditionEditButton from './AuditionEditButton';
+import { useHistory } from 'react-router-dom';
 
 export const AuditionCardActions = (props: { audition: Audition }) => {
   const { audition } = props;
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const markAsStatus = (newStatus: AuditionStatus) => {
     const oldStatus = audition.status;
@@ -39,6 +48,20 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
       });
   };
 
+  const createCallback = () => {
+    const newAudition = ModelFactory.createEmptyAudition(
+      AuditionStatus.Accepted,
+      AuditionType.Callback
+    );
+    newAudition.source = audition.source;
+    newAudition.breakdown = audition.breakdown;
+    newAudition.followUpTo = audition;
+    history.push({
+      pathname: '/auditions/new/edit',
+      state: { initial: newAudition },
+    });
+  };
+
   const activateProject = () => {
     const oldStatus = audition.breakdown.project.status;
     audition.breakdown.project.status = ProjectStatus.Active;
@@ -47,8 +70,7 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
       .then((p) => {
         dispatch(
           logSuccess({
-            message:
-              'Project saved.'
+            message: 'Project saved.',
           })
         );
       })
@@ -71,10 +93,7 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
               <Done />
             </IconButton>
           </Tooltip>
-          <Tooltip
-            title="Mark as Cancelled"
-            aria-label="mark as cancelled"
-          >
+          <Tooltip title="Mark as Cancelled" aria-label="mark as cancelled">
             <IconButton
               aria-label="mark as cancelled"
               onClick={() => markAsStatus(AuditionStatus.Cancelled)}
@@ -94,10 +113,7 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
               <ThumbUp />
             </IconButton>
           </Tooltip>
-          <Tooltip
-            title="Mark as Cancelled"
-            aria-label="mark as cancelled"
-          >
+          <Tooltip title="Mark as Cancelled" aria-label="mark as cancelled">
             <IconButton
               aria-label="mark as cancelled"
               onClick={() => markAsStatus(AuditionStatus.Cancelled)}
@@ -130,16 +146,30 @@ export const AuditionCardActions = (props: { audition: Audition }) => {
           </Tooltip>
         </>
       )}
-      {audition.status === AuditionStatus.Successful && audition.breakdown?.project?.status === ProjectStatus.Provisional &&  (
-        <Tooltip title="Convert to Project" aria-label="convert to project">
+      {audition.status === AuditionStatus.Successful && (
+        <Tooltip
+          title="Create Callback"
+          aria-label="create a callback audition"
+        >
           <IconButton
-            aria-label="convert to project"
-            onClick={activateProject}
+            aria-label="create a callback audition"
+            onClick={createCallback}
           >
-            <PermMedia />
+            <MeetingRoom />
           </IconButton>
         </Tooltip>
       )}
+      {audition.status === AuditionStatus.Successful &&
+        audition.breakdown?.project?.status === ProjectStatus.Provisional && (
+          <Tooltip title="Convert to Project" aria-label="convert to project">
+            <IconButton
+              aria-label="convert to project"
+              onClick={activateProject}
+            >
+              <PermMedia />
+            </IconButton>
+          </Tooltip>
+        )}
     </>
   );
 };
