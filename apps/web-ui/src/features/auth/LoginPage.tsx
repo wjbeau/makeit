@@ -49,7 +49,15 @@ export const LoginPage = () => {
       .then(unwrapResult)
       .then((auth) => {
         if(location && location.state['from']) {
-          history.push(location.state['from'])
+          let dest = location.state['from'];
+          
+          //we don't allow jumping straight to an edit page because of load sequence issues
+          if(dest.pathname && dest.pathname.indexOf('edit') >= 0) {
+            const parts = dest.pathname.split("/")
+            dest =  parts[0] + "/" + parts[1]
+          }
+
+          history.push(dest);
         }
         else {
           history.push('/');
