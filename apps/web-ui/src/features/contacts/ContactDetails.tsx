@@ -18,7 +18,6 @@ import {
 } from '@material-ui/core';
 import {
   Call,
-  Delete,
   Edit,
   Email,
   Facebook,
@@ -45,6 +44,7 @@ import { useHistory } from 'react-router-dom';
 import VimeoIcon from 'mdi-react/VimeoIcon';
 import SkypeIcon from 'mdi-react/SkypeIcon';
 import * as _ from 'lodash'
+import DeleteWithConfirm from '../controls/DeleteWithConfirm';
 
 const useStyles = makeStyles((theme) => ({
   mainAvatar: {
@@ -70,12 +70,6 @@ const useStyles = makeStyles((theme) => ({
   menuIcon: {
     marginRight: theme.spacing(2),
   },
-  delete: {
-    color: theme.palette.error.dark
-  },
-  deleteMenu: {
-    marginTop: theme.spacing(4)
-  }
 }));
 
 const iconForSocial = (val: ContactLinkType) => {
@@ -139,7 +133,6 @@ export const ContactDetails = (props: {
   );
   const [callAnchor, setCallAnchor] = useState(null);
   const [emailAnchor, setEmailAnchor] = useState(null);
-  const [deleteAnchor, setDeleteAnchor] = useState(null);
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -148,10 +141,6 @@ export const ContactDetails = (props: {
 
   const invokeContact = (link: string) => {
     window.location.href = link;
-  };
-
-  const handleShowDelete = (evt) => {
-    setDeleteAnchor(evt.currentTarget);
   };
 
   const handleDelete = () => {
@@ -299,22 +288,7 @@ export const ContactDetails = (props: {
                 </>
               )}
               {onDelete && (
-                <>
-                  <IconButton onClick={handleShowDelete}>
-                    <Delete />
-                  </IconButton>
-                  <Menu
-                    anchorEl={deleteAnchor}
-                    keepMounted
-                    open={!!deleteAnchor}
-                    onClose={() => setDeleteAnchor(null)}
-                    className={classes.deleteMenu}
-                  >
-                    <MenuItem onClick={handleDelete} className={classes.delete}>
-                      <Delete className={classes.menuIcon} /> Delete
-                    </MenuItem>
-                  </Menu>
-                </>
+                <DeleteWithConfirm onDelete={handleDelete} />
               )}
             </div>
           </Grid>
