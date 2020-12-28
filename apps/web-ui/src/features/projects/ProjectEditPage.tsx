@@ -125,7 +125,7 @@ const ProjectEditPage = () => {
                         onClick={handleCancel}
                         startIcon={<ArrowBack />}
                       >
-                        Back to Projects
+                        Back
                       </Button>
                     </Breadcrumbs>
                   </Grid>

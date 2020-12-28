@@ -132,7 +132,7 @@ const AuditionEditPage = () => {
                         onClick={handleCancel}
                         startIcon={<ArrowBack />}
                       >
-                        Back to Auditions
+                        Back
                       </Button>
                     </Breadcrumbs>
                   </Grid>
