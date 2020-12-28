@@ -54,6 +54,7 @@
     "class-validator": "^0.12.2",
     "clsx": "^1.1.1",
     "document-register-element": "1.13.1",
+    "emailjs-com": "^2.6.4",
     "formik": "^2.2.5",
     "formik-material-ui": "^3.0.1",
     "formik-material-ui-lab": "^0.0.8",

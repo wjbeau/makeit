@@ -9,6 +9,7 @@ import { Container, Grid } from '@material-ui/core';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
 import { DIMENSIONS } from './dimensions';
 import { Loading } from './Loading';
+import SupportButton from '../support/SupportButton';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     [theme.breakpoints.down('sm')]: {
       paddingLeft: 0,
-      paddingRight: 0
+      paddingRight: 0,
     },
   },
   sidebarLeft: {
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up('md')]: {
       width: DIMENSIONS.drawerWidth,
-      marginRight: theme.spacing(8)
+      marginRight: theme.spacing(8),
     },
   },
   sidebarRight: {
@@ -44,12 +45,12 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up('md')]: {
       width: DIMENSIONS.drawerWidth,
-      marginLeft: theme.spacing(8)
+      marginLeft: theme.spacing(8),
     },
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
 }));
 
@@ -57,7 +58,7 @@ export function PageContent() {
   const classes = useStyles();
   return (
     <Router>
-      <Container maxWidth="xl"  className={classes.container}>
+      <Container maxWidth="xl" className={classes.container}>
         <Grid container direction="row" className={classes.grid}>
           <IfAuthenticated>
             <Grid item className={classes.sidebarLeft}>
@@ -97,6 +98,9 @@ export function PageContent() {
           </IfAuthenticated>
         </Grid>
       </Container>
+      <IfAuthenticated>
+        <SupportButton />
+      </IfAuthenticated>
     </Router>
   );
 }

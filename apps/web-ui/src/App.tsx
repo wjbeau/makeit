@@ -74,7 +74,6 @@ function App() {
             </Grid>
             <Grid item className={classes.content}>
               <PageContent />
-              <SupportButton />
               <Footer />
             </Grid>
           </Grid>
