@@ -60,6 +60,10 @@ export const authSlice = createSlice({
           );
           localStorage.setItem(REFRESH_USER_KEY, state.user.email);
         }
+        else {
+          localStorage.removeItem(REFRESH_TOKEN_KEY)
+          localStorage.removeItem(REFRESH_USER_KEY)
+        }
         state.loading = false;
       })
       .addCase(loginAttempt.rejected, (state, action) => {
@@ -82,6 +86,10 @@ export const authSlice = createSlice({
             JSON.stringify(state.refreshToken)
           );
           localStorage.setItem(REFRESH_USER_KEY, state.user.email);
+        }
+        else {
+          localStorage.removeItem(REFRESH_TOKEN_KEY)
+          localStorage.removeItem(REFRESH_USER_KEY)
         }
         state.refreshActive = false;
       });
