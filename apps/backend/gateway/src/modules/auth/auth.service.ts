@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthResponse, UserAccount } from '@makeit/types';
+import { AuthResponse, UserAccount, AccessTokenType } from '@makeit/types';
 import { UserService } from '../user/user.service';
 import { CryptoService } from '../common-services/crypto.service';
+import * as moment from 'moment'
 
 @Injectable()
 export class AuthService {
@@ -22,17 +23,54 @@ export class AuthService {
     const result = await this.cryptoService.compare(pass, user.password)
     if (result) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+      const { password, tokens, ...rest } = user;
+      return rest;
     }
 
     return null;
   }
 
+  async refreshToken(username: string, refresh: string): Promise<AuthResponse> {
+    const user = await this.usersService.findByEmail(username);
+
+    if(!user || !refresh) {
+      throw new BadRequestException();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, tokens, ...rest } = user;
+
+    if(tokens) {
+      const matching = tokens.find(t => t.token === refresh && t.type === AccessTokenType.Refresh)
+      if(matching && matching.expires > new Date()) {
+        return {
+          access_token: this.generateToken(rest),
+          refresh_token: matching,
+          user: rest
+        };
+      }
+    }
+
+    throw new UnauthorizedException();
+  }
+
   async login(user: UserAccount): Promise<AuthResponse> {
+    const refresh = await this.usersService.generateRefreshToken(user);
     return {
-      access_token: this.jwtService.sign(user),
+      access_token: this.generateToken(user),
+      refresh_token: refresh,
       user: user
     };
+  }
+
+  generateToken(user: UserAccount) {
+    const expires = moment().add(30, "minutes").toDate()
+    const result = this.jwtService.sign(user, { expiresIn: '20s' })
+
+    this.jwtService.decode(result)
+    return {
+      token: result,
+      expires: expires,
+      type: AccessTokenType.Auth
+    }
   }
 }

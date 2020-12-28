@@ -104,7 +104,7 @@ export const EventCard = (props: {
             </Grid>
             {(event.participants?.length > 0 ||
               event.attachments?.length > 0 ||
-              event.links.length > 0) && (
+              event.links?.length > 0) && (
               <Grid item className={classes.attachmentIcons}>
                 <Grid container spacing={2}>
                   <Grid item>

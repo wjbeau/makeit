@@ -10,6 +10,7 @@ import {
 export function AuthedRoute ({ children, ...rest }:PropsWithChildren<RouteProps>) {
     const auth = useSelector(selectAuthed);
 
+    
     return (
         <Route
         {...rest}

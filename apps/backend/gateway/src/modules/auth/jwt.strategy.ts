@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: UserAccount) {
-    //Down the road this can do additional work to look up additional payload info
+    //Down the road this can do additional work to look up additional payload info like subscriptions and profiles
     return payload;
   }
 }

@@ -1,15 +1,16 @@
 import { AuthRequest } from '@makeit/types';
 import {
   Button,
+  FormControlLabel,
   Grid,
   Link,
   makeStyles,
   Paper,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { Checkbox, TextField } from 'formik-material-ui';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -17,7 +18,7 @@ import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
 import { logError } from '../logging/logging.slice';
 import { loginAttempt, selectLoading } from './auth.slice';
-
+import { FormControl, InputLabel } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
@@ -48,18 +49,17 @@ export const LoginPage = () => {
     dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then((auth) => {
-        if(location && location.state['from']) {
+        if (location && location.state['from']) {
           let dest = location.state['from'];
-          
+
           //we don't allow jumping straight to an edit page because of load sequence issues
-          if(dest.pathname && dest.pathname.indexOf('edit') >= 0) {
-            const parts = dest.pathname.split("/")
-            dest =  parts[0] + "/" + parts[1]
+          if (dest.pathname && dest.pathname.indexOf('edit') >= 0) {
+            const parts = dest.pathname.split('/');
+            dest = parts[0] + '/' + parts[1];
           }
 
           history.push(dest);
-        }
-        else {
+        } else {
           history.push('/');
         }
       })
@@ -99,11 +99,15 @@ export const LoginPage = () => {
                 </Grid>
                 <Grid item>
                   <Formik
-                    initialValues={{ username: '', password: '' }}
+                    initialValues={{
+                      username: '',
+                      password: '',
+                      rememberMe: false,
+                    }}
                     validationSchema={validationSchema}
                     onSubmit={handleLogin}
                   >
-                    {({ errors, touched, submitForm, isSubmitting }) => 
+                    {({ errors, touched, submitForm, isSubmitting }) => (
                       <Form>
                         <Grid container direction="column" spacing={2}>
                           <Grid item>
@@ -126,6 +130,19 @@ export const LoginPage = () => {
                             />
                           </Grid>
                           <Grid item>
+                            <FormControlLabel
+                              control={
+                                <Field
+                                  type="checkbox"
+                                  component={Checkbox}
+                                  name="rememberMe"
+                                  label="Remember Me"
+                                />
+                              }
+                              label="Remember Me"
+                            />
+                          </Grid>
+                          <Grid item>
                             <Button
                               variant="contained"
                               color="primary"
@@ -138,7 +155,7 @@ export const LoginPage = () => {
                           </Grid>
                         </Grid>
                       </Form>
-                    }
+                    )}
                   </Formik>
                 </Grid>
                 <Grid item>

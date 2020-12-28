@@ -14,7 +14,7 @@ import {
 
     PermMedia,
 
-    Send, Today
+    Send, SwapHorizontalCircle, Today
 } from '@material-ui/icons';
 import React, { lazy } from 'react';
 
@@ -58,6 +58,18 @@ export class Routes {
             icon: <People />,
             requiresAuth: true,
             showInMenu: true,
+          },
+          {
+            path: '/exchange',
+            exact: false,
+            main: lazy(() => import('../features/contacts/ContactsPage')),
+            title: 'Exchange',
+            icon: <SwapHorizontalCircle />,
+            requiresAuth: true,
+            showInMenu: true,
+            disabled: true,
+            description:
+              'The Exchange will eventually offer a way for users to exchange service with each other (e.g. self-tape readers, view each other\'s imdb feeds, social media follows, etc) with a points-system to ensure fairness and reciprocal action.',
           },
         ],
       },

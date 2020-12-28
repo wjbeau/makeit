@@ -7,6 +7,7 @@ import {
   createMuiTheme,
   Grid,
   makeStyles,
+  responsiveFontSizes,
   ThemeProvider,
 } from '@material-ui/core';
 import { DIMENSIONS } from './features/layout/dimensions';
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   overrides: {
     MuiTableCell: {
       root: {
@@ -53,6 +54,7 @@ const theme = createMuiTheme({
     },
   },
 });
+theme = responsiveFontSizes(theme, {factor: 3});
 
 function App() {
   const classes = useStyles();

@@ -9,6 +9,7 @@ import contactsReducer from '../features/contacts/contact.slice';
 import projectsReducer from '../features/projects/project.slice';
 import calendarReducer from '../features/calendar/calendar.slice';
 import financeReducer from '../features/finance/finance.slice';
+import { interceptor } from './initializer';
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,9 @@ export const store = configureStore({
     finance: financeReducer
   },
 });
+
+//set up the auth interceptors
+interceptor(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

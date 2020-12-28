@@ -4,6 +4,8 @@ import {
   TransactionType,
   Transaction,
   TransactionIncomeCategory,
+  TransactionExpenseCategory, 
+  TransactionRelationType
 } from '@makeit/types';
 import { Button, Grid, InputAdornment, makeStyles } from '@material-ui/core';
 import { CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
@@ -21,7 +23,6 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers';
 import { saveTransaction } from './finance.slice';
 import AttachmentPanel from '../attachments/AttachmentPanel';
 import NumberFormat from 'react-number-format';
-import { TransactionExpenseCategory, TransactionRelationType } from '../../../../../libs/types/src/finance.model';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {

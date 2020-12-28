@@ -1,10 +1,13 @@
 // Model / State objects for the auth feature
 
-import { UserAccount } from "@makeit/types";
+import { UserAccount, AccessToken } from '@makeit/types';
 
 
 export interface AuthenticationState {
     user?: UserAccount;
-    token?: string;
+    token?: AccessToken;
+    refreshToken?: AccessToken;
+    rememberMe: boolean;
     loading: boolean;
+    refreshActive?: boolean;
 }
