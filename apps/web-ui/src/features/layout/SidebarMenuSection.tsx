@@ -67,10 +67,10 @@ const RouteItem = (props: any) => {
 export function SidebarMenuSection(props: any) {
   const classes = useStyles();
   const theme = useTheme();
-  const showLabels = useMediaQuery(theme.breakpoints.up('md'));
+  const hideLabels = useMediaQuery(theme.breakpoints.only('sm'));
   return (
     <>
-      {showLabels && props.section.title && (
+      {!hideLabels && props.section.title && (
         <ListSubheader>{props.section.title}</ListSubheader>
       )}
       {props.section.routes
@@ -81,7 +81,7 @@ export function SidebarMenuSection(props: any) {
             route={route}
             classes={classes}
             key={index}
-            showLabels={showLabels}
+            showLabels={!hideLabels}
           />
         ))}
     </>

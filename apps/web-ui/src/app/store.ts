@@ -9,6 +9,7 @@ import contactsReducer from '../features/contacts/contact.slice';
 import projectsReducer from '../features/projects/project.slice';
 import calendarReducer from '../features/calendar/calendar.slice';
 import financeReducer from '../features/finance/finance.slice';
+import layoutReducer from '../features/layout/layout.slice';
 import { interceptor } from './initializer';
 
 export const store = configureStore({
@@ -21,7 +22,8 @@ export const store = configureStore({
     contacts: contactsReducer,
     projects: projectsReducer,
     calendar: calendarReducer,
-    finance: financeReducer
+    finance: financeReducer,
+    layout: layoutReducer
   },
 });
 

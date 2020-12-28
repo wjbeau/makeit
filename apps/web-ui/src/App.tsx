@@ -7,6 +7,7 @@ import {
   createMuiTheme,
   Grid,
   makeStyles,
+  Portal,
   responsiveFontSizes,
   ThemeProvider,
 } from '@material-ui/core';
@@ -65,7 +66,9 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <MessagePanel />
+      <Portal>
+        <MessagePanel />
+      </Portal>
       <ErrorGuard retry={retry}>
         <ConfirmProvider>
           <Grid container direction="column" className={classes.layoutGrid}>
