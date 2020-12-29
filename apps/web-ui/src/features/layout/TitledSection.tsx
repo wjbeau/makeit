@@ -1,4 +1,4 @@
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, makeStyles, Typography, useTheme } from '@material-ui/core';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,16 +16,17 @@ export const TitledSection = (props: {variant?, component?, title: string, child
     const {variant, title, component, children, spacing} = props
     const classes = useStyles()
     const useSpacing = spacing !== undefined ? spacing : 1;
+    const theme = useTheme();
 
     return (
-        <Grid container direction="column" className={classes.root} spacing={useSpacing}>
-            <Grid item className={classes.titleContainer}>
+        <div className={classes.root} style={{padding: theme.spacing(useSpacing)}}>
+            <div className={classes.titleContainer}>
                 <Typography variant={variant} component={component}>{title}</Typography>
-            </Grid>
-            <Grid item>
+            </div>
+            <div>
                 {children} 
-            </Grid>
-        </Grid>
+            </div>
+        </div>
     );
 }
 

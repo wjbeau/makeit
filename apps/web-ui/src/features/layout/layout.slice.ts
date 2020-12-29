@@ -1,8 +1,5 @@
-import { Transaction } from '@makeit/types';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { apiClient } from '../../app/api-client';
+import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { FinanceState } from './finance.state';
 import { LayoutState } from './layout.state';
 
 const initialState: LayoutState = {
