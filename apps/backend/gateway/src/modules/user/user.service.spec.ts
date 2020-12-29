@@ -1,41 +1,55 @@
-import { getModelToken } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Document } from 'mongoose';
-import { deepEqual, instance, mock, reset, when } from 'ts-mockito';
-import { MockableDocumentQuery, MockableModel } from '../../test/mockables';
-import { UserAccountModel } from '../../schema/user.schema';
-import { UserService } from './user.service';
+import { Model } from 'mongoose';
+import {
+  anything,
+  deepEqual,
+  instance,
+  mock,
+  reset,
+  verify,
+  when,
+} from 'ts-mockito';
+import { UserDocument } from '../../schema/user.schema';
+import {
+  MockableDocumentQuery,
+  MockableModel,
+  MockableDocument,
+} from '../../test/mockables';
 import { CryptoService } from '../common-services/crypto.service';
+import { UserService } from './user.service';
+import { UserAccount, ModelFactory } from '@makeit/types';
+import { BadRequestException } from '@nestjs/common';
+import { strictEqual } from 'ts-mockito';
 
 describe('UserService', () => {
   let classUnderTest: UserService;
 
+  const mockCryptoService = mock(CryptoService);
   const mockModel = mock(MockableModel);
   const mockQuery = mock(MockableDocumentQuery);
-  const mockDocument = mock(Document);
+  const mockDocument = mock(MockableDocument);
+  let mockRequest = undefined;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CryptoService,
-        UserService,
-        {
-          provide: getModelToken(UserAccountModel.name),
-          useValue: instance(mockModel),
-        },
-      ],
-    }).compile();
-
-    classUnderTest = module.get<UserService>(UserService);
+    mockRequest = {
+      user: {
+        _id: 'someID',
+      },
+    };
+    classUnderTest = new UserService(
+      mockRequest,
+      instance(mockCryptoService),
+      instance(mockModel) as Model<UserDocument>
+    );
   });
 
   afterEach(async () => {
+    reset(mockCryptoService);
     reset(mockModel);
     reset(mockQuery);
     reset(mockDocument);
   });
 
-  describe('findById', () => {
+  describe('findByEmail', () => {
     it('should return valid user when found', async () => {
       const user = {
         email: 'uid',
@@ -93,6 +107,135 @@ describe('UserService', () => {
         fail();
       } catch (e) {
         expect(e).toBe(error);
+      }
+    });
+  });
+
+  describe('save', () => {
+    it('should return valid User when properly updated', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = mockRequest.user._id;
+
+      when(mockDocument.save()).thenReturn(instance(mockDocument));
+      when(mockDocument.toObject()).thenReturn(user);
+
+      when(mockModel.findOne(deepEqual({ _id: user._id }))).thenReturn(
+        new Promise((resolve) => resolve(instance(mockDocument)))
+      );
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.save(user._id, user);
+      verify(mockDocument.set(anything())).once();
+      verify(mockDocument.save()).once();
+      verify(mockModel.findOne(deepEqual({ _id: user._id }))).once();
+      expect(result).toEqual(user);
+    });
+
+    it('should return valid User when properly inserted', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = null;
+      user.password = "mypass";
+
+      //we don't want to be logged in
+      classUnderTest = new UserService(
+        {},
+        instance(mockCryptoService),
+        instance(mockModel) as Model<UserDocument>
+      );
+
+      when(mockDocument.toObject()).thenReturn(user);
+
+      when(mockModel.findOne(deepEqual({ _id: user._id }))).thenReturn(
+        new Promise((resolve) => resolve(null))
+      );
+
+      when(mockModel.create(deepEqual(user))).thenReturn(
+        new Promise((resolve) => resolve(instance(mockDocument)))
+      );
+
+      when(mockCryptoService.hash(strictEqual(user.password))).thenResolve("hashed");
+
+      expect(classUnderTest).toBeDefined();
+      const result = await classUnderTest.save(user._id, user);
+      verify(mockDocument.set(anything())).never();
+      verify(mockModel.create(deepEqual(user))).once();
+      verify(mockModel.findOne(anything())).never();
+      verify(mockCryptoService.hash(strictEqual("mypass"))).once();
+      expect(result.password).toEqual("hashed");
+      expect(result).toEqual(user);
+    });
+
+    it('should throw error when ids arent a match', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = 'userid';
+
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.save('differentid', user);
+        fail();
+      } catch (e) {
+        expect(e instanceof BadRequestException).toBeTruthy();
+      }
+    });
+
+    it('should throw error when insert attempted with id-holding user', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = 'userid';
+
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.save(null, user);
+        fail();
+      } catch (e) {
+        expect(e instanceof BadRequestException).toBeTruthy();
+      }
+    });
+
+    it('should throw error when update attempted with new user', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.save('some_id', user);
+        fail();
+      } catch (e) {
+        expect(e instanceof BadRequestException).toBeTruthy();
+      }
+    });
+
+    it('should return throw error when specified user doesnt exist for update', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = mockRequest.user._id;
+
+      when(mockDocument.toObject()).thenReturn(user);
+
+      when(mockModel.findOne(deepEqual({ _id: user._id }))).thenReturn(
+        new Promise((resolve) => resolve(null))
+      );
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.save(user._id, user);
+        fail();
+      } catch (e) {
+        expect(e.message).toEqual('Not Found');
+      }
+    });
+
+    it('should return throw error when database interaction fails', async () => {
+      const user: UserAccount = ModelFactory.createEmptyUserAccount();
+      user._id = mockRequest.user._id;
+
+      when(mockDocument.toObject()).thenReturn(user);
+
+      const err = new Error('mock error');
+      when(mockModel.findOne(deepEqual({ _id: user._id }))).thenThrow(err);
+
+      expect(classUnderTest).toBeDefined();
+      try {
+        await classUnderTest.save(user._id, user);
+        fail();
+      } catch (e) {
+        expect(e).toEqual(err);
       }
     });
   });

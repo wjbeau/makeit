@@ -11,12 +11,23 @@ import {
 } from './project.model';
 import { Gender, Ethnicity } from './base-enums.model';
 import { Contact } from './contact.model';
-import { Event, Transaction, TransactionIncomeCategory } from '@makeit/types';
+import { Event, Transaction, TransactionIncomeCategory, UserAccount } from '@makeit/types';
 import { EventType } from './event.model';
 import { TransactionType, TransactionExpenseCategory, TransactionRelationType } from './finance.model';
 import { ProjectSource } from './project.model';
 
 export class ModelFactory {
+
+  public static createEmptyUserAccount(): UserAccount {
+    return {
+      firstName: undefined,
+      lastName: undefined,
+      avatar: undefined,
+      email: undefined,
+      profiles: [],
+    };
+  }
+
   public static createEmptyAudition(status?:AuditionStatus, type?:AuditionType): Audition {
     return {
       breakdown: this.createEmptyBreakdown(),

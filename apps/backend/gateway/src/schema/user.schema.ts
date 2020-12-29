@@ -48,7 +48,7 @@ export class UserAccountModel implements UserAccount {
     avatar: string;
 
     @Prop({ type: [AccessTokenSchema] })
-    tokens: AccessToken[];
+    tokens?: AccessToken[];
 
     @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: ProfileModel.name }])
     profiles: Profile[];

@@ -41,3 +41,8 @@ export enum AccessTokenType {
     Auth="auth",
     Refresh="refresh"
 }
+
+export interface PasswordChangeRequest {
+    oldPassword: string;
+    newPassword: string;
+}
