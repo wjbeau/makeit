@@ -5,7 +5,7 @@ import {
   Button,
   Grid,
   makeStyles,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { ArrowBack, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -15,22 +15,21 @@ import { TextField } from 'formik-material-ui';
 import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
-import { selectAuthed } from '../auth/auth.slice';
 import Loading from '../layout/Loading';
 import TitledPaper from '../layout/TitledPaper';
 import { logError, logSuccess } from '../logging/logging.slice';
+import ProjectDetailsEdit from '../projects/ProjectDetailsEdit';
 import {
   saveAudition,
   selectAuditions,
-  selectAuditionsLoading,
+  selectAuditionsLoading
 } from './audition.slice';
 import AuditionDetailsEdit from './AuditionDetailsEdit';
 import AuditionNotesEdit from './AuditionNotesEdit';
 import BreakdownDetailsEdit from './BreakdownDetailsEdit';
-import * as yup from 'yup';
-import ProjectDetailsEdit from '../projects/ProjectDetailsEdit';
 
 const useStyles = makeStyles((theme) => ({
   attachmentContainer: {

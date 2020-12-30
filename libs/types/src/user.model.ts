@@ -43,6 +43,7 @@ export enum AccessTokenType {
 }
 
 export interface PasswordChangeRequest {
+    userid;
     oldPassword: string;
     newPassword: string;
 }

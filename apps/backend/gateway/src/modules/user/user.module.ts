@@ -4,8 +4,12 @@ import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonServicesModule } from '../common-services/common-services.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserController } from './user.controller';
 
 @Module({
+  controllers: [
+    UserController
+  ],
   imports: [
     ConfigModule,
     CommonServicesModule,

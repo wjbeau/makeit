@@ -17,12 +17,12 @@ import React, { useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { selectAuthed } from '../auth/auth.slice';
 import { IfAuthenticated } from '../auth/IfAuthenticated';
-import AccountMenu from '../profile/AccountMenu';
 import { useSelector } from 'react-redux';
 import logo from './logo.png';
 import clsx from 'clsx';
 import { selectDrawerOpen, setDrawerOpen } from './layout.slice';
 import { DIMENSIONS } from './dimensions';
+import AccountMenu from '../account/AccountMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -115,8 +115,7 @@ export function Header() {
               <Notifications />
             </IconButton>
             <IconButton color="inherit" onClick={handleProfileClick}>
-              {!user?.avatar && <AccountCircle />}
-              {user?.avatar && <Avatar src={user.avatar} />}
+              <AccountCircle />
             </IconButton>
             <AccountMenu
               open={accountMenuOpen}

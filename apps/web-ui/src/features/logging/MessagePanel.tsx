@@ -1,4 +1,4 @@
-import { Slide, Snackbar, makeStyles } from '@material-ui/core';
+import { Slide, Snackbar, makeStyles, Portal } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   alertContainer: {
     position: 'fixed',
     margin: theme.spacing(3) + 'px 0',
-    zIndex: theme.zIndex.drawer + 2,
+    zIndex: theme.zIndex.modal + 2,
     width: '100vw',
   },
   alertInner: {
@@ -41,7 +41,7 @@ export const MessagePanel = () => {
         <div className={classes.alertContainer}>
           <div className={classes.alertInner}>
             {messages.map((message, index) =>
-              message.type !== 'success' ? 
+              message.type !== 'success' ? (
                 <Alert
                   onClose={() => handleSingleClose(message)}
                   severity={message.type}
@@ -49,7 +49,7 @@ export const MessagePanel = () => {
                 >
                   {message.message}
                 </Alert>
-               : 
+              ) : (
                 <Snackbar
                   open={true}
                   autoHideDuration={autohideDuration}
@@ -64,6 +64,7 @@ export const MessagePanel = () => {
                     {message.message}
                   </Alert>
                 </Snackbar>
+              )
             )}
           </div>
         </div>

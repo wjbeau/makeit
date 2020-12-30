@@ -64,6 +64,7 @@ export class ContactService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async findAllForUser(): Promise<Contact[] | undefined> {
     const user = this.request.user;
+
     //find all contacts where a given user is the owner
     const result: Contact[] = await this.contactModel
       .find({

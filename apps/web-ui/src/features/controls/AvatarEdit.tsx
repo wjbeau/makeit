@@ -5,7 +5,7 @@ import Avatar from 'react-avatar-edit';
 import { useAppDispatch } from '../../app/store';
 import { logError } from '../logging/logging.slice';
 
-const MAX_FILE_SIZE = 120000;
+const MAX_FILE_SIZE = 500000;
 
 const useStyles = makeStyles((theme) => ({
   avatar: {

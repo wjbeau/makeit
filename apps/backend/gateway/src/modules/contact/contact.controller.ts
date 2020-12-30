@@ -10,7 +10,9 @@ export class ContactController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getContacts() {
-    return this.contactService.findAllForUser()
+    const result = this.contactService.findAllForUser()
+
+    return result;
   }
 
   @UseGuards(JwtAuthGuard)

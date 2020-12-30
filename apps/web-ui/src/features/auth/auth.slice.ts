@@ -9,6 +9,7 @@ import {
   REFRESH_USER_KEY,
 } from '../../app/config';
 import { apiClient } from '../../app/api-client';
+import { userSet, selectCurrentUser } from '../account/user.slice';
 
 const initialState: AuthenticationState = {
   rememberMe: false,
@@ -17,8 +18,9 @@ const initialState: AuthenticationState = {
 
 export const loginAttempt = createAsyncThunk(
   'auth/loginAttempt',
-  async (userData: AuthRequest): Promise<AuthResponse> => {
+  async (userData: AuthRequest, thunkAPI): Promise<AuthResponse> => {
     const result = await apiClient().post(SERVER_URL + '/auth/login', userData);
+    thunkAPI.dispatch(userSet(result.data.user))
     return result.data;
   }
 );
@@ -36,8 +38,9 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     doLogout: (state) => {
-      state.user = undefined;
       localStorage.removeItem(ACTIVE_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_USER_KEY);
       state.token = undefined;
       state.refreshToken = undefined;
       state.loading = false;
@@ -50,7 +53,6 @@ export const authSlice = createSlice({
         state.rememberMe = action.meta.arg.rememberMe;
       })
       .addCase(loginAttempt.fulfilled, (state, action) => {
-        state.user = action.payload.user;
         state.token = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
         if (state.rememberMe) {
@@ -58,7 +60,7 @@ export const authSlice = createSlice({
             REFRESH_TOKEN_KEY,
             JSON.stringify(state.refreshToken)
           );
-          localStorage.setItem(REFRESH_USER_KEY, state.user.email);
+          localStorage.setItem(REFRESH_USER_KEY, action.payload.user.email);
         }
         else {
           localStorage.removeItem(REFRESH_TOKEN_KEY)
@@ -67,7 +69,6 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(loginAttempt.rejected, (state, action) => {
-        state.user = undefined;
         localStorage.removeItem(ACTIVE_TOKEN_KEY);
         state.token = undefined;
         state.refreshToken = undefined;
@@ -77,7 +78,6 @@ export const authSlice = createSlice({
         state.refreshActive = true;
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
-        state.user = action.payload.user;
         state.token = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
         if (state.rememberMe) {
@@ -85,7 +85,7 @@ export const authSlice = createSlice({
             REFRESH_TOKEN_KEY,
             JSON.stringify(state.refreshToken)
           );
-          localStorage.setItem(REFRESH_USER_KEY, state.user.email);
+          localStorage.setItem(REFRESH_USER_KEY, action.payload.user.email);
         }
         else {
           localStorage.removeItem(REFRESH_TOKEN_KEY)
@@ -98,7 +98,7 @@ export const authSlice = createSlice({
 
 export const { doLogout } = authSlice.actions;
 
-export const selectAuthed = (state: RootState) => state.auth.user;
+export const selectAuthed = selectCurrentUser;
 export const selectLoading = (state: RootState) => state.auth.loading;
 export const selectAuthToken = (state: RootState) => state.auth.token;
 export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;

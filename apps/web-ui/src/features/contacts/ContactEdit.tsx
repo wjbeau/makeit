@@ -2,33 +2,25 @@ import {
   Contact,
   ContactLinkType,
   ModelFactory,
-  TelecomType,
+  TelecomType
 } from '@makeit/types';
 import {
-  Avatar,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+
+
+
+
   Grid,
   IconButton,
-  makeStyles,
+  makeStyles
 } from '@material-ui/core';
 import {
   Add,
-  AddAPhoto,
+
   CancelOutlined,
   Delete,
-  Facebook,
-  Instagram,
-  LinkedIn,
-  Pinterest,
-  SaveOutlined,
-  Twitter,
-  YouTube,
+  SaveOutlined
 } from '@material-ui/icons';
-import { mdiVimeo as Vimeo } from '@mdi/js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { FastField, FieldArray, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -36,8 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { useAppDispatch } from '../../app/store';
-import AvatarEdit from '../controls/AvatarEdit';
-import ImdbIcon from '../controls/icons/ImdbIcon';
+import EditableAvatar from '../controls/EditableAvatar';
 import TitledSection from '../layout/TitledSection';
 import { logError, logSuccess } from '../logging/logging.slice';
 import { saveContact } from './contact.slice';
@@ -76,13 +67,8 @@ export const ContactEdit = (props: {
   const { contact, onCancel, onSave } = props;
   const classes = useStyles();
   const [formValues, setFormValues] = useState<Contact>(contact);
-  const [avatarDialogOpen, setAvatarDialogOpen] = useState<boolean>(false);
   const history = useHistory();
   const dispatch = useAppDispatch();
-
-  const handleAvatarDialogClose = () => {
-    setAvatarDialogOpen(false);
-  };
 
   const handleSave = (values, { setSubmitting }) => {
     dispatch(saveContact(values))
@@ -152,10 +138,6 @@ export const ContactEdit = (props: {
     ),
   });
 
-  const handleAvatarClick = () => {
-    setAvatarDialogOpen(true);
-  };
-
   return (
     <Formik
       initialValues={formValues}
@@ -169,11 +151,9 @@ export const ContactEdit = (props: {
             <Grid item xs={12}>
               <Grid container spacing={1} direction="row">
                 <Grid item className={classes.headingAvatar}>
-                  <Avatar src={values.avatar} className={classes.mainAvatar}>
-                    <IconButton onClick={handleAvatarClick}>
-                      <AddAPhoto />
-                    </IconButton>
-                  </Avatar>
+                  <EditableAvatar person={values} onChange={(preview) => {
+                      setFieldValue('avatar', preview);
+                    }} />
                 </Grid>
                 <Grid item className={classes.headingTitles}>
                   <Grid container spacing={1} direction="row">
@@ -366,33 +346,6 @@ export const ContactEdit = (props: {
               </TitledSection>
             </Grid>
           </Grid>
-
-          <Dialog
-            onClose={handleAvatarDialogClose}
-            aria-labelledby="avatar-edit-title"
-            open={avatarDialogOpen}
-          >
-            <DialogTitle id="avatar-edit-title">
-              Edit Contact Avatar
-            </DialogTitle>
-            <DialogContent dividers>
-              <AvatarEdit
-                person={values}
-                onChange={(preview) => {
-                  setFieldValue('avatar', preview);
-                }}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                autoFocus
-                onClick={handleAvatarDialogClose}
-                color="primary"
-              >
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
         </Form>
       )}
     </Formik>

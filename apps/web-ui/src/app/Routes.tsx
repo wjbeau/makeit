@@ -1,19 +1,9 @@
 import {
     AccountCircle,
     Assessment,
-
-
-
     Dashboard, MeetingRoom,
-
-
-
     MonetizationOn, People,
-
-
-
     PermMedia,
-
     Send, SwapHorizontalCircle, Today
 } from '@material-ui/icons';
 import React, { lazy } from 'react';
@@ -40,6 +30,7 @@ export class Routes {
             icon: undefined,
             requiresAuth: false,
             showInMenu: false,
+            hideSidebar: true
           },
           {
             path: '/calendar',
@@ -70,6 +61,16 @@ export class Routes {
             disabled: true,
             description:
               'The Exchange will eventually offer a way for users to exchange service with each other (e.g. self-tape readers, view each other\'s imdb feeds, social media follows, etc) with a points-system to ensure fairness and reciprocal action.',
+          },
+          {
+            path: '/account',
+            exact: true,
+            main: lazy(() => import('../features/account/AccountEditPage')),
+            title: 'Account',
+            icon: <AccountCircle />,
+            requiresAuth: true,
+            showInMenu: false,
+            hideSidebar: true,
           },
         ],
       },

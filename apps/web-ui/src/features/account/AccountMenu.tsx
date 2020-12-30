@@ -8,6 +8,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAppDispatch } from '../../app/store';
 import { doLogout } from '../auth/auth.slice';
+import { userSet } from './user.slice';
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -30,6 +31,8 @@ export const AccountMenu = (props: {
 
   const handleLogout = () => {
     dispatch(doLogout());
+    dispatch(userSet(null));
+    history.push("/login")
     onClose();
   };
 

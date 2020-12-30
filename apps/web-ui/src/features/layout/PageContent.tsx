@@ -1,21 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Suspense } from 'react';
-import { Routes } from '../../app/Routes';
-import { SidebarMenu } from './SidebarMenu';
-import { AuthedRoute } from '../auth/AuthedRoute';
+import {
+  Container,
+  Divider,
+  Drawer,
+  Grid,
+  Hidden,
+  IconButton,
+  useMediaQuery
+} from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Container, Divider, Drawer, Grid, Hidden, IconButton, useMediaQuery } from '@material-ui/core';
-import { IfAuthenticated } from '../auth/IfAuthenticated';
-import { DIMENSIONS } from './dimensions';
-import { Loading } from './Loading';
-import SupportButton from '../support/SupportButton';
 import { ChevronLeft } from '@material-ui/icons';
-import { useAppDispatch } from '../../app/store';
-import { useSelector } from 'react-redux';
-import { selectDrawerOpen, setDrawerOpen } from './layout.slice';
 import clsx from 'clsx';
+import React, { Suspense } from 'react';
+import { useSelector } from 'react-redux';
+import { Route, Switch } from 'react-router-dom';
+import { Routes } from '../../app/Routes';
+import { useAppDispatch } from '../../app/store';
 import { selectAuthed } from '../auth/auth.slice';
+import { AuthedRoute } from '../auth/AuthedRoute';
+import { IfAuthenticated } from '../auth/IfAuthenticated';
+import SupportButton from '../support/SupportButton';
+import { DIMENSIONS } from './dimensions';
+import { selectDrawerOpen, setDrawerOpen } from './layout.slice';
+import { Loading } from './Loading';
+import { SidebarMenu } from './SidebarMenu';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -100,7 +108,7 @@ export function PageContent() {
   };
 
   return (
-    <Router>
+    <>
       <Container maxWidth="xl" className={classes.container}>
         <Grid container direction="row" className={classes.grid}>
           <IfAuthenticated>
@@ -129,11 +137,13 @@ export function PageContent() {
               </Drawer>
             </Hidden>
           </IfAuthenticated>
-          <Grid item 
+          <Grid
+            item
             className={clsx(classes.content, {
               [classes.contentShift]: open && authed,
-              [classes.contentAdjustLeft]: isXs
-            })}>
+              [classes.contentAdjustLeft]: isXs,
+            })}
+          >
             <Suspense fallback={<Loading />}>
               <Switch>
                 {[
@@ -169,6 +179,6 @@ export function PageContent() {
       <IfAuthenticated>
         <SupportButton />
       </IfAuthenticated>
-    </Router>
+    </>
   );
 }

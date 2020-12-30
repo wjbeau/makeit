@@ -27,16 +27,11 @@ describe('UserService', () => {
   const mockModel = mock(MockableModel);
   const mockQuery = mock(MockableDocumentQuery);
   const mockDocument = mock(MockableDocument);
-  let mockRequest = undefined;
+  const currentUser = ModelFactory.createEmptyUserAccount()
+  currentUser._id = "someid"
 
   beforeEach(async () => {
-    mockRequest = {
-      user: {
-        _id: 'someID',
-      },
-    };
     classUnderTest = new UserService(
-      mockRequest,
       instance(mockCryptoService),
       instance(mockModel) as Model<UserDocument>
     );
@@ -114,7 +109,7 @@ describe('UserService', () => {
   describe('save', () => {
     it('should return valid User when properly updated', async () => {
       const user: UserAccount = ModelFactory.createEmptyUserAccount();
-      user._id = mockRequest.user._id;
+      user._id = currentUser._id;
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(user);
@@ -124,7 +119,7 @@ describe('UserService', () => {
       );
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(user._id, user);
+      const result = await classUnderTest.save(user._id, user, currentUser);
       verify(mockDocument.set(anything())).once();
       verify(mockDocument.save()).once();
       verify(mockModel.findOne(deepEqual({ _id: user._id }))).once();
@@ -135,13 +130,6 @@ describe('UserService', () => {
       const user: UserAccount = ModelFactory.createEmptyUserAccount();
       user._id = null;
       user.password = "mypass";
-
-      //we don't want to be logged in
-      classUnderTest = new UserService(
-        {},
-        instance(mockCryptoService),
-        instance(mockModel) as Model<UserDocument>
-      );
 
       when(mockDocument.toObject()).thenReturn(user);
 
@@ -156,7 +144,7 @@ describe('UserService', () => {
       when(mockCryptoService.hash(strictEqual(user.password))).thenResolve("hashed");
 
       expect(classUnderTest).toBeDefined();
-      const result = await classUnderTest.save(user._id, user);
+      const result = await classUnderTest.save(user._id, user, null);
       verify(mockDocument.set(anything())).never();
       verify(mockModel.create(deepEqual(user))).once();
       verify(mockModel.findOne(anything())).never();
@@ -171,7 +159,7 @@ describe('UserService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('differentid', user);
+        await classUnderTest.save('differentid', user, currentUser);
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -184,7 +172,7 @@ describe('UserService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(null, user);
+        await classUnderTest.save(null, user, currentUser);
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -196,7 +184,7 @@ describe('UserService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save('some_id', user);
+        await classUnderTest.save('some_id', user, currentUser);
         fail();
       } catch (e) {
         expect(e instanceof BadRequestException).toBeTruthy();
@@ -205,7 +193,7 @@ describe('UserService', () => {
 
     it('should return throw error when specified user doesnt exist for update', async () => {
       const user: UserAccount = ModelFactory.createEmptyUserAccount();
-      user._id = mockRequest.user._id;
+      user._id = currentUser._id;
 
       when(mockDocument.toObject()).thenReturn(user);
 
@@ -214,7 +202,7 @@ describe('UserService', () => {
       );
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(user._id, user);
+        await classUnderTest.save(user._id, user, currentUser);
         fail();
       } catch (e) {
         expect(e.message).toEqual('Not Found');
@@ -223,7 +211,7 @@ describe('UserService', () => {
 
     it('should return throw error when database interaction fails', async () => {
       const user: UserAccount = ModelFactory.createEmptyUserAccount();
-      user._id = mockRequest.user._id;
+      user._id = currentUser._id;
 
       when(mockDocument.toObject()).thenReturn(user);
 
@@ -232,7 +220,7 @@ describe('UserService', () => {
 
       expect(classUnderTest).toBeDefined();
       try {
-        await classUnderTest.save(user._id, user);
+        await classUnderTest.save(user._id, user, currentUser);
         fail();
       } catch (e) {
         expect(e).toEqual(err);

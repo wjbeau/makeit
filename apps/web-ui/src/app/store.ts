@@ -10,7 +10,9 @@ import projectsReducer from '../features/projects/project.slice';
 import calendarReducer from '../features/calendar/calendar.slice';
 import financeReducer from '../features/finance/finance.slice';
 import layoutReducer from '../features/layout/layout.slice';
-import { interceptor } from './initializer';
+import userReducer from '../features/account/user.slice';
+import { initApiClient } from './api-client';
+import { refreshToken } from '../features/auth/auth.slice';
 
 export const store = configureStore({
   reducer: {
@@ -23,12 +25,13 @@ export const store = configureStore({
     projects: projectsReducer,
     calendar: calendarReducer,
     finance: financeReducer,
-    layout: layoutReducer
+    layout: layoutReducer,
+    user: userReducer
   },
 });
 
 //set up the auth interceptors
-interceptor(store);
+initApiClient(store, refreshToken);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

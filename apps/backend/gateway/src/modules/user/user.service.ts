@@ -2,8 +2,6 @@ import {
   Injectable,
   Logger,
   OnModuleInit,
-  Scope,
-  Inject,
   BadRequestException,
   UnauthorizedException,
   NotFoundException,
@@ -14,12 +12,10 @@ import { Model } from 'mongoose';
 import { CryptoService } from '../common-services/crypto.service';
 import { AccessToken, UserAccount, AccessTokenType } from '@makeit/types';
 import * as moment from 'moment';
-import { REQUEST } from '@nestjs/core';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class UserService implements OnModuleInit {
   constructor(
-    @Inject(REQUEST) private readonly request,
     private cryptoService: CryptoService,
     @InjectModel(UserAccountModel.name) private userModel: Model<UserDocument>
   ) {}
@@ -64,12 +60,11 @@ export class UserService implements OnModuleInit {
   async changePassword(
     id: string,
     oldPwd: string,
-    newPwd: string
+    newPwd: string,
+    currentUser: UserAccount
   ): Promise<boolean> {
-    const currentUser = this.request.user;
-
     //for now you can only change your own user account
-    if (id !== currentUser.id) {
+    if (id !== currentUser._id) {
       throw new UnauthorizedException();
     }
 
@@ -98,9 +93,11 @@ export class UserService implements OnModuleInit {
     }
   }
 
-  async save(id: string, user: UserAccount): Promise<UserAccount> {
-    const currentUser = this.request.user;
-
+  async save(
+    id: string,
+    user: UserAccount,
+    currentUser: UserAccount
+  ): Promise<UserAccount> {
     //the path variable must match the data posted
     if ((id || user._id) && id !== user._id) {
       throw new BadRequestException();
@@ -117,14 +114,14 @@ export class UserService implements OnModuleInit {
     }
 
     // Find the document and update it if required or save a new one if not.
-    if (user._id) {
+    if (id) {
       const result = await this.userModel
-        .findOne({ _id: user._id })
+        .findOne({ _id: id })
         .then((dbRes) => {
           if (dbRes) {
-            //apply the changes with the exception of the password
+            //apply the changes with the exception of the password, refresh tokens and profiles
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {password, ...rest} = user;
+            const { password, tokens, profiles, ...rest } = user;
             dbRes.set(rest);
             return dbRes;
           }
@@ -133,14 +130,19 @@ export class UserService implements OnModuleInit {
         .catch((error) => {
           throw new BadRequestException(error, 'Database update failed.');
         });
-      
+
       await result.save();
-      return result.toObject();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, tokens, ...rest } = result.toObject();
+      return rest;
     } else {
       await this.cryptoService.hash(user.password).then((h) => {
         user.password = h;
       });
-      return await this.userModel.create(user).then((u) => u.toObject());
+      const result = await this.userModel.create(user).then((u) => u);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, tokens, ...rest } = result.toObject();
+      return rest;
     }
   }
 

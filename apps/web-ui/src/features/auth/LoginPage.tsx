@@ -49,7 +49,7 @@ export const LoginPage = () => {
     dispatch(loginAttempt(data))
       .then(unwrapResult)
       .then((auth) => {
-        if (location && location.state['from']) {
+        if (location && location.state && location.state['from']) {
           let dest = location.state['from'];
 
           //we don't allow jumping straight to an edit page because of load sequence issues

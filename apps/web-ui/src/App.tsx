@@ -1,8 +1,3 @@
-import React from 'react';
-import { Header } from './features/layout/Header';
-import { Footer } from './features/layout/Footer';
-import { PageContent } from './features/layout/PageContent';
-import './App.scss';
 import {
   createMuiTheme,
   Grid,
@@ -11,12 +6,16 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from '@material-ui/core';
-import { DIMENSIONS } from './features/layout/dimensions';
-import MessagePanel from './features/logging/MessagePanel';
-import { ErrorGuard } from './features/logging/ErrorGuard';
-import { useHistory } from 'react-router-dom';
-import SupportButton from './features/support/SupportButton';
 import { ConfirmProvider } from 'material-ui-confirm';
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import './App.scss';
+import { DIMENSIONS } from './features/layout/dimensions';
+import { Footer } from './features/layout/Footer';
+import { Header } from './features/layout/Header';
+import { PageContent } from './features/layout/PageContent';
+import { ErrorGuard } from './features/logging/ErrorGuard';
+import MessagePanel from './features/logging/MessagePanel';
 
 const useStyles = makeStyles((theme) => ({
   layoutGrid: {
@@ -55,7 +54,7 @@ let theme = createMuiTheme({
     },
   },
 });
-theme = responsiveFontSizes(theme, {factor: 3});
+theme = responsiveFontSizes(theme, { factor: 3 });
 
 function App() {
   const classes = useStyles();
@@ -66,22 +65,22 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Portal>
-        <MessagePanel />
-      </Portal>
-      <ErrorGuard retry={retry}>
-        <ConfirmProvider>
-          <Grid container direction="column" className={classes.layoutGrid}>
-            <Grid item className={classes.header}>
-              <Header />
+      <Router>
+        <ErrorGuard retry={retry}>
+          <ConfirmProvider>
+            <MessagePanel />
+            <Grid container direction="column" className={classes.layoutGrid}>
+              <Grid item className={classes.header}>
+                <Header />
+              </Grid>
+              <Grid item className={classes.content}>
+                <PageContent />
+                <Footer />
+              </Grid>
             </Grid>
-            <Grid item className={classes.content}>
-              <PageContent />
-              <Footer />
-            </Grid>
-          </Grid>
-        </ConfirmProvider>
-      </ErrorGuard>
+          </ConfirmProvider>
+        </ErrorGuard>
+      </Router>
     </ThemeProvider>
   );
 }
