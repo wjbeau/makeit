@@ -22,7 +22,7 @@ export class FileController {
   @UseGuards(JwtAuthGuard)
   @Get(':fileId')
   async getFile(@Param('fileId') fileId, @Response() res) {
-    res.sendFile(fileId, { root: 'attachments' });
+    res.sendFile(fileId, { root: 'file_uploads' });
   }
 
   @UseGuards(JwtAuthGuard)
