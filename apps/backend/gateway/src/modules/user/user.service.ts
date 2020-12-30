@@ -91,7 +91,7 @@ export class UserService implements OnModuleInit {
     } else {
       throw new NotFoundException('No such user account found.');
     }
-  }
+  } 
 
   async save(
     id: string,
@@ -131,7 +131,14 @@ export class UserService implements OnModuleInit {
           throw new BadRequestException(error, 'Database update failed.');
         });
 
-      await result.save();
+        try {
+          await result.save();
+        }
+        catch (error) {
+          this.handleDuplicateKey(error, user.email)
+          throw error;
+
+        }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, tokens, ...rest } = result.toObject();
       return rest;
@@ -139,7 +146,12 @@ export class UserService implements OnModuleInit {
       await this.cryptoService.hash(user.password).then((h) => {
         user.password = h;
       });
-      const result = await this.userModel.create(user).then((u) => u);
+      const result = await this.userModel.create(user)
+        .then((u) => u)
+        .catch((err) => {
+          this.handleDuplicateKey(err, user.email)
+          throw err
+        });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, tokens, ...rest } = result.toObject();
       return rest;
@@ -164,5 +176,11 @@ export class UserService implements OnModuleInit {
         });
       }
     });
+  }
+
+  private handleDuplicateKey(error, email) {
+    if(error.code === 11000) {
+      throw new BadRequestException(`An account for '${email}' already exists`);
+    }
   }
 }

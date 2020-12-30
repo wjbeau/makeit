@@ -36,7 +36,7 @@ export type UserDocument = UserAccountModel & mongoose.Document;
 
 @Schema()
 export class UserAccountModel implements UserAccount {
-    @Prop({ required: true })
+    @Prop({ required: true, unique: true })
     email: string;
     @Prop()
     password?: string;
