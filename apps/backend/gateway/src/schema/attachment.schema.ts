@@ -8,9 +8,9 @@ export type AttachmentDocument = AttachmentModel & mongoose.Document;
 export class AttachmentModel implements Attachment {
     @Prop({required: true})
     reference: string;
-    @Prop({ enum: Object.values(AttachmentType), type: String, required: true })
+    @Prop({ enum: Object.values(AttachmentType), type: String})
     attachmentType: AttachmentType;
-    @Prop({required: true})
+    @Prop()
     displayName: string;
     @Prop({required: true})
     fileName: string;

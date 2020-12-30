@@ -52,7 +52,7 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
                 formValues.notes &&
                 formValues.notes.map((note, index) => (
                   <>
-                    <Grid item key={index}>
+                    <Grid item key={'a' + index}>
                       {index > 0 && <Divider />}
                       <Typography
                         variant="body2"
@@ -81,7 +81,7 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
                         fullWidth={true}
                       />
                     </Grid>
-                    <Grid item key={index}>
+                    <Grid item key={'b' + index}>
                       <AttachmentPanel container={note} rootPath={`notes[${index}]`} >
                         <Button
                           startIcon={<Delete />}

@@ -2,7 +2,6 @@ import { Attachment } from '@makeit/types';
 import {
   IconButton,
   ListItem,
-
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -12,7 +11,6 @@ import { AttachFile, Delete, Image, YouTube, PictureAsPdf } from '@material-ui/i
 import React from 'react';
 import { Converter } from '../../app/Converters';
 import { AttachmentType } from '../../../../../libs/types/src/attachment.model';
-import { SERVER_URL } from '../../app/config';
 import { useAppDispatch } from '../../app/store';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { logError } from '../logging/logging.slice';

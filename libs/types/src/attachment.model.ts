@@ -6,8 +6,8 @@ export interface HasAttachments {
 
 export interface Attachment {
     reference: string;
-    attachmentType: AttachmentType;
-    displayName: string;
+    attachmentType?: AttachmentType;
+    displayName?: string;
     fileName: string;
     mimeType: string;
     size: number;
