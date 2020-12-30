@@ -11,7 +11,12 @@ import {
   DialogActions,
   Container,
 } from '@material-ui/core';
-import { AddAPhoto, CancelOutlined, SaveAltOutlined } from '@material-ui/icons';
+import {
+  AddAPhoto,
+  CancelOutlined,
+  LockOpen,
+  SaveAltOutlined,
+} from '@material-ui/icons';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -30,15 +35,15 @@ import {
   selectUserActivityBusy,
 } from './user.slice';
 import EditableAvatar from '../controls/EditableAvatar';
+import ChangePasswordDialog from './ChangePasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
-  mainContainer: {
-  },
+  mainContainer: {},
   addNoteContainer: {
     marginTop: theme.spacing(3),
   },
   settingsContainer: {
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
   },
   unsaved: {
     color: theme.palette.grey[400],
@@ -57,6 +62,7 @@ const AccountEditPage = () => {
   const busy = useSelector(selectUserActivityBusy);
   const currentUser = useSelector(selectCurrentUser);
   const [formValues, setFormValues] = useState<UserAccount>(currentUser);
+  const [changePasswordOpen, setChangePasswordOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const history = useHistory();
 
@@ -92,18 +98,38 @@ const AccountEditPage = () => {
           enableReinitialize={true}
           validationSchema={validationSchema}
         >
-          {({ dirty, values, submitForm, isSubmitting, resetForm, setFieldValue }) => (
+          {({
+            dirty,
+            values,
+            submitForm,
+            isSubmitting,
+            resetForm,
+            setFieldValue,
+          }) => (
             <Form>
-              <Grid container direction="column" spacing={3} className={classes.mainContainer}>
+              <Grid
+                container
+                direction="column"
+                spacing={3}
+                className={classes.mainContainer}
+              >
                 <Grid item>
                   <Typography variant="h4" component="h1" display="inline">
                     Account Settings
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Grid container direction="row" spacing={3} className={classes.settingsContainer}>
-                    <Grid item >
-                      <EditableAvatar person={values} onChange={(p) => setFieldValue("avatar", p)} />
+                  <Grid
+                    container
+                    direction="row"
+                    spacing={3}
+                    className={classes.settingsContainer}
+                  >
+                    <Grid item>
+                      <EditableAvatar
+                        person={values}
+                        onChange={(p) => setFieldValue('avatar', p)}
+                      />
                     </Grid>
                     <Grid item>
                       <Field
@@ -128,7 +154,12 @@ const AccountEditPage = () => {
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <Button variant="text" color="primary">
+                  <Button
+                    variant="text"
+                    color="primary"
+                    startIcon={<LockOpen />}
+                    onClick={() => setChangePasswordOpen(true)}
+                  >
                     Change Password
                   </Button>
                 </Grid>
@@ -157,6 +188,11 @@ const AccountEditPage = () => {
           )}
         </Formik>
       )}
+      <ChangePasswordDialog
+        visible={changePasswordOpen}
+        onSave={() => setChangePasswordOpen(false)}
+        onCancel={() => setChangePasswordOpen(false)}
+      />
     </Container>
   );
 };

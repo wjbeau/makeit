@@ -33,7 +33,7 @@ export const registerAccount = createAsyncThunk(
 export const changePassword = createAsyncThunk(
   'user/changePassword',
   async (changeRequest: PasswordChangeRequest): Promise<UserAccount> => {
-    const result = await apiClient().post(SERVER_URL + '/users/' 
+    const result = await apiClient().put(SERVER_URL + '/users/' 
       + changeRequest.userid + '/password', changeRequest);
     return result.data;
   }

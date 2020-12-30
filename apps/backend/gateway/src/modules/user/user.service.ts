@@ -72,18 +72,18 @@ export class UserService implements OnModuleInit {
       .findOne({ _id: id })
       .then((dbRes) => dbRes)
       .catch((error) => {
-        throw new BadRequestException(error, 'Database update failed.');
+        throw new BadRequestException(error, 'Database search failed.');
       });
 
     if (result) {
       const dbPwd = result.password;
 
-      if (!this.cryptoService.compare(oldPwd, dbPwd)) {
-        throw new UnauthorizedException('Incorrect password supplied');
+      if (!await this.cryptoService.compare(oldPwd, dbPwd)) {
+        throw new BadRequestException('Passwords don\'t match, please try again.');
       }
 
       await this.cryptoService.hash(newPwd).then((h) => {
-        result.password = h;
+        result.set({password: h});
       });
 
       await result.save();

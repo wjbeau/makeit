@@ -34,8 +34,6 @@ export const saveContact = createAsyncThunk('contacts/saveContact', async (conta
 
 export const deleteContact = createAsyncThunk('contacts/deleteContact', async (contact: Contact, thunkAPI) => {
   const result = await apiClient().delete('/contacts/' + contact._id);
-  console.log('Result: ')
-  console.log(result.data)
   if(result.data) {
     thunkAPI.dispatch(contactDeleted(contact))
   }

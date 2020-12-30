@@ -82,7 +82,8 @@
     "rxjs": "~6.5.5",
     "ts-mockito": "^2.6.1",
     "tslib": "^2.0.0",
-    "yup": "^0.31.0"
+    "yup": "^0.31.0",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",

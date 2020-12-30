@@ -31,7 +31,6 @@ class APIClientManager {
     client.interceptors.request.use(
       (conf) => {
         const refreshActive = this.store.getState()?.auth?.refreshActive;
-        console.log("request interceptor "  + refreshActive)
         //there's a token refresh in progress so just hold here
         if (refreshActive) {
           return new Promise((resolve) =>
@@ -51,7 +50,6 @@ class APIClientManager {
       },
       (error) => {
         return new Promise((resolve, reject) => {
-          console.log(error)
           const originalReq = error.config;
           if (error?.response?.status === 401 && !originalReq._retry) {
             const user = this.store.getState()?.auth?.user;
@@ -72,7 +70,7 @@ class APIClientManager {
               resolve(outcome);
             }
           }
-          reject(error);
+          reject(error?.response?.data ? error?.response?.data : error);
         });
       }
     );

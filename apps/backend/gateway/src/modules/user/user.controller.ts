@@ -10,7 +10,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put(':id/password')
   async changePassword(@Param() params, @Body() body:PasswordChangeRequest, @Request() req) {
-    return this.userService.changePassword(params.id, body.oldPassword, body.newPassword, req.user)
+    return this.userService.changePassword(params.id, body.oldPassword, body.newPassword, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
