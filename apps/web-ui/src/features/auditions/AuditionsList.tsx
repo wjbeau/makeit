@@ -3,7 +3,11 @@ import * as moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import React from 'react';
 import { Converter } from '../../app/Converters';
-import { makeStyles } from '@material-ui/core';
+import {
+  makeStyles,
+  createMuiTheme,
+  MuiThemeProvider,
+} from '@material-ui/core';
 import AuditionCardActions from './AuditionCardActions';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +48,7 @@ const columns = (auditions: Audition[]) => [
       filter: true,
       sort: true,
       customBodyRender: (value, tableMeta, updateValue) => {
-        return value ? moment.default(value).format("LLL") : "Not set";
+        return value ? moment.default(value).format('LLL') : 'Not set';
       },
     },
   },
@@ -68,7 +72,11 @@ const columns = (auditions: Audition[]) => [
       print: false,
       searchable: false,
       customBodyRender: (value, tableMeta, updateValue) => {
-        return <AuditionCardActions audition={auditions.find(a => a._id === value)} />
+        return (
+          <AuditionCardActions
+            audition={auditions.find((a) => a._id === value)}
+          />
+        );
       },
     },
   },
@@ -77,8 +85,60 @@ const columns = (auditions: Audition[]) => [
 const options = {
   filtertype: 'checkbox',
   enableNestedDataAccess: '.',
-  selectableRows: 'none'
+  selectableRows: 'none',
 };
+
+const defaultTheme = createMuiTheme();
+const theme = createMuiTheme({
+  overrides: {
+    MuiTableRow: {
+      head: {
+        [defaultTheme.breakpoints.up('md')]: {
+          '& th:nth-child(1)': {
+            width: 150,
+          },
+          '& th:nth-child(2)': {
+            width: 200,
+          },
+          '& th:nth-child(3)': {
+          },
+          '& th:nth-child(4)': {
+            width: 200,
+          },
+          '& th:nth-child(5)': {
+            width: 150,
+          },
+          '& th:nth-child(6)': {
+            width: 200,
+            textAlign: 'center',
+          },
+        },
+      },
+      root: {
+        [defaultTheme.breakpoints.up('md')]: {
+          '& td:nth-child(1)': {
+            width: 150,
+          },
+          '& td:nth-child(2)': {
+            width: 200,
+          },
+          '& td:nth-child(3)': {
+          },
+          '& td:nth-child(4)': {
+            width: 200,
+          },
+          '& td:nth-child(5)': {
+            width: 150,
+          },
+          '& td:nth-child(6)': {
+            width: 200,
+            textAlign: 'right',
+          },
+        },
+      },
+    },
+  },
+});
 
 export const AuditionsList = (props) => {
   const { auditions } = props;
@@ -86,12 +146,14 @@ export const AuditionsList = (props) => {
 
   return (
     <div className={classes.padding}>
-      <MUIDataTable
-        title="Auditions"
-        data={auditions}
-        columns={columns(auditions)}
-        options={options}
-      />
+      <MuiThemeProvider theme={theme}>
+        <MUIDataTable
+          title="Auditions"
+          data={auditions}
+          columns={columns(auditions)}
+          options={options}
+        />
+      </MuiThemeProvider>
     </div>
   );
 };

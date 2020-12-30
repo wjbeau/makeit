@@ -2,7 +2,7 @@ import { UnionType, ProjectType, ProjectStatus } from '@makeit/types';
 import MUIDataTable from 'mui-datatables';
 import React, { useEffect } from 'react';
 import { Converter } from '../../app/Converters';
-import { makeStyles } from '@material-ui/core';
+import { createMuiTheme, makeStyles, MuiThemeProvider } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectAuthed } from '../auth/auth.slice';
 import {
@@ -27,6 +27,53 @@ const options = {
   enableNestedDataAccess: '.',
   selectableRows: 'none',
 };
+
+const defaultTheme = createMuiTheme();
+const theme = createMuiTheme({
+  overrides: {
+    MuiTableRow: {
+      head: {
+        '& td:nth-child(3)': {
+          textAlign: 'left',
+        },
+        [defaultTheme.breakpoints.up('md')]: {
+          '& th:nth-child(1)': {},
+          '& th:nth-child(2)': {
+            width: 150,
+          },
+          '& th:nth-child(3)': {
+            width: 150,
+          },
+          '& th:nth-child(4)': {
+            width: 150,
+          },
+          '& th:nth-child(5)': {
+            width: 200,
+            textAlign: 'center',
+          },
+        },
+      },
+      root: {
+        [defaultTheme.breakpoints.up('md')]: {
+          '& td:nth-child(1)': {},
+          '& td:nth-child(2)': {
+            width: 150,
+          },
+          '& td:nth-child(3)': {
+            width: 150,
+          },
+          '& td:nth-child(4)': {
+            width: 150,
+          },
+          '& td:nth-child(5)': {
+            width: 200,
+            textAlign: 'right',
+          },
+        },
+      },
+    },
+  },
+});
 
 export const ProjectsList = () => {
   const user = useSelector(selectAuthed);
@@ -109,12 +156,14 @@ export const ProjectsList = () => {
   return (
     <IfNotLoading loading={loading}>
       <div className={classes.padding}>
-        <MUIDataTable
-          title="Projects"
-          data={projects}
-          columns={columns}
-          options={options}
-        />
+        <MuiThemeProvider theme={theme}>
+          <MUIDataTable
+            title="Projects"
+            data={projects}
+            columns={columns}
+            options={options}
+          />
+        </MuiThemeProvider>
       </div>
     </IfNotLoading>
   );

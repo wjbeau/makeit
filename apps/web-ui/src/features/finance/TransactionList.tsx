@@ -1,4 +1,8 @@
-import { Transaction, TransactionType } from '@makeit/types';
+import {
+  Transaction,
+  TransactionType,
+  TransactionRelationType,
+} from '@makeit/types';
 import {
   createMuiTheme,
   IconButton,
@@ -24,7 +28,6 @@ import { selectAuthed } from '../auth/auth.slice';
 import DeleteWithConfirm from '../controls/DeleteWithConfirm';
 import IfNotLoading from '../layout/IfNotLoading';
 import { logError, logSuccess } from '../logging/logging.slice';
-import { TransactionRelationType } from '../../../../../libs/types/src/finance.model';
 import {
   deleteTransaction,
   fetchTransactions,
@@ -47,40 +50,48 @@ const options = {
   selectableRows: 'none',
 };
 
+const defaultTheme = createMuiTheme();
 const theme = createMuiTheme({
   overrides: {
     MuiTableRow: {
       head: {
-        '& th:nth-child(1)': {
-          width: 150,
-        },
-        '& th:nth-child(2)': {
-          width: 150,
-        },
-        '& th:nth-child(3)': {
-          width: 150,
-        },
-        '& th:nth-child(4)': {},
-        '& th:nth-child(5)': {
-          width: 150,
+        '& td:nth-child(3)': {
           textAlign: 'left',
+        },
+        [defaultTheme.breakpoints.up('md')]: {
+          '& th:nth-child(1)': {
+            width: 150,
+          },
+          '& th:nth-child(2)': {
+            width: 150,
+          },
+          '& th:nth-child(3)': {
+            width: 150,
+          },
+          '& th:nth-child(4)': {},
+          '& th:nth-child(5)': {
+            width: 200,
+            textAlign: 'center',
+          },
         },
       },
       root: {
-        '& td:nth-child(1)': {
-          width: 150,
-        },
-        '& td:nth-child(2)': {
-          width: 150,
-        },
-        '& td:nth-child(3)': {
-          width: 150,
-          textAlign: 'right',
-        },
-        '& td:nth-child(4)': {},
-        '& td:nth-child(5)': {
-          width: 150,
-          textAlign: 'right',
+        [defaultTheme.breakpoints.up('md')]: {
+          '& td:nth-child(1)': {
+            width: 150,
+          },
+          '& td:nth-child(2)': {
+            width: 150,
+          },
+          '& td:nth-child(3)': {
+            width: 150,
+            textAlign: 'right',
+          },
+          '& td:nth-child(4)': {},
+          '& td:nth-child(5)': {
+            width: 200,
+            textAlign: 'right',
+          },
         },
       },
       footer: {
@@ -104,7 +115,8 @@ export const TransactionsList = (props: {
   const { related, relatedType } = props;
 
   const transactions = transactionsRaw.filter(
-    (t) => (!related || t.relatesTo === related._id) &&
+    (t) =>
+      (!related || t.relatesTo === related._id) &&
       (!relatedType || t.relatesToType === relatedType)
   );
 
