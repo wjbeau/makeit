@@ -1,6 +1,7 @@
 import { AuthRequest } from '@makeit/types';
 import {
   Button,
+  Divider,
   FormControlLabel,
   Grid,
   Link,
@@ -19,19 +20,40 @@ import { useAppDispatch } from '../../app/store';
 import { logError } from '../logging/logging.slice';
 import { loginAttempt, selectLoading } from './auth.slice';
 import { FormControl, InputLabel } from '@material-ui/core';
+import { AddCircle, CheckBox } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
     justifyContent: 'center',
+    maxWidth: 625,
   },
   loginBackground: {
     justifyContent: 'center',
-    minHeight: '30vh',
     padding: 50,
+    height: 375
   },
   buttonBlock: {
     width: '100%',
   },
+  pageContent: {
+    height: '100%',
+    alignItems: 'center',
+  },
+  signupButton: {
+    textAlign: 'center',
+    marginTop: theme.spacing(6),
+  },
+  textCenter: {
+    textAlign: 'center'
+  },
+  explainer: {
+    textAlign: 'justify',
+    marginTop: theme.spacing(2)
+  },
+  forgot: {
+    marginTop: theme.spacing(1),
+    textAlign: 'center'
+  }
 }));
 
 const validationSchema = yup.object().shape({
@@ -73,13 +95,24 @@ export const LoginPage = () => {
         )
       );
   };
+
+  const handleRegister = () => {
+    history.push("/register")
+  }
+
   const loading = useSelector(selectLoading);
 
   return (
-    <div>
+    <>
       {!loading && (
-        <Grid container spacing={0} justify="center" direction="row">
-          <Grid item>
+        <Grid
+          container
+          spacing={0}
+          justify="center"
+          direction="row"
+          className={classes.pageContent}
+        >
+          <Grid>
             <Grid
               container
               direction="column"
@@ -87,89 +120,121 @@ export const LoginPage = () => {
               spacing={2}
               className={classes.loginForm}
             >
-              <Paper
-                variant="elevation"
-                elevation={2}
-                className={classes.loginBackground}
-              >
-                <Grid item>
-                  <Typography component="h1" variant="h5">
-                    Log in
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Formik
-                    initialValues={{
-                      username: '',
-                      password: '',
-                      rememberMe: false,
-                    }}
-                    validationSchema={validationSchema}
-                    onSubmit={handleLogin}
-                  >
-                    {({ errors, touched, submitForm, isSubmitting }) => (
-                      <Form>
-                        <Grid container direction="column" spacing={2}>
-                          <Grid item>
-                            <Field
-                              component={TextField}
-                              name="username"
-                              label="Username"
-                              error={errors.username && touched.username}
-                              helperText={errors.username}
-                            />
-                          </Grid>
-                          <Grid item>
-                            <Field
-                              component={TextField}
-                              name="password"
-                              label="Password"
-                              type="password"
-                              error={errors.password && touched.password}
-                              helperText={errors.password}
-                            />
-                          </Grid>
-                          <Grid item>
-                            <FormControlLabel
-                              control={
+              <Grid item>
+                <Grid container spacing={5} justify="center" direction="row">
+                  <Grid item xs={12} sm={6}>
+                    <Paper
+                      variant="elevation"
+                      elevation={2}
+                      className={classes.loginBackground}
+                    >
+                      <Typography component="h1" variant="h5">
+                        Log in
+                      </Typography>
+                      <Formik
+                        initialValues={{
+                          username: '',
+                          password: '',
+                          rememberMe: false,
+                        }}
+                        validationSchema={validationSchema}
+                        onSubmit={handleLogin}
+                      >
+                        {({ errors, touched, submitForm, isSubmitting }) => (
+                          <Form>
+                            <Grid container direction="column" spacing={2}>
+                              <Grid item>
                                 <Field
-                                  type="checkbox"
-                                  component={Checkbox}
-                                  name="rememberMe"
+                                  component={TextField}
+                                  name="username"
+                                  label="Username"
+                                  error={errors.username && touched.username}
+                                  helperText={errors.username}
+                                />
+                              </Grid>
+                              <Grid item>
+                                <Field
+                                  component={TextField}
+                                  name="password"
+                                  label="Password"
+                                  type="password"
+                                  error={errors.password && touched.password}
+                                  helperText={errors.password}
+                                />
+                              </Grid>
+                              <Grid item>
+                                <FormControlLabel
+                                  control={
+                                    <Field
+                                      type="checkbox"
+                                      component={Checkbox}
+                                      name="rememberMe"
+                                      label="Remember Me"
+                                    />
+                                  }
                                   label="Remember Me"
                                 />
-                              }
-                              label="Remember Me"
-                            />
-                          </Grid>
-                          <Grid item>
+                              </Grid>
+                              <Grid item>
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  className={classes.buttonBlock}
+                                  onClick={submitForm}
+                                  disabled={isSubmitting}
+                                >
+                                  Sign In
+                                </Button>
+                              </Grid>
+                            </Grid>
+                          </Form>
+                        )}
+                      </Formik>
+                      <div className={classes.forgot}>
+                        <Link href="#" variant="body2">
+                          Forgot Password?
+                        </Link>
+                      </div>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Paper
+                      variant="elevation"
+                      elevation={1}
+                      className={classes.loginBackground}
+                    >
+                      <Grid container direction="column" spacing={2}>
+                        <Grid item>
+                          <Typography component="h2" variant="h6" className={classes.textCenter}>
+                            No account yet?
+                          </Typography>
+                          <Typography color="textSecondary" variant="body1" className={classes.explainer}>
+                            Not to worry, registering is a simple process. Why
+                            not give it a shot and see whether Make It is right
+                            for your Acting career?
+                          </Typography>
+                          <div className={classes.signupButton}>
                             <Button
                               variant="contained"
-                              color="primary"
-                              className={classes.buttonBlock}
-                              onClick={submitForm}
-                              disabled={isSubmitting}
+                              color="secondary"
+                              startIcon={<CheckBox />}
+                              onClick={handleRegister}
                             >
-                              Sign In
+                              Register
                             </Button>
-                          </Grid>
+                          </div>
                         </Grid>
-                      </Form>
-                    )}
-                  </Formik>
+                      </Grid>
+                    </Paper>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    Forgot Password?
-                  </Link>
-                </Grid>
-              </Paper>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
       )}
       {loading && <div>Loading...</div>}
-    </div>
+    </>
   );
 };
 

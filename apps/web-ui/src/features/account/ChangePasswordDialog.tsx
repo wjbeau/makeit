@@ -19,23 +19,11 @@ import { useSelector } from 'react-redux';
 import { logError, logSuccess } from '../logging/logging.slice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { InputAdornment } from '@material-ui/core';
-import * as zxcvbn from 'zxcvbn';
+import { PasswordInputWithStrength } from './PasswordInputWithStrength';
 
 export const useStyles = makeStyles((theme) => ({
   mainContent: {
     overflow: 'hidden',
-  },
-  weak: {
-    color: theme.palette.error.dark,
-  },
-  fair: {
-    color: theme.palette.warning.dark,
-  },
-  good: {
-    color: theme.palette.info.dark,
-  },
-  strong: {
-    color: theme.palette.success.dark,
   },
 }));
 
@@ -69,24 +57,6 @@ export const ChangePasswordDialog = (props: { visible: boolean, onSave: () => vo
   const handleCancel = (resetForm) => {
     resetForm();
     onCancel()
-  };
-
-  const passwordStrength = (pwd: string) => {
-    if (!pwd) {
-      return '';
-    }
-    const result = zxcvbn(pwd);
-    switch (result.score) {
-      case 0:
-      case 1:
-        return <span className={classes.weak}>Weak</span>;
-      case 2:
-        return <span className={classes.fair}>Fair</span>;
-      case 3:
-        return <span className={classes.good}>Good</span>;
-      case 4:
-        return <span className={classes.strong}>Strong</span>;
-    }
   };
 
   const validationSchema = yup.object().shape({
@@ -128,19 +98,11 @@ export const ChangePasswordDialog = (props: { visible: boolean, onSave: () => vo
                 type="password"
               />
               <Field
-                component={TextField}
+                component={PasswordInputWithStrength}
                 name="newpwd"
                 label="New Password"
                 fullWidth={true}
                 required
-                type="password"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {passwordStrength(values.newpwd)}
-                    </InputAdornment>
-                  ),
-                }}
               />
               <Field
                 component={TextField}

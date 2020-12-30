@@ -72,6 +72,16 @@ export class Routes {
             showInMenu: false,
             hideSidebar: true,
           },
+          {
+            path: '/register',
+            exact: true,
+            main: lazy(() => import('../features/account/AccountRegisterPage')),
+            title: 'Account',
+            icon: <AccountCircle />,
+            requiresAuth: false,
+            showInMenu: false,
+            hideSidebar: true,
+          },
         ],
       },
       career: {
