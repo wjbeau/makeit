@@ -2,16 +2,11 @@ import {
   hasAttachments,
   HasAttachments,
   hasParticipants,
-  HasParticipants,
+  HasParticipants
 } from '@makeit/types';
-import { Divider, Grid, makeStyles, Typography } from '@material-ui/core';
-import { display } from '@material-ui/system';
+import { Grid, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
-import TitledSection from '../layout/TitledSection';
 import AttachmentButtons from './AttachmentButtons';
-import FileAttachmentList from './FileAttachmentList';
-import LinkAttachmentList from './LinkAttachmentList';
-import ParticipantAttachmentList from './ParticipantAttachmentList';
 import FileAttachmentMenu from './FileAttachmentMenu';
 import LinkAttachmentMenu from './LinkAttachmentMenu';
 import ParticipantAttachmentMenu from './ParticipantAttachmentMenu';
