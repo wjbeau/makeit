@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const PasswordInputWithStrength = (props: TextFieldProps) => {
   const classes = useStyles();
-  const [strength, setStrength] = useState(undefined);
+  const [strength, setStrength] = useState(<span></span>);
 
   const {
     form: { setFieldValue },
@@ -48,7 +48,7 @@ export const PasswordInputWithStrength = (props: TextFieldProps) => {
             break;
         }
       } else {
-        setStrength(undefined);
+        setStrength(<span></span>);
       }
       setFieldValue(name, value);
     },
