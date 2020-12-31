@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   bold: {
     fontWeight: 'bold',
   },
+  hide: {
+    display: 'none'
+  }
 }));
 
 export class FieldArrayHelperContainer {
@@ -37,6 +40,10 @@ export const AttachmentPanel = (props: {
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
   const { container, disableMargin, rootPath, children } = props;
 
+  const showMenuIcons = (container['attachments']?.length > 0 ||
+      container['links']?.length > 0 ||
+      container['participants']?.length > 0);
+
   return (
     <Grid
       container
@@ -44,36 +51,32 @@ export const AttachmentPanel = (props: {
       direction="row"
       className={disableMargin ? null : classes.attachmentContainer}
     >
-      {(container['attachments']?.length > 0 ||
-        container['links']?.length > 0 ||
-        container['participants']?.length > 0) && (
-        <Grid item xs={12}>
-          {hasAttachments(container) && (
-            <>
-              <FileAttachmentMenu
-                rootPath={rootPath}
-                container={container as HasAttachments}
-                readOnly={false}
-                helpers={helpers}
-              />
-              <LinkAttachmentMenu
-                rootPath={rootPath}
-                container={container as HasAttachments}
-                readOnly={false}
-                helpers={helpers}
-              />
-            </>
-          )}
-          {hasParticipants(container) && (
-            <ParticipantAttachmentMenu
+      <Grid item xs={12} className={!showMenuIcons ? classes.hide : null}>
+        {hasAttachments(container) && (
+          <>
+            <FileAttachmentMenu
               rootPath={rootPath}
-              container={container as HasParticipants}
+              container={container as HasAttachments}
               readOnly={false}
               helpers={helpers}
             />
-          )}
-        </Grid>
-      )}
+            <LinkAttachmentMenu
+              rootPath={rootPath}
+              container={container as HasAttachments}
+              readOnly={false}
+              helpers={helpers}
+            />
+          </>
+        )}
+        {hasParticipants(container) && (
+          <ParticipantAttachmentMenu
+            rootPath={rootPath}
+            container={container as HasParticipants}
+            readOnly={false}
+            helpers={helpers}
+          />
+        )}
+      </Grid>
       <Grid item xs={12}>
         <AttachmentButtons container={container} helpers={helpers}>
           {children}

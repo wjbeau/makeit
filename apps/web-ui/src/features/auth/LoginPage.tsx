@@ -220,7 +220,7 @@ export const LoginPage = () => {
                               startIcon={<CheckBox />}
                               onClick={handleRegister}
                             >
-                              Register
+                              Register Now
                             </Button>
                           </div>
                         </Grid>

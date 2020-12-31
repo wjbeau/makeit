@@ -42,8 +42,8 @@ export const FileAttachmentDialog = (props: {
   const { open, onSave, onClose } = props;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [file, setFile] = useState<File>(null);
-  const [description, setDescription] = useState<string>();
-  const [type, setType] = useState<string>();
+  const [description, setDescription] = useState<string>('');
+  const [type, setType] = useState<string>('');
   const dispatch = useAppDispatch();
 
   const handleDisplayChange = (e) => {
@@ -59,13 +59,17 @@ export const FileAttachmentDialog = (props: {
   };
 
   const handleSave = () => {
-    dispatch(uploadFile(file))
+    dispatch(
+      uploadFile({
+        displayName: description,
+        attachmentType: type,
+        file: file,
+      })
+    )
       .then(unwrapResult)
       .then((a) => {
-        a.displayName = description;
-        a.attachmentType = type;
-        props.onSave([a]);
-        props.onClose();
+        onSave([a]);
+        onClose();
       })
       .catch((e) => dispatch(logError(e)));
   };
@@ -84,10 +88,11 @@ export const FileAttachmentDialog = (props: {
               label="Description"
               fullWidth={true}
               onChange={handleDisplayChange}
+              value={description}
             />
           </Grid>
           <Grid item xs={4}>
-            <FormControl fullWidth={true}>
+            <FormControl fullWidth={true} required>
               <InputLabel id="attachment-type-label">Type</InputLabel>
               <Select
                 name="attachmentType"
@@ -95,6 +100,8 @@ export const FileAttachmentDialog = (props: {
                 id="attachmentType"
                 labelId="attachment-type-label"
                 onChange={handleTypeChange}
+                value={type}
+                required
               >
                 {Converter.enumToMenuItems('AttachmentType', AttachmentType)}
               </Select>

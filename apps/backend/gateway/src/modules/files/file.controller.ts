@@ -1,5 +1,7 @@
 import { Attachment } from '@makeit/types';
 import {
+  BadRequestException,
+  Query,
   Controller,
   Get,
   Param,
@@ -8,12 +10,14 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileService } from './file.service';
+import * as fs from 'fs';
 
 @Controller('files')
 export class FileController {
@@ -41,13 +45,17 @@ export class FileController {
       }),
     })
   )
-  async uploadFileAsAttachment(@UploadedFile() file) {
+  async uploadFileAsAttachment(@UploadedFile() file, @Body() body) {
+    if(!body.attachmentType?.length) {
+      fs.unlinkSync(process.env.BACKEND_FILE_UPLOADS + '/' + file.filename);
+      throw new BadRequestException("No attachment type specified")
+    }
     const result: Attachment = {
       reference: file.filename,
-      attachmentType: null,
+      attachmentType: body.attachmentType,
       fileName: file.originalname,
       mimeType: file.mimetype,
-      displayName: null,
+      displayName: body.displayName,
       size: file.size,
     };
 

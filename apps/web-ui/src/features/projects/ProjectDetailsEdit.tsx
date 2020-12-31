@@ -131,7 +131,7 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string, sho
           />
         </Grid>
       </Grid>
-      <AttachmentPanel container={project} rootPath={getPath(formikPrefix, "project")} />
+      <AttachmentPanel container={project} rootPath={formikPrefix} />
     </TitledPaper>
   );
 };

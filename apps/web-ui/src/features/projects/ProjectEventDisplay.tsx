@@ -1,4 +1,4 @@
-import { ProjectEventType } from '@makeit/types';
+import { ProjectEventType, ProjectEvent } from '@makeit/types';
 import {
   Collapse,
   fade,
@@ -11,7 +11,6 @@ import { ExpandMore } from '@material-ui/icons';
 import clsx from 'clsx';
 import React from 'react';
 import Moment from 'react-moment';
-import { ProjectEvent } from '../../../../../libs/types/src/project.model';
 import { Converter } from '../../app/Converters';
 import AddressDisplay from '../controls/AddressDisplay';
 
