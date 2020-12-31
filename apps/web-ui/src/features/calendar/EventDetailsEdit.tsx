@@ -9,6 +9,7 @@ import { TextField } from 'formik-material-ui';
 import { KeyboardDateTimePicker } from 'formik-material-ui-pickers';
 import React, { useState } from 'react';
 import * as yup from 'yup';
+import * as moment from 'moment';
 import { useAppDispatch } from '../../app/store';
 import { logError, logSuccess } from '../logging/logging.slice';
 import { saveEvent } from './calendar.slice';
@@ -73,13 +74,21 @@ const EventDetailsEdit = (props: {
     start: yup
       .date()
       .transform((curr, orig) => {
-        return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
+        let oriMom = orig;
+        if(oriMom && !orig.isValid) {
+          oriMom = moment.default(new Date(orig));
+        }
+        return !oriMom || !oriMom.isValid() ? undefined : curr;
       })
       .required('Required'),
     end: yup
       .date()
       .transform((curr, orig) => {
-        return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
+        let oriMom = orig;
+        if(oriMom && !orig.isValid) {
+          oriMom = moment.default(new Date(orig));
+        }
+        return !oriMom || !oriMom.isValid() ? undefined : curr;
       })
       .required('Required'),
   });

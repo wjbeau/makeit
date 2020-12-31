@@ -20,6 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as yup from 'yup';
+import * as moment from 'moment';
 import { useAppDispatch } from '../../app/store';
 import Loading from '../layout/Loading';
 import { logError, logSuccess } from '../logging/logging.slice';
@@ -88,7 +89,11 @@ const ProjectEditPage = () => {
         time: yup
           .date()
           .transform((curr, orig) => {
-            return !orig || !orig.isValid || !orig.isValid() ? undefined : curr;
+            let oriMom = orig;
+            if(oriMom && !orig.isValid) {
+              oriMom = moment.default(new Date(orig));
+            }
+            return !oriMom || !oriMom.isValid() ? undefined : curr;
           })
           .required('Required'),
         eventType: yup.string().required('Required'),

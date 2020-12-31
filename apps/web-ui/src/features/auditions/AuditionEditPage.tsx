@@ -82,7 +82,7 @@ const AuditionEditPage = () => {
 
   const validationSchema = yup.object().shape({
     type: yup.string().required('Required'),
-    auditionTime: yup.date().required('Required').nullable(),
+    auditionTime: yup.date().required('Required'),
     status: yup.string().required('Required'),
     source: yup.string().required('Required'),
     breakdown: yup.object({

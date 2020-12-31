@@ -1,4 +1,4 @@
-import { Project, ProjectEventType } from '@makeit/types';
+import { ModelFactory, Project, ProjectEventType } from '@makeit/types';
 import {
   Button,
   Divider,
@@ -67,14 +67,19 @@ const ProjectEventsEdit = (props: { project: Project }) => {
                     <Grid container spacing={3}>
                       <Grid item xs={3}>
                         <FormControl fullWidth={true}>
-                          <InputLabel htmlFor={'event-type-' + index}>Event Type</InputLabel>
+                          <InputLabel htmlFor={'event-type-' + index}>
+                            Event Type
+                          </InputLabel>
                           <FastField
                             component={Select}
                             name={`events[${index}].eventType`}
                             inputProps={{ id: 'event-type-' + index }}
                             fullWidth={true}
                           >
-                            {Converter.enumToMenuItems('ProjectEventType', ProjectEventType)}
+                            {Converter.enumToMenuItems(
+                              'ProjectEventType',
+                              ProjectEventType
+                            )}
                           </FastField>
                         </FormControl>
                       </Grid>
@@ -145,7 +150,10 @@ const ProjectEventsEdit = (props: { project: Project }) => {
                         />
                       </Grid>
                       <Grid item key={index} xs={12}>
-                        <AttachmentPanel container={event} rootPath={`events[${index}]`} >
+                        <AttachmentPanel
+                          container={event}
+                          rootPath={`events[${index}]`}
+                        >
                           <Button
                             startIcon={<Delete />}
                             color="primary"
@@ -155,13 +163,32 @@ const ProjectEventsEdit = (props: { project: Project }) => {
                           >
                             Delete Event
                           </Button>
+                          {index === formValues.events.length - 1 && (
+                            <Button
+                              startIcon={<NoteAdd />}
+                              color="primary"
+                              variant="text"
+                              onClick={() =>
+                                arrayHelpers.push({
+                                  time: null,
+                                  location: ModelFactory.createEmptyAddress(),
+                                  notes: '',
+                                  eventType: ProjectEventType.Rehearsal,
+                                  links: [],
+                                  attachments: [],
+                                })
+                              }
+                            >
+                              Add Event
+                            </Button>
+                          )}
                         </AttachmentPanel>
                       </Grid>
                     </Grid>
                   </Grid>
                 ))}
 
-              <Grid item className={classes.addNoteContainer}>
+              {formValues?.events?.length === 0 && <Grid item className={classes.addNoteContainer}>
                 <Button
                   startIcon={<NoteAdd />}
                   color="primary"
@@ -169,17 +196,17 @@ const ProjectEventsEdit = (props: { project: Project }) => {
                   onClick={() =>
                     arrayHelpers.push({
                       time: null,
-                      location: null,
-                      notes: null,
+                      location: ModelFactory.createEmptyAddress(),
+                      notes: '',
                       eventType: ProjectEventType.Rehearsal,
                       links: [],
                       attachments: [],
                     })
                   }
                 >
-                  Add Note
+                  Add Event
                 </Button>
-              </Grid>
+              </Grid>}
             </>
           )}
         />
