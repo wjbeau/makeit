@@ -1,6 +1,6 @@
-import { instance, mock, reset, when, strictEqual } from 'ts-mockito';
+import { instance, mock, reset, when, strictEqual, deepEqual } from 'ts-mockito';
 import { AuthService } from './auth.service';
-import { UserAccount } from '@makeit/types';
+import { UserAccount, AccessTokenType } from '@makeit/types';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { CryptoService } from '../common-services/crypto.service';
@@ -34,15 +34,28 @@ describe('AuthService', () => {
         firstName: 'fname',
         lastName: 'lname',
         avatar: '',
+        tokens: [],
+        password: 'some crazy password',
         profiles: []
       }
-      when(mockedJwtService.sign(strictEqual(user))).thenReturn('test_jwt');
+
+      const refreshToken = {
+        token: "refresh",
+        expires: new Date(),
+        type: AccessTokenType.Refresh,
+      }
+
+      when(mockedUserService.generateRefreshToken((deepEqual(user)))).thenResolve(refreshToken);
+
+      const {avatar, password, tokens, ...rest} = user
+      when(mockedJwtService.sign(deepEqual(rest), deepEqual( { expiresIn: '30m' }))).thenReturn('test_jwt');
 
       expect(classUnderTest).toBeDefined();
       const result = await classUnderTest.login(user);
       expect(result).toBeDefined();
-      expect(result.access_token).toEqual('test_jwt')
-      expect(result.user).toEqual(user)
+      expect(result.access_token.token).toEqual('test_jwt')
+      expect(result.refresh_token).toEqual(refreshToken)
+      expect(result.user).toEqual({avatar, ...rest})
     });
   });
 

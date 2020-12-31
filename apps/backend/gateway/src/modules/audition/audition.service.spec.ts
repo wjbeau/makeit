@@ -55,10 +55,10 @@ describe('AuditionService', () => {
       audition._id = 'auditionid';
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
-      when(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.populate(deepEqual([
+        { path: 'breakdown', populate: { path: 'project' }},
+        {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+      ]))).thenReturn(instance(mockDocument));
       when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
@@ -77,10 +77,10 @@ describe('AuditionService', () => {
       verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
         mockDocument.populate(
-          deepEqual({
-            path: 'breakdown',
-            populate: { path: 'project' },
-          })
+          deepEqual([
+            { path: 'breakdown', populate: { path: 'project' }},
+            {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+          ])
         )
       ).once();
       expect(result).toEqual(audition);
@@ -100,10 +100,10 @@ describe('AuditionService', () => {
       ).thenResolve(audition.breakdown);
 
       when(mockDocument.save()).thenReturn(instance(mockDocument));
-      when(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.populate(deepEqual([
+        { path: 'breakdown', populate: { path: 'project' }},
+        {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+      ]))).thenReturn(instance(mockDocument));
       when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
       when(mockDocument.toObject()).thenReturn(audition);
 
@@ -122,10 +122,10 @@ describe('AuditionService', () => {
       verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
         mockDocument.populate(
-          deepEqual({
-            path: 'breakdown',
-            populate: { path: 'project' },
-          })
+          deepEqual([
+            { path: 'breakdown', populate: { path: 'project' }},
+            {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+          ])
         )
       ).once();
       expect(result).toEqual(audition);
@@ -137,10 +137,10 @@ describe('AuditionService', () => {
       audition._id = null;
 
       when(mockDocument.toObject()).thenReturn(audition);
-      when(mockDocument.populate(deepEqual({
-        path: 'breakdown',
-        populate: { path: 'project'}
-      }))).thenReturn(instance(mockDocument));
+      when(mockDocument.populate(deepEqual([
+        { path: 'breakdown', populate: { path: 'project' }},
+        {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+      ]))).thenReturn(instance(mockDocument));
       when(mockDocument.execPopulate()).thenResolve(instance(mockDocument));
 
       when(mockModel.findOne(deepEqual({ _id: audition._id }))).thenReturn(
@@ -162,10 +162,10 @@ describe('AuditionService', () => {
       verify(mockModel.findOne(deepEqual({ _id: audition._id }))).once();
       verify(
         mockDocument.populate(
-          deepEqual({
-            path: 'breakdown',
-            populate: { path: 'project' },
-          })
+          deepEqual([
+            { path: 'breakdown', populate: { path: 'project' }},
+            {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+          ])
         )
       ).once();
       expect(result).toEqual(audition);

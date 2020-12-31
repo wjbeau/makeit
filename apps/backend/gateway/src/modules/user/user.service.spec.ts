@@ -130,12 +130,9 @@ describe('UserService', () => {
       const user: UserAccount = ModelFactory.createEmptyUserAccount();
       user._id = null;
       user.password = "mypass";
+      user.tokens = [];
 
       when(mockDocument.toObject()).thenReturn(user);
-
-      when(mockModel.findOne(deepEqual({ _id: user._id }))).thenReturn(
-        new Promise((resolve) => resolve(null))
-      );
 
       when(mockModel.create(deepEqual(user))).thenReturn(
         new Promise((resolve) => resolve(instance(mockDocument)))
@@ -149,8 +146,10 @@ describe('UserService', () => {
       verify(mockModel.create(deepEqual(user))).once();
       verify(mockModel.findOne(anything())).never();
       verify(mockCryptoService.hash(strictEqual("mypass"))).once();
-      expect(result.password).toEqual("hashed");
-      expect(result).toEqual(user);
+      expect(result.password).toBeUndefined();
+      expect(result.tokens).toBeUndefined();
+      const {password, tokens, ...rest} = user
+      expect(result).toEqual(rest);
     });
 
     it('should throw error when ids arent a match', async () => {
