@@ -99,7 +99,7 @@ export const AuditionAvatar = (props: { audition: Audition }) => {
       </Avatar>
       <span className={classes.iconContainer}>
         {isSoon(audition) && (
-          <Tooltip title="Warning" aria-label="warning">
+          <Tooltip title="Audition is Past Due" aria-label="warning">
             <Warning className={classes.warningIcon} fontSize="small"></Warning>
           </Tooltip>
         )}
