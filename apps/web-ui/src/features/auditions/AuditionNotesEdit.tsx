@@ -1,4 +1,4 @@
-import { Audition } from '@makeit/types';
+import { Audition, PersonInfo } from '@makeit/types';
 import {
   Button,
   Divider,
@@ -14,7 +14,6 @@ import Moment from 'react-moment';
 import { useSelector } from 'react-redux';
 import { selectAuthed } from '../auth/auth.slice';
 import TitledPaper from '../layout/TitledPaper';
-import AttachmentButtons from '../attachments/AttachmentButtons';
 import AttachmentPanel from '../attachments/AttachmentPanel';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,9 +31,22 @@ const useStyles = makeStyles((theme) => ({
   secondaryTitle: {
     display: 'inline-block',
     paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
   },
 }));
+
+const byLine = (person: PersonInfo) => {
+  let line = ""
+  if(person?.firstName) {
+    line += person.firstName
+  }
+  if(person?.lastName) {
+    if(line.length) line += " "
+    line += person.lastName
+  }
+
+  return line.length ? "by " + line : ''
+}
 
 const AuditionNotesEdit = (props: { formValues: Audition }) => {
   const classes = useStyles();
@@ -51,9 +63,9 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
               {formValues &&
                 formValues.notes &&
                 formValues.notes.map((note, index) => (
-                  <>
-                    <Grid item key={'a' + index}>
-                      {index > 0 && <Divider />}
+                  <Grid item key={index}>
+                    {index > 0 && <Divider />}
+                    <div>
                       <Typography
                         variant="body2"
                         component="p"
@@ -67,11 +79,7 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
                         component="p"
                         className={classes.secondaryTitle}
                       >
-                        (on <Moment format="lll">{note.createdOn}</Moment> by{' '}
-                        {note.createdBy.firstName +
-                          ' ' +
-                          note.createdBy.lastName}
-                        )
+                        on <Moment format="lll">{note.createdOn}</Moment> {byLine(note.createdBy)}
                       </Typography>
                       <FastField
                         component={TextField}
@@ -80,41 +88,62 @@ const AuditionNotesEdit = (props: { formValues: Audition }) => {
                         multiline
                         fullWidth={true}
                       />
-                    </Grid>
-                    <Grid item key={'b' + index}>
-                      <AttachmentPanel container={note} rootPath={`notes[${index}]`} >
+                    </div>
+                    <AttachmentPanel
+                      container={note}
+                      rootPath={`notes[${index}]`}
+                    >
+                      <Button
+                        startIcon={<Delete />}
+                        color="primary"
+                        variant="text"
+                        className={classes.button}
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        Delete Note
+                      </Button>
+                      {index === formValues.notes.length - 1 && (
                         <Button
-                          startIcon={<Delete />}
+                          startIcon={<NoteAdd />}
                           color="primary"
                           variant="text"
-                          className={classes.button}
-                          onClick={() => arrayHelpers.remove(index)}
+                          onClick={() =>
+                            arrayHelpers.push({
+                              createdBy: user,
+                              createdOn: new Date().toISOString(),
+                              description: '',
+                              links: [],
+                              attachments: [],
+                            })
+                          }
                         >
-                          Delete Note
+                          Add Note
                         </Button>
-                      </AttachmentPanel>
-                    </Grid>
-                  </>
+                      )}
+                    </AttachmentPanel>
+                  </Grid>
                 ))}
 
-              <Grid item className={classes.addNoteContainer}>
-                <Button
-                  startIcon={<NoteAdd />}
-                  color="primary"
-                  variant="text"
-                  onClick={() =>
-                    arrayHelpers.push({
-                      createdBy: user,
-                      createdOn: new Date().toISOString(),
-                      description: undefined,
-                      links: [],
-                      attachments: [],
-                    })
-                  }
-                >
-                  Add Note
-                </Button>
-              </Grid>
+              {!formValues.notes?.length && (
+                <Grid item className={classes.addNoteContainer}>
+                  <Button
+                    startIcon={<NoteAdd />}
+                    color="primary"
+                    variant="text"
+                    onClick={() =>
+                      arrayHelpers.push({
+                        createdBy: user,
+                        createdOn: new Date().toISOString(),
+                        description: '',
+                        links: [],
+                        attachments: [],
+                      })
+                    }
+                  >
+                    Add Note
+                  </Button>
+                </Grid>
+              )}
             </>
           )}
         />

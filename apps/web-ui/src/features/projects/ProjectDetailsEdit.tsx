@@ -23,9 +23,11 @@ const getPath = (prefix: string, path: string) => {
   }
 }
 
-const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string, showSource?: boolean }) => {
+const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string, showSource?: boolean, allowProvisional?:boolean }) => {
   const classes = useStyles();
-  const { project, formikPrefix, showSource } = props
+  const { project, formikPrefix, showSource, allowProvisional } = props
+
+  const excludes = allowProvisional ? [] : [ProjectStatus.Provisional]
 
   return (
     <TitledPaper
@@ -57,7 +59,7 @@ const ProjectDetailsEdit = (props: { project: Project, formikPrefix: string, sho
                   }}
                   fullWidth={true}
                 >
-                  {Converter.enumToMenuItems('ProjectStatus', ProjectStatus, [ProjectStatus.Provisional])}
+                  {Converter.enumToMenuItems('ProjectStatus', ProjectStatus, excludes)}
                 </FastField>
               </FormControl>
             </Grid>

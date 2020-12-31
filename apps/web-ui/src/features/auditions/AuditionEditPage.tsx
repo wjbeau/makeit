@@ -98,7 +98,7 @@ const AuditionEditPage = () => {
     if (auditionId !== 'new') {
       setFormValues(auditions.find((a) => a._id === auditionId));
     } else {
-      if (location.state['initial']) {
+      if (location.state && location.state['initial']) {
         setFormValues(location.state['initial']);
       } else {
         if (formValues?.breakdown?.project) {
@@ -177,13 +177,14 @@ const AuditionEditPage = () => {
                   </Grid>
                   <Grid item>
                     <Grid container direction="row" spacing={3}>
-                      <Grid item xs={6}>
+                      <Grid item xs={12} lg={6}>
                         <BreakdownDetailsEdit breakdown={values.breakdown} />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={12} lg={6}>
                         <ProjectDetailsEdit
                           formikPrefix="breakdown.project"
                           project={values.breakdown.project}
+                          allowProvisional
                         />
                       </Grid>
                     </Grid>

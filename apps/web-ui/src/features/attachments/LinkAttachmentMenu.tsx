@@ -20,9 +20,10 @@ export const LinkAttachmentMenu = (props: {
   helpers?: FieldArrayHelperContainer;
   rootPath?: string;
   readOnly: boolean;
+  className?;
 }) => {
   const classes = useStyles();
-  const { container, iconOnly, helpers, rootPath, readOnly } = props;
+  const { container, iconOnly, helpers, rootPath, readOnly, className } = props;
   const [open, setOpen] = useState<boolean>(false);
   const [anchor, setAnchor] = useState(null);
 
@@ -41,6 +42,7 @@ export const LinkAttachmentMenu = (props: {
     <>
       {container.links?.length > 0 && (
         <Badge
+          className={className}
           badgeContent={container.links.length}
           color="primary"
           overlap={iconOnly ? 'circle' : 'rectangle'}
@@ -76,21 +78,23 @@ export const LinkAttachmentMenu = (props: {
             </div>
           ))}
         {!readOnly && (
-          <FieldArray
-            name={path}
-            render={(arrayHelpers) => {
-              helpers.linkArrayHelper = arrayHelpers;
-              return container.links?.map((a, index) => (
-                <div key={index}>
-                  <LinkAttachment
-                    link={a}
-                    readOnly={readOnly}
-                    onDelete={() => arrayHelpers.remove(index)}
-                  />
-                </div>
-              ));
-            }}
-          />
+          <div>
+            <FieldArray
+              name={path}
+              render={(arrayHelpers) => {
+                helpers.linkArrayHelper = arrayHelpers;
+                return container.links?.map((a, index) => (
+                  <div key={index}>
+                    <LinkAttachment
+                      link={a}
+                      readOnly={readOnly}
+                      onDelete={() => arrayHelpers.remove(index)}
+                    />
+                  </div>
+                ));
+              }}
+            />
+          </div>
         )}
       </Menu>
     </>

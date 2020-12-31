@@ -48,7 +48,7 @@ const BreakdownDetailsEdit = (props: { breakdown: Breakdown }) => {
               <FastField
                 component={TextField}
                 name="breakdown.rate"
-                label="Rate / Pay"
+                label="Pay"
                 fullWidth={true}
               />
             </Grid>

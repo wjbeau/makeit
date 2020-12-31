@@ -2,7 +2,7 @@ import {
   hasAttachments,
   HasAttachments,
   hasParticipants,
-  HasParticipants
+  HasParticipants,
 } from '@makeit/types';
 import { Grid, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
@@ -19,8 +19,11 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   hide: {
-    display: 'none'
-  }
+    display: 'none',
+  },
+  badge: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export class FieldArrayHelperContainer {
@@ -40,9 +43,10 @@ export const AttachmentPanel = (props: {
   const [helpers, setHelpers] = useState(new FieldArrayHelperContainer());
   const { container, disableMargin, rootPath, children } = props;
 
-  const showMenuIcons = (container['attachments']?.length > 0 ||
-      container['links']?.length > 0 ||
-      container['participants']?.length > 0);
+  const showMenuIcons =
+    container['attachments']?.length > 0 ||
+    container['links']?.length > 0 ||
+    container['participants']?.length > 0;
 
   return (
     <Grid
@@ -59,12 +63,14 @@ export const AttachmentPanel = (props: {
               container={container as HasAttachments}
               readOnly={false}
               helpers={helpers}
+              className={classes.badge}
             />
             <LinkAttachmentMenu
               rootPath={rootPath}
               container={container as HasAttachments}
               readOnly={false}
               helpers={helpers}
+              className={classes.badge}
             />
           </>
         )}

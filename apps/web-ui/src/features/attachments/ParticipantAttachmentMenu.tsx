@@ -22,9 +22,10 @@ export const ParticipantAttachmentMenu = (props: {
   helpers?: FieldArrayHelperContainer;
   rootPath?: string;
   readOnly?: boolean;
+  className?
 }) => {
   const classes = useStyles();
-  const { container, iconOnly, helpers, rootPath, readOnly } = props;
+  const { container, iconOnly, helpers, rootPath, readOnly, className } = props;
   const [open, setOpen] = useState<boolean>(false);
   const [anchor, setAnchor] = useState(null);
 
@@ -44,6 +45,7 @@ export const ParticipantAttachmentMenu = (props: {
     <>
       {container.participants?.length > 0 && (
         <Badge
+          className={className}
           badgeContent={container.participants.length}
           color="primary"
           overlap={iconOnly ? 'circle' : 'rectangle'}
@@ -79,21 +81,23 @@ export const ParticipantAttachmentMenu = (props: {
             </div>
           ))}
         {!readOnly && (
-          <FieldArray
-            name={path}
-            render={(arrayHelpers) => {
-              helpers.participantArrayHelper = arrayHelpers;
-              return container.participants?.map((a, index) => (
-                <div key={index}>
-                  <ParticipantAttachment
-                    participant={a}
-                    readOnly={readOnly}
-                    onDelete={() => arrayHelpers.remove(index)}
-                  />
-                </div>
-              ));
-            }}
-          />
+          <div>
+            <FieldArray
+              name={path}
+              render={(arrayHelpers) => {
+                helpers.participantArrayHelper = arrayHelpers;
+                return container.participants?.map((a, index) => (
+                  <div key={index}>
+                    <ParticipantAttachment
+                      participant={a}
+                      readOnly={readOnly}
+                      onDelete={() => arrayHelpers.remove(index)}
+                    />
+                  </div>
+                ));
+              }}
+            />
+          </div>
         )}
       </Menu>
     </>

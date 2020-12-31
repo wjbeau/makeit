@@ -15,7 +15,7 @@ export type AuditionNoteDocument = AuditionNoteModel & mongoose.Document;
 export class AuditionNoteModel implements AuditionNote {
     @Prop()
     description: string;
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: UserAccountModel.name }] })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: UserAccountModel.name })
     createdBy: UserAccount;
     @Prop()
     createdOn: Date;

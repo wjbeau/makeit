@@ -52,10 +52,10 @@ export class AuditionService {
         throw new BadRequestException(error, 'Database update failed.');
       });
 
-    await result.populate({
-      path: 'breakdown',
-      populate: { path: 'project' },
-    }).execPopulate();
+    await result.populate([
+      {path: 'breakdown', populate: { path: 'project' }},
+      {path: 'notes.createdBy', select: 'firstName lastName _id avatar' }
+    ]).execPopulate();
 
     return result.toObject();
   }
@@ -84,10 +84,10 @@ export class AuditionService {
           permissionsSpec(id, null, [PermissionRole.Admin, PermissionRole.Editor, PermissionRole.Viewer])
         ]
       })
-      .populate({
-        path: 'breakdown',
-        populate: { path: 'project' },
-      })
+      .populate([
+        {path: 'breakdown', populate: { path: 'project' }},
+        {path: 'notes.createdBy',  select: 'firstName lastName _id avatar' }
+      ])
       .sort({
         deadline: -1,
         auditionTime: -1,

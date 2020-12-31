@@ -1,7 +1,6 @@
 import { Attachment } from '@makeit/types';
 import {
   BadRequestException,
-  Query,
   Controller,
   Get,
   Param,

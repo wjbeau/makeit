@@ -20,10 +20,10 @@ export class ModelFactory {
 
   public static createEmptyUserAccount(): UserAccount {
     return {
-      firstName: undefined,
-      lastName: undefined,
+      firstName: '',
+      lastName: '',
       avatar: undefined,
-      email: undefined,
+      email: '',
       profiles: [],
     };
   }
@@ -31,16 +31,16 @@ export class ModelFactory {
   public static createEmptyAudition(status?:AuditionStatus, type?:AuditionType): Audition {
     return {
       breakdown: this.createEmptyBreakdown(),
-      instructions: undefined,
+      instructions: '',
       type: type ?? AuditionType.InPersonAudition,
       auditionTime: null,
       deadline: null,
       callbackDate: null,
       address: this.createEmptyAddress(),
       status: status ?? AuditionStatus.Invited,
-      statusReason: undefined,
+      statusReason: '',
       followUpTo: undefined,
-      reminderNote: undefined,
+      reminderNote: '',
       reminderTime: null,
       notes: [],
       participants: [],
@@ -53,11 +53,11 @@ export class ModelFactory {
 
   public static createEmptyBreakdown(): Breakdown {
     return {
-      roleName: undefined,
-      roleDescription: undefined,
-      roleType: undefined,
+      roleName: '',
+      roleDescription: '',
+      roleType: '',
 
-      rate: undefined, //how much does it pay
+      rate: '', //how much does it pay
       gender: Gender.Unspecified,
       ageMin: undefined,
       ageMax: undefined,
@@ -71,20 +71,20 @@ export class ModelFactory {
 
   public static createEmptyAddress(): Address {
     return {
-      line1: undefined,
-      line2: undefined,
-      line3: undefined,
-      city: undefined,
-      state: undefined,
-      zip: undefined,
-      country: undefined,
+      line1: '',
+      line2: '',
+      line3: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: '',
     };
   }
 
   public static createEmptyEvent(start?: Date, end?: Date): Event {
     return {
-      title: undefined,
-      description: undefined,
+      title: '',
+      description: '',
       eventType: EventType.Calendar,
       start: start,
       end: end,
@@ -97,9 +97,9 @@ export class ModelFactory {
 
   public static createEmptyProject(status?: ProjectStatus, source?:ProjectSource): Project {
     return {
-      name: undefined,
+      name: '',
       projectType: ProjectType.Pilot,
-      description: undefined,
+      description: '',
       union: UnionType.NonUnion,
       startDate: null,
       events: [],
@@ -134,7 +134,7 @@ export class ModelFactory {
 
   public static createEmptyProjectEvent(time?: Date): ProjectEvent {
     return {
-      notes: undefined,
+      notes: '',
       time: time,
       eventType: ProjectEventType.CallTime,
       attachments: [],

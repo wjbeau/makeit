@@ -21,9 +21,10 @@ export const FileAttachmentMenu = (props: {
   helpers?: FieldArrayHelperContainer;
   rootPath?: string;
   readOnly?: boolean;
+  className?
 }) => {
   const classes = useStyles();
-  const { container, iconOnly, rootPath, readOnly, helpers } = props;
+  const { container, iconOnly, rootPath, readOnly, helpers, className } = props;
   const [open, setOpen] = useState<boolean>(false);
   const [anchor, setAnchor] = useState(null);
 
@@ -43,6 +44,7 @@ export const FileAttachmentMenu = (props: {
     <>
       {container.attachments?.length > 0 && (
         <Badge
+          className={className}
           badgeContent={container.attachments.length}
           color="primary"
           overlap={iconOnly ? 'circle' : 'rectangle'}
@@ -78,21 +80,23 @@ export const FileAttachmentMenu = (props: {
             </div>
           ))}
         {!readOnly && (
-          <FieldArray
-            name={path}
-            render={(arrayHelpers) => {
-              helpers.fileArrayHelper = arrayHelpers;
-              return container.attachments?.map((a, index) => (
-                <div key={index}>
-                  <FileAttachment
-                    attachment={a}
-                    readOnly={readOnly}
-                    onDelete={() => arrayHelpers.remove(index)}
-                  />
-                </div>
-              ));
-            }}
-          />
+          <div>
+            <FieldArray
+              name={path}
+              render={(arrayHelpers) => {
+                helpers.fileArrayHelper = arrayHelpers;
+                return container.attachments?.map((a, index) => (
+                  <div key={index}>
+                    <FileAttachment
+                      attachment={a}
+                      readOnly={readOnly}
+                      onDelete={() => arrayHelpers.remove(index)}
+                    />
+                  </div>
+                ));
+              }}
+            />
+          </div>
         )}
       </Menu>
     </>

@@ -124,6 +124,7 @@ const AuditionDetailsEdit = (props: { audition: Audition }) => {
                 name="address.line1"
                 label="Address Line 1"
                 fullWidth={true}
+                
               />
             </Grid>
             <Grid item xs={3}>
