@@ -19,6 +19,8 @@ export function AuthedRoute({
   if (!auth && !refresh) {
     const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
     const user = localStorage.getItem(REFRESH_USER_KEY);
+    console.log('Refresh is here: ' + refresh)
+    console.log('User is here: ' + user)
     if (refresh && user) {
       setRefresh(true);
       dispatch(

@@ -27,8 +27,9 @@ export const loginAttempt = createAsyncThunk(
 
 export const refreshToken = createAsyncThunk(
   'auth/refreshToken',
-  async (data: RefreshRequest, thunkApi) => {
+  async (data: RefreshRequest, thunkAPI) => {
     const result = await apiClient().post(SERVER_URL + '/auth/refresh', data);
+    thunkAPI.dispatch(userSet(result.data.user))
     return result.data;
   }
 );
@@ -80,17 +81,6 @@ export const authSlice = createSlice({
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.token = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
-        if (state.rememberMe) {
-          localStorage.setItem(
-            REFRESH_TOKEN_KEY,
-            JSON.stringify(state.refreshToken)
-          );
-          localStorage.setItem(REFRESH_USER_KEY, action.payload.user.email);
-        }
-        else {
-          localStorage.removeItem(REFRESH_TOKEN_KEY)
-          localStorage.removeItem(REFRESH_USER_KEY)
-        }
         state.refreshActive = false;
       });
   },
