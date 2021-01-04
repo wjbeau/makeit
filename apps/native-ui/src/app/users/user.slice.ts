@@ -1,10 +1,10 @@
 import { UserAccount, PasswordChangeRequest } from '@makeit/types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { apiClient } from '../../app/api-client';
+import { apiClient } from '../api-client';
 import {
   SERVER_URL
-} from '../../app/config';
-import { RootState } from '../../app/store';
+} from '../config';
+import { RootState } from '../store';
 import { UserState } from './user.state';
 
 const initialState: UserState = {
